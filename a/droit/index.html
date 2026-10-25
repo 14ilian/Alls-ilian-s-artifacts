@@ -1,0 +1,267 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Carte de l'introduction au droit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: arbre repliable vertical, une couleur par grande partie, rails reliant les nœuds */
+:root{
+  --bg:#f6f7f4; --surface:#ffffff; --fg:#1d2420; --muted:#5b665f; --line:#cfd6d0;
+  --c1:#2f6f5e; --c1-bg:#e3f0eb; --c2:#3d5a99; --c2-bg:#e5ebf7; --c3:#8a4f2a; --c3-bg:#f6e9df; --c4:#7a3f74; --c4-bg:#f3e5f1;
+  --warn:#9a5b00; --warn-bg:#fdf1dc;
+  --display:"Fraunces", Georgia, serif; --body:"Public Sans", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --surface:#1c2320; --fg:#e8ede9; --muted:#a3b0a8; --line:#34403a;
+  --c1:#7fd0b6; --c1-bg:#1f3a32; --c2:#9db6ec; --c2-bg:#232f4a; --c3:#e9ad84; --c3-bg:#3d2a1e; --c4:#dba3d4; --c4-bg:#3a2438;
+  --warn:#f2c46b; --warn-bg:#3a2e14; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1c2320; --fg:#e8ede9; --muted:#a3b0a8; --line:#34403a;
+  --c1:#7fd0b6; --c1-bg:#1f3a32; --c2:#9db6ec; --c2-bg:#232f4a; --c3:#e9ad84; --c3-bg:#3d2a1e; --c4:#dba3d4; --c4-bg:#3a2438;
+  --warn:#f2c46b; --warn-bg:#3a2e14; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:960px;margin:0 auto;padding:28px 16px 64px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(26px,5vw,36px);line-height:1.1;margin:0;text-wrap:balance}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:13px;font-weight:500;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer}
+button:hover{border-color:var(--muted)}
+button:focus-visible,.node:focus-visible{outline:2px solid var(--c2);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted);margin:0 0 20px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.root{font-family:var(--display);font-size:20px;font-weight:600;display:inline-block;padding:10px 16px;border:2px solid var(--fg);border-radius:10px;background:var(--surface)}
+ul.tree{list-style:none;margin:0;padding:0 0 0 22px;position:relative}
+ul.tree li{position:relative;padding:5px 0 5px 18px}
+ul.tree li::before{content:"";position:absolute;left:0;top:0;bottom:0;border-left:1.5px solid var(--line)}
+ul.tree li:last-child::before{bottom:auto;height:21px}
+ul.tree li::after{content:"";position:absolute;left:0;top:21px;width:14px;border-top:1.5px solid var(--line)}
+.node{display:inline-flex;align-items:baseline;gap:8px;max-width:100%;padding:5px 11px;border-radius:8px;background:var(--surface);border:1px solid var(--line);text-align:left;min-width:0}
+.node.has{cursor:pointer}
+.node .t{font-weight:600}
+.node .d{color:var(--muted);font-weight:400}
+.node .chev{font-size:11px;color:var(--muted);transition:transform .15s}
+li.closed>.node .chev{transform:rotate(-90deg)}
+li.closed>ul{display:none}
+.lvl1>.node{font-family:var(--display);font-size:17px;padding:8px 14px;border-width:1.5px}
+.b1 .node{border-color:color-mix(in srgb,var(--c1) 35%,var(--line))}.b1>.node{background:var(--c1-bg);color:var(--c1);border-color:var(--c1)}
+.b2 .node{border-color:color-mix(in srgb,var(--c2) 35%,var(--line))}.b2>.node{background:var(--c2-bg);color:var(--c2);border-color:var(--c2)}
+.b3 .node{border-color:color-mix(in srgb,var(--c3) 35%,var(--line))}.b3>.node{background:var(--c3-bg);color:var(--c3);border-color:var(--c3)}
+.b4 .node{border-color:color-mix(in srgb,var(--c4) 35%,var(--line))}.b4>.node{background:var(--c4-bg);color:var(--c4);border-color:var(--c4)}
+.lvl1>.node .d{color:inherit;opacity:1}
+.trap{display:inline-block;margin-left:6px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);background:var(--warn-bg);border-radius:4px;padding:1px 6px;vertical-align:1px}
+.note{font-size:13px;color:var(--muted);margin-top:28px;max-width:65ch}
+@media (max-width:520px){ul.tree{padding-left:10px}ul.tree li{padding-left:14px}ul.tree li::after{width:10px}.node{font-size:14px}}
+@media (prefers-reduced-motion:reduce){.node .chev{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow">UE 3.8 · Environnement juridique</p>
+      <h1>Introduction au droit</h1>
+    </div>
+    <div class="tools">
+      <button id="open-all" type="button">Tout déplier</button>
+      <button id="close-all" type="button">Tout replier</button>
+      <button id="level1" type="button">Grandes parties</button>
+    </div>
+  </header>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--c1)"></i>1. Définition et rôle</span>
+    <span><i class="dot" style="background:var(--c2)"></i>2. Sources du droit</span>
+    <span><i class="dot" style="background:var(--c3)"></i>3. Branches du droit</span>
+    <span><i class="dot" style="background:var(--c4)"></i>4. Organisation de la justice</span>
+    <span><span class="trap" style="margin:0">piège</span>tombe souvent en QCM</span>
+  </div>
+  <div class="root">Introduction au droit</div>
+  <ul class="tree" id="tree"></ul>
+  <p class="note">Clique sur une case pour la déplier ou la replier. Tout vient de ta ronéo et des diapos de Mme Taboulet.</p>
+</div>
+
+<script>
+const T=(t,d,c,trap)=>({t,d,c,trap});
+const DATA=[
+T("1. Définition et rôle du droit","",[
+  T("Droit et justice","",[
+    T("Justice","bon partage des biens, droits, obligations, avantages et charges"),
+    T("« Suum cuique tribuere »","rendre à chacun son dû")]),
+  T("3 notions","",[
+    T("Droit objectif","ensemble des règles qui s'imposent → intérêt général ; protège la dignité, surtout des plus faibles"),
+    T("Droits subjectifs","pouvoirs juridiques reconnus aux individus → intérêts individuels ; pas de droits sans devoirs"),
+    T("Droit positif","règles applicables en un lieu donné, à un moment donné",null,true)]),
+  T("Droits vs libertés","les droits sont plus concrets, plus orientés"),
+  T("Fonctions","",[
+    T("Régulatrice","ordre et paix sociale, « système immunitaire de la société »"),
+    T("De direction","exprime les valeurs de la société"),
+    T("Enraciné dans une culture","variations dans le temps et l'espace")]),
+  T("Autres systèmes normatifs","bienséance, morale, préceptes religieux"),
+  T("Ce que font les règles","interdire, imposer, autoriser (ex : pas d'AMM = pas de vente)"),
+  T("Droit pharmaceutique","règles des activités pharmaceutiques (production, commercialisation, dispensation)",[
+    T("Objectif principal","santé publique, dont la sécurité sanitaire",null,true)])
+]),
+T("2. Sources du droit","",[
+  T("Hiérarchie des normes","pyramide : général en haut, concret en bas",[
+    T("Règle d'or","une norme inférieure ne contredit jamais une norme supérieure",null,true)]),
+  T("A. Sources écrites","du haut vers le bas",[
+    T("1. Bloc de constitutionnalité","",[
+      T("Contenu","Constitution 1958, DDHC 1789, Préambule 1946, Charte environnement 2004"),
+      T("Rôles","garantir les droits ; séparation des pouvoirs (Parlement vote, exécutif applique, judiciaire contrôle)"),
+      T("Produits de santé","la Constitution n'en dit rien",null,true)]),
+    T("2. Traités et droit de l'UE","",[
+      T("Traités internationaux","applicables si signés et ratifiés",[
+        T("DUDH 1948 (ONU)","déclaratoire, non contraignante",null,true),
+        T("CEDH 1950","Conseil de l'Europe"),
+        T("Oviedo 1997","biomédecine, primauté de l'être humain")]),
+      T("Droit de l'UE","au-dessus des lois françaises",[
+        T("Traités fondateurs","« constitution » de l'UE"),
+        T("Droit dérivé","",[
+          T("Règlement","général, obligatoire, directement applicable, identique dans les 27 (ex : DM 2017, RGPD)"),
+          T("Directive","fixe un objectif, transposition obligatoire, chaque État choisit ses moyens (ex : 2001/83 code du médicament)"),
+          T("Décision","destinataires précis (ex : AMM)"),
+          T("Règlement = directive","même valeur, fonctionnement différent",null,true)]),
+        T("Jurisprudence CJUE","arrêts qui s'imposent aux 27 (DocMorris 2003)"),
+        T("Recommandations et avis","peu contraignants")])]),
+    T("3. Lois","règles générales et permanentes, rédigées par le législateur",[
+      T("Initiative","projet de loi = Premier ministre ; proposition de loi = parlementaire",null,true),
+      T("Adoption","débat et vote au Parlement (Assemblée nationale + Sénat)"),
+      T("Entrée en vigueur","promulgation par le Président + publication au JO",null,true),
+      T("Contrôle","Conseil constitutionnel"),
+      T("Codification","CSP, code civil…")]),
+    T("4. Règlements","pris par l'exécutif pour appliquer les lois",[
+      T("a. Décrets et arrêtés","",[
+        T("Décret","toujours signé par le Premier ministre + ministres concernés",[
+          T("Décret en Conseil d'État","avis du Conseil d'État → articles R"),
+          T("Décret simple","→ articles D")]),
+        T("Arrêté","ministre, préfet, maire, ARS… pas toujours un ministre",null,true),
+        T("Hiérarchie","décret > arrêté",null,true)]),
+      T("b. Ordonnances","gouvernement dans le domaine de la loi",[
+        T("Procédure","autorisation du Parlement puis ratification",null,true),
+        T("Pourquoi","urgence, ou texte peu discutable (transposer une directive)"),
+        T("Loi vs ordonnance","même effet, auteur différent (Parlement / gouvernement)")])]),
+    T("5. Documents de l'administration","circulaires, instructions, avis, réponses ministérielles"),
+    T("6. Décisions administratives individuelles","notifiées par lettre recommandée avec AR"),
+    T("7. Déontologie professionnelle","a une valeur juridique")]),
+  T("B. Sources non écrites","",[
+    T("Jurisprudence","décisions des tribunaux ; le juge dit le droit affaire par affaire ; autorité de la chose jugée",[
+      T("Arrêt ≠ arrêté","arrêt = décision d'une Cour ; arrêté = texte",null,true)]),
+    T("Coutume","pratique répétée et admise"),
+    T("Doctrine","réflexions des experts du droit")])
+]),
+T("3. Branches du droit","",[
+  T("1. Droit public / droit privé","",[
+    T("a. Droit public","",[
+      T("Droit constitutionnel","organisation de l'État"),
+      T("Droit administratif","l'administration et ses relations avec les usagers ; concerne beaucoup les pharmaciens"),
+      T("Finances publiques","dont droit fiscal"),
+      T("Droit pénal","sanctionner un trouble à l'ordre public",[
+        T("Infraction pénale","action ou omission définie par un texte, prévue et punie par la loi"),
+        T("Légalité des délits et des peines","le texte fixe un maximum, le juge peut descendre en dessous",null,true),
+        T("3 catégories","contraventions < délits < crimes ; en pharmacie ≈ 90 % de délits"),
+        T("3 sanctions","amende, emprisonnement, privation de droits (interdiction d'exercer)"),
+        T("Où ?","code pénal mais aussi CSP, CSS…")])]),
+    T("b. Droit privé","",[
+      T("Droit civil","personnes, propriété, obligations",[
+        T("Responsabilité civile","réparation pécuniaire d'un préjudice, avec ou sans faute",null,true),
+        T("3 éléments","préjudice, faute, lien de causalité")]),
+      T("Droit des affaires","commercial, concurrence, consommation, propriété intellectuelle"),
+      T("Droit social","droit du travail, Sécurité sociale")])]),
+  T("2. Droit interne / international","",[
+    T("Droit interne",""),
+    T("Droit international",""),
+    T("Droit européen","",[
+      T("Conseil de l'Europe","ex : CEDH"),
+      T("Union européenne","contient le droit pharmaceutique",null,true)])]),
+  T("3. Droit de la santé","mixte public et privé",[
+    T("Composantes","droit médical, hospitalier, pharmaceutique, santé publique, bioéthique"),
+    T("Codes","CSP (≈ 10 000 articles, 4e partie = professionnels de santé), CSS",[
+      T("L.","partie législative → loi"),
+      T("R.","décret en Conseil d'État"),
+      T("D.","décret simple"),
+      T("Arrêtés","jamais codifiés dans le CSP",null,true)])])
+]),
+T("4. Organisation de la justice","deux ordres, trois niveaux chacun",[
+  T("Déterminer le tribunal","",[
+    T("Ratione materiae","selon la matière"),
+    T("Ratione loci","selon le lieu"),
+    T("Ratione personae","selon la personne"),
+    T("Droit commun / attribution","droit commun = toutes les affaires ; attribution = seulement celles qu'un texte lui confie")]),
+  T("Ordre judiciaire","personnes privées entre elles + infractions pénales",[
+    T("a. 1re instance","",[
+      T("Juridictions civiles","litiges entre personnes physiques ou morales",[
+        T("Droit commun","tribunal judiciaire"),
+        T("Attribution","",[
+          T("Tribunal de commerce","ex : impayés officine / laboratoire"),
+          T("Conseil de prud'hommes","travail, ex : titulaire / adjoint ; pas d'amende",null,true)])]),
+      T("Juridictions répressives","infractions pénales",[
+        T("Instruction","enquête : y a-t-il infraction ?"),
+        T("Jugement","",[
+          T("Tribunal de police","contraventions"),
+          T("Tribunal correctionnel","délits (≤ 10 ans) → le cas des pharmaciens",null,true),
+          T("Cour d'assises","crimes (≥ 10 ans)")])])]),
+    T("b. 2e instance","",[
+      T("Cour d'appel","chambres civile, commerciale, sociale, correctionnelle"),
+      T("Cour d'assises d'appel","crimes : à ne pas citer pour un pharmacien",null,true)]),
+    T("c. Cour de cassation","pourvoi ; juge du droit, ne rejuge pas",[
+      T("Arrêt de rejet","décision d'appel confirmée"),
+      T("Arrêt de cassation","renvoi devant une autre cour d'appel",null,true)])]),
+  T("Ordre administratif","usagers contre pouvoirs publics (ANSM, université, ARS…)",[
+    T("a. Tribunal administratif","1re instance"),
+    T("b. Cour administrative d'appel","2e instance"),
+    T("c. Conseil d'État","",[
+      T("Fonction administrative","avis au gouvernement sur lois et règlements"),
+      T("Fonction juridictionnelle","juge du droit, et parfois juge du fond",null,true)]),
+    T("Juridictions ordinales (attribution)","chambres de discipline des Ordres, justice par les pairs",[
+      T("1re instance","CROP (titulaires) ou conseil central"),
+      T("Appel","CNOP",null,true),
+      T("Cassation","Conseil d'État"),
+      T("Tribunal administratif","n'intervient pas ici",null,true)])]),
+  T("Un pharmacien peut être jugé","",[
+    T("Au civil","réparer un préjudice"),
+    T("Au pénal","tribunal correctionnel, sanctionner"),
+    T("À l'administratif","contester une décision de l'administration"),
+    T("À l'Ordre","faute disciplinaire")])
+])
+];
+
+const tree=document.getElementById('tree');let uid=0;
+function build(items,parent,depth,branch){
+  items.forEach(n=>{
+    const li=document.createElement('li');
+    if(depth===1){li.className='lvl1 b'+branch;}
+    const has=n.c&&n.c.length;
+    const el=document.createElement(has?'button':'div');
+    el.className='node'+(has?' has':'');
+    if(has){el.type='button';el.id='n'+(uid++);el.setAttribute('aria-expanded','true');}
+    el.innerHTML=(has?'<span class="chev" aria-hidden="true">▼</span>':'')+'<span><span class="t">'+n.t+'</span>'+(n.d?' <span class="d">· '+n.d+'</span>':'')+(n.trap?'<span class="trap">piège</span>':'')+'</span>';
+    li.appendChild(el);
+    if(has){const ul=document.createElement('ul');ul.className='tree';build(n.c,ul,depth+1,branch);li.appendChild(ul);
+      el.addEventListener('click',()=>{li.classList.toggle('closed');el.setAttribute('aria-expanded',!li.classList.contains('closed'));});}
+    parent.appendChild(li);
+  });
+}
+DATA.forEach((b,i)=>build([b],tree,1,i+1));
+function setAll(open,maxDepth){
+  tree.querySelectorAll('li').forEach(li=>{
+    const btn=li.querySelector(':scope>.node.has');if(!btn)return;
+    let d=0,p=li;while(p&&p!==tree){if(p.tagName==='LI')d++;p=p.parentElement;}
+    const o=maxDepth?d<maxDepth:open;li.classList.toggle('closed',!o);btn.setAttribute('aria-expanded',o);
+  });
+}
+document.getElementById('open-all').onclick=()=>setAll(true);
+document.getElementById('close-all').onclick=()=>setAll(false);
+document.getElementById('level1').onclick=()=>setAll(false,2);
+</script>
+
+
+<a href="../../" class="mes-artefacts-back" aria-label="Retour à tous mes artefacts">← Mes artefacts</a>
+<style>
+.mes-artefacts-back{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2147483000;
+ font:600 13px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:#fff;background:rgba(24,28,36,.86);
+ -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.mes-artefacts-back:hover{background:rgba(24,28,36,.96)}
+.mes-artefacts-back:focus-visible{outline:2px solid #6aa0ff;outline-offset:2px}
+@media print{.mes-artefacts-back{display:none}}
+</style>
+</body></html>

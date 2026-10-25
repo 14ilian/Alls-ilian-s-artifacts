@@ -1,0 +1,429 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Carte des réactions orga</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout : une vraie carte (nœud central + 10 familles) ; on clique une famille → seules ses réactions s'affichent, une par ligne « réactif → produit ». Les mots-clés et les TD filtrent à travers toutes les familles. */
+:root{
+  --bg:#f3f6fb; --surface:#ffffff; --ink:#151d33; --muted:#59627c; --line:#d5dbe8; --soft:#eaeef7;
+  --regio:#a8590b; --regio-bg:#fdf0e1;
+  --stereo:#6a3fb5; --stereo-bg:#f0e9fb;
+  --inter:#0f7569; --inter-bg:#e2f4f1;
+  --td:#151d33; --td-bg:#e3e8f3;
+  --b1:#c2410c; --b2:#b45309; --b3:#64748b; --b4:#1d4ed8; --b5:#7c3aed;
+  --b6:#0e7490; --b7:#be185d; --b8:#15803d; --b9:#9333ea; --b10:#0369a1;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1320; --surface:#161d2d; --ink:#e7ebf5; --muted:#9aa4be; --line:#2b3549; --soft:#1d2537;
+    --regio:#f5b26b; --regio-bg:#3a2a16; --stereo:#c4a6ff; --stereo-bg:#2c2246;
+    --inter:#6fd8c8; --inter-bg:#163430; --td:#e7ebf5; --td-bg:#2a3448;
+    --b1:#fb8a5a; --b2:#f2b04a; --b3:#a3b1c6; --b4:#7ea6ff; --b5:#b69bff;
+    --b6:#5ccbe0; --b7:#f47bb0; --b8:#62d48c; --b9:#d29bff; --b10:#62b6ef;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1320; --surface:#161d2d; --ink:#e7ebf5; --muted:#9aa4be; --line:#2b3549; --soft:#1d2537;
+  --regio:#f5b26b; --regio-bg:#3a2a16; --stereo:#c4a6ff; --stereo-bg:#2c2246;
+  --inter:#6fd8c8; --inter-bg:#163430; --td:#e7ebf5; --td-bg:#2a3448;
+  --b1:#fb8a5a; --b2:#f2b04a; --b3:#a3b1c6; --b4:#7ea6ff; --b5:#b69bff;
+  --b6:#5ccbe0; --b7:#f47bb0; --b8:#62d48c; --b9:#d29bff; --b10:#62b6ef;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 56px}
+.wrap{max-width:1100px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--b4);outline-offset:2px}
+
+/* ---------- carte ---------- */
+.top{padding-block:24px 6px}
+.top h1{font-size:clamp(24px,4vw,34px);font-weight:800;letter-spacing:-.01em}
+.top p{color:var(--muted);margin:4px 0 0;max-width:62ch}
+.ov{position:relative;margin:16px 0 8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ov svg{display:none}
+.core{grid-column:1/-1;justify-self:center;background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 22px;text-align:center}
+.core b{font-family:var(--f-display);font-size:18px;display:block;line-height:1.15}
+.core span{font-size:12px;opacity:.8}
+.fam{display:flex;align-items:center;gap:8px;background:var(--surface);border:2px solid var(--bc);border-radius:12px;padding:8px 10px;cursor:pointer;text-align:left;min-width:0}
+.fam .d{width:10px;height:10px;border-radius:50%;background:var(--bc);flex:none}
+.fam .t{font-weight:700;font-size:14px;line-height:1.2;min-width:0}
+.fam .n{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.fam[aria-pressed="true"]{background:var(--bc);color:var(--surface)}
+.fam[aria-pressed="true"] .d{background:var(--surface)}
+.fam[aria-pressed="true"] .n{color:var(--surface);opacity:.85}
+@media (min-width:760px){
+  .ov{display:block;height:440px}
+  .ov svg{display:block;position:absolute;inset:0;width:100%;height:100%}
+  .ov svg line{stroke:var(--line);stroke-width:2}
+  .core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:1}
+  .fam{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);width:180px;z-index:1}
+}
+
+/* ---------- filtres ---------- */
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.frow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.flabel{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;width:112px;flex:none}
+.chip{font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 10px;border:1px solid transparent;cursor:pointer;white-space:nowrap;line-height:1.5;background:none}
+.chip.regio{color:var(--regio);background:var(--regio-bg)}
+.chip.stereo{color:var(--stereo);background:var(--stereo-bg)}
+.chip.inter{color:var(--inter);background:var(--inter-bg)}
+.chip.td{color:var(--td);background:var(--td-bg)}
+.chip:hover{border-color:currentColor}
+.chip[aria-pressed="true"]{border-color:currentColor;box-shadow:0 0 0 1px currentColor inset}
+.search{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search input{font:inherit;font-size:14px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);flex:1 1 200px;min-width:0;max-width:340px}
+
+/* ---------- panneau ---------- */
+.panel{margin-top:22px}
+.phead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;border-bottom:3px solid var(--bc);padding-bottom:8px}
+.phead h2{font-size:clamp(20px,3vw,26px)}
+.phead .sub{color:var(--muted);font-size:14px;margin-top:2px}
+.back{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer}
+.key{background:var(--soft);border-radius:10px;padding:10px 14px;margin:12px 0 4px;font-size:14.5px}
+.key b{color:var(--bc)}
+.grp{margin-top:18px}
+.grp h3{font-size:15px;color:var(--bc);display:flex;gap:8px;align-items:center;margin-bottom:4px}
+.grp h3::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--bc)}
+.rows{list-style:none;margin:0;padding:0}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr);gap:4px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.rx{font-family:var(--f-mono);font-size:13px;font-weight:600;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--bc);border-radius:8px;padding:6px 10px;overflow-wrap:anywhere}
+.ar{color:var(--bc);font-size:20px;text-align:center;font-weight:700}
+.pr{font-weight:700;font-size:15.5px;line-height:1.3}
+.meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.meta .chip{font-size:11.5px;padding:1px 8px}
+details.why{grid-column:1/-1}
+details.why summary{cursor:pointer;color:var(--muted);font-size:13px;list-style:none;display:inline-flex;gap:4px;align-items:center}
+details.why summary::-webkit-details-marker{display:none}
+details.why summary::before{content:"+";display:inline-grid;place-items:center;width:16px;height:16px;border-radius:4px;border:1px solid var(--line);font-size:12px;line-height:1}
+details.why[open] summary::before{content:"−"}
+details.why p{margin:6px 0 0;font-size:14px;max-width:70ch}
+@media (max-width:560px){
+  .row{grid-template-columns:1fr}
+  .ar{text-align:left;font-size:16px;line-height:1}
+}
+.empty{color:var(--muted);padding:18px 0}
+
+/* ---------- lexique ---------- */
+section.lex{margin-top:40px}
+section.lex h2{font-size:22px}
+section.lex > p{color:var(--muted);margin:2px 0 12px}
+.cmp{overflow-x:auto;margin-bottom:22px}
+.cmp table{border-collapse:collapse;width:100%;min-width:580px;background:var(--surface);border:1px solid var(--line);font-size:14px}
+.cmp th,.cmp td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp th{font-family:var(--f-display);font-size:13px;background:var(--soft)}
+.cmp td:first-child{font-family:var(--f-mono);font-size:12.5px;font-weight:600;white-space:nowrap}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:10px}
+.litem{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.litem p{margin:6px 0 0;font-size:14px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Carte des réactions orga</h1>
+    <p>Programme du CC (jusqu'aux époxydes) + TD 1 et 2. Clique une famille pour voir ses réactions, ou un mot-clé pour retrouver toutes les réactions qui le partagent.</p>
+  </header>
+
+  <nav class="ov" id="ov" aria-label="Familles de réactions">
+    <svg id="lines" aria-hidden="true"></svg>
+    <div class="core"><b>Chimie orga</b><span>CC du 19 oct.</span></div>
+  </nav>
+
+  <div class="filters" id="filters"></div>
+
+  <main class="panel" id="panel"></main>
+
+  <section class="lex" id="lexique">
+    <h2>Un alcène, huit réactifs</h2>
+    <p>Le tableau à connaître : où va le groupe ajouté, et de quel côté.</p>
+    <div class="cmp"><table>
+      <thead><tr><th>Réactif</th><th>Où ?</th><th>De quel côté ?</th><th>Pourquoi</th></tr></thead>
+      <tbody>
+        <tr><td>H₂O / H₂SO₄</td><td>OH sur le C le + substitué (Markovnikov)</td><td>Racémique</td><td>Carbocation plan, le plus stable</td></tr>
+        <tr><td>1) BH₃ 2) H₂O₂/OH⁻</td><td>OH sur le C le − substitué (anti-Markovnikov)</td><td>cis (syn)</td><td>B encombrant → C dégagé ; concerté</td></tr>
+        <tr><td>HBr</td><td>Br sur le C le + substitué (Markovnikov)</td><td>Racémique</td><td>Carbocation</td></tr>
+        <tr><td>HBr + peroxyde</td><td>Br sur le C le − substitué (anti-Markovnikov)</td><td>Non stéréospécifique</td><td>Radical le plus stable (Kharasch)</td></tr>
+        <tr><td>Br₂</td><td>Un Br sur chaque C</td><td>trans (anti)</td><td>Ion ponté ouvert par l'arrière</td></tr>
+        <tr><td>KMnO₄ dilué, froid</td><td>Un OH sur chaque C</td><td>cis (syn)</td><td>Intermédiaire cyclique d'un seul côté</td></tr>
+        <tr><td>RCO₃H puis H₂O/H⁺</td><td>Un OH sur chaque C</td><td>trans (anti)</td><td>Époxyde ouvert à l'opposé de O</td></tr>
+        <tr><td>O₃ ou KMnO₄ conc. Δ</td><td>C=C coupée</td><td>—</td><td>Oxydation forte → 2 carbonylés / acides</td></tr>
+      </tbody>
+    </table></div>
+    <h2>Les mots-clés, expliqués</h2>
+    <p>Ce que veut dire chaque étiquette.</p>
+    <div class="lgrid" id="lex"></div>
+  </section>
+</div>
+
+<script>
+const TAGS = {
+  markov:{label:"Markovnikov",g:"regio",def:"H⁺ se fixe sur le C le moins substitué → carbocation le plus stable → le groupe ajouté finit sur le C le plus substitué."},
+  antimarkov:{label:"anti-Markovnikov",g:"regio",def:"Le groupe ajouté finit sur le C le moins substitué. Deux cas : HBr + peroxyde (radical) et hydroboration (B encombrant)."},
+  zaitsev:{label:"Zaïtsev",g:"regio",def:"Élimination : l'alcène le plus substitué (le plus stable) est majoritaire."},
+  hofmann:{label:"Hofmann",g:"regio",def:"Groupe partant très encombrant (ammonium) : la base prend le H le plus accessible → alcène le moins substitué."},
+  moinsenc:{label:"C le moins encombré",g:"regio",def:"Ouverture d'époxyde par un Nu fort (milieu basique, RMgX) : SN2 côté dégagé."},
+  plusenc:{label:"C le plus substitué",g:"regio",def:"Ouverture d'époxyde en milieu acide : le Nu va là où le carbocation serait le plus stable."},
+  walden:{label:"Inversion de Walden",g:"stereo",def:"Le Nu arrive à l'opposé du groupe partant. R/S s'inverse SAUF si les priorités changent → toujours recalculer."},
+  cis:{label:"cis (syn)",g:"stereo",def:"Les deux groupes arrivent du même côté. Alcène Z symétrique → méso ; E → RR + SS."},
+  trans:{label:"trans (anti)",g:"stereo",def:"Les deux groupes arrivent de part et d'autre. Résultats Z/E inversés par rapport au cis."},
+  racem:{label:"Racémique",g:"stereo",def:"Intermédiaire plan (C⁺ ou C=O) attaqué 50/50 → R + S, optiquement inactif."},
+  ze:{label:"Z + E",g:"stereo",def:"Pas stéréospécifique : les deux alcènes se forment, E majoritaire (plus stable)."},
+  stereospe:{label:"Stéréospécifique",g:"stereo",def:"La configuration du réactif impose celle du produit : un seul produit possible."},
+  cation:{label:"Carbocation",g:"inter",def:"C⁺ plan. Stabilité : tertiaire > secondaire > primaire ; stabilisé par mésomérie (benzylique, allylique)."},
+  radical:{label:"Radical",g:"inter",def:"Rupture homolytique (hν, Δ, peroxyde). Initiation → propagation → terminaison."},
+  ponte:{label:"Ion ponté",g:"inter",def:"X⁺ en pont sur les 2 C : le Nu ne peut attaquer que par l'arrière → trans."},
+  concerte:{label:"1 étape",g:"inter",def:"Concerté : pas d'intermédiaire, seulement un état de transition."},
+  carbanion:{label:"C nucléophile",g:"inter",def:"Carbone δ− (RMgX, acétylure) : nucléophile ET base forte."}
+};
+
+/* td : renvoi aux exercices des TD 1 et 2 */
+const F = [
+ {id:"mec",title:"SN1 · SN2 · E1 · E2",short:"Choisir le mécanisme",c:"--b1",
+  key:"Sur un dérivé halogéné, 4 mécanismes possibles. <b>Froid / dilué → substitution ; chaud / concentré → élimination.</b> Puis la classe du carbone et la stéréo du produit tranchent entre ordre 1 et ordre 2.",
+  groups:[
+  {h:"Substitutions",items:[
+   {rx:"C tertiaire · Nu faible · solvant protique · froid",p:"SN1 (2 étapes)",t:["cation","racem"],td:["TD1 ex1"],
+    why:"Le GP part d'abord → C⁺ plan → le Nu attaque des 2 côtés → mélange R + S, inactif. Avec plusieurs C* : diastéréoisomères. v = k[RX]."},
+   {rx:"C primaire · Nu chargé (OH⁻, CN⁻) · solvant aprotique · froid",p:"SN2 (1 étape)",t:["concerte","walden","stereospe"],td:["TD1 ex3"],
+    why:"Le Nu arrive à l'opposé du GP pendant qu'il part → un seul produit, optiquement actif. R/S peut rester identique si les priorités changent (ex. Cl → CN à côté d'un COOH). v = k[RX][Nu]."}]},
+  {h:"Éliminations",items:[
+   {rx:"C tertiaire · base forte · protique · chaud",p:"E1 → alcène",t:["cation","zaitsev","ze"],td:["TD1 ex1"],
+    why:"C⁺ puis perte du H voisin. Libre rotation → Z et E, E majoritaire. Alcène le plus substitué majoritaire."},
+   {rx:"Base forte conc. (KOH, tBuOK) · aprotique · chaud",p:"E2 → un seul alcène",t:["concerte","stereospe","zaitsev"],td:["TD1 ex2"],
+    why:"H et X doivent être coplanaires et en anti. On tourne autour de la liaison C–C pour les mettre en anti ; ce qui est devant reste devant → un seul isomère (Z ou E)."}]},
+  {h:"Cas pièges",items:[
+   {rx:"Carbone secondaire",p:"Lire les indices de l'énoncé",t:[],td:["TD1 ex3"],
+    why:"« Optiquement actif » ou « un seul isomère » → ordre 2. « Racémique » ou « mélange Z/E » → ordre 1. Solvant protique → 1, aprotique → 2."},
+   {rx:"Ammonium quaternaire + OH⁻, Δ",p:"Élimination de Hofmann (E2)",t:["hofmann","stereospe"],td:[],
+    why:"GP très encombrant → alcène le moins substitué majoritaire, contrairement à Zaïtsev. Un alcène conjugué possible reste aussi prioritaire sur Zaïtsev."},
+   {rx:"X sur la C=C (vinylique) / à 1 C de la C=C (allylique)",p:"Pas de SN / SN1 avec transposition",t:["cation"],td:[],
+    why:"Vinylique : effet +M de X, liaison trop forte → pas de SN. Allylique : C⁺ stabilisé par mésomérie → SN1 même en secondaire, 2 produits."}]}
+  ]},
+ {id:"rx",title:"Dérivés halogénés",short:"Quel Nu donne quoi",c:"--b2",
+  key:"R–X a un <b>carbone δ+</b> : un nucléophile vient remplacer X. Il suffit de retenir ce que chaque Nu apporte.",
+  groups:[{h:"R–X + Nu⁻ → R–Nu",items:[
+   {rx:"R–X + OH⁻ (dilué, froid)",p:"Alcool R–OH",t:[],td:["TD1 ex1"],why:"À chaud et concentré, OH⁻ agit comme base → élimination."},
+   {rx:"R–X + R'O⁻",p:"Éther-oxyde R–O–R'",t:[],td:["TD2"],why:"Synthèse de Williamson (voir Alcools)."},
+   {rx:"R–X + CN⁻ (KCN)",p:"Nitrile R–C≡N (+1 C)",t:[],td:["TD1 ex3"],why:"Le nitrile peut ensuite être réduit en amine primaire."},
+   {rx:"R–X + R'C≡C⁻",p:"Alcyne disubstitué",t:["carbanion"],td:["TD2"],why:"Alkylation d'un acétylure."},
+   {rx:"R–X + R'COO⁻",p:"Ester",t:[],td:[],why:"Le O⁻ du carboxylate attaque."},
+   {rx:"R–X + R'S⁻",p:"Thioéther",t:[],td:[],why:""},
+   {rx:"R–X + NH₃ / amine",p:"Amine (N-alkylation)",t:[],td:[],why:"Tant que N garde son doublet, la réaction continue → jusqu'à l'ammonium quaternaire."},
+   {rx:"1) phtalimide/KOH 2) R–X 3) hydrolyse",p:"Amine primaire (Gabriel)",t:[],td:[],why:"Seule méthode du cours pour une amine primaire pure."}]},
+   {h:"Autres",items:[
+   {rx:"KOH/EtOH, NaNH₂, tBuOK · Δ",p:"Alcène (−HX) ; alcyne si dihalogéné (−2 HX)",t:["zaitsev"],td:[],why:"Élimination."},
+   {rx:"R–X + Mg · éther anhydre",p:"Organomagnésien R–MgX",t:["carbanion"],td:["TD2"],why:"Voir famille RMgX."}]}
+  ]},
+ {id:"alcane",title:"Alcanes",short:"Peu réactifs",c:"--b3",
+  key:"Liaisons C–C et C–H fortes et peu polarisées : <b>ni site Nu, ni site électrophile</b>. Seules réactions : radicalaire et combustion.",
+  groups:[{h:"Réactions",items:[
+   {rx:"Cl₂ ou Br₂ · hν ou 300 °C",p:"Halogénoalcane (souvent polyhalogéné)",t:["radical"],td:[],why:"Initiation, propagation en chaîne, terminaison. Peu contrôlable."},
+   {rx:"+ O₂",p:"CO₂ + H₂O",t:[],td:[],why:"Combustion : intérêt énergétique."}]}]},
+ {id:"add",title:"Alcènes : additions",short:"C=C + électrophile",c:"--b4",
+  key:"La C=C est <b>riche en électrons</b> : elle attaque un électrophile. À chaque fois, deux questions : <b>où</b> va chaque groupe (régio) et <b>de quel côté</b> (stéréo).",
+  groups:[
+  {h:"Via un carbocation (Markovnikov, racémique)",items:[
+   {rx:"HCl, HBr, HI · solvant polaire",p:"Dérivé halogéné le + substitué",t:["markov","cation","racem"],td:["TD1 ex5","TD1 supp"],why:"H⁺ sur le C le moins substitué → C⁺ le plus stable → X⁻ s'y fixe."},
+   {rx:"H₂O / H₂SO₄",p:"Alcool le + substitué",t:["markov","cation","racem"],td:[],why:"H⁺ → C⁺ → H₂O attaque → perte de H⁺. C'est l'inverse de la déshydratation."}]},
+  {h:"Anti-Markovnikov",items:[
+   {rx:"HBr + peroxyde (ou hν)",p:"Dérivé bromé le − substitué",t:["antimarkov","radical"],td:[],why:"Effet Kharasch : Br• s'ajoute en premier → radical le plus stable. Seulement avec HBr."},
+   {rx:"1) BH₃ 2) H₂O₂ / OH⁻",p:"Alcool le − substitué",t:["antimarkov","cis","concerte"],td:[],why:"Le bore, encombrant, va sur le C le plus dégagé ; H et B arrivent du même côté. Mécanisme non demandé."}]},
+  {h:"Stéréospécifiques",items:[
+   {rx:"H₂ · Pt, Ni, Pd",p:"Alcane",t:["cis","stereospe"],td:[],why:"Z symétrique → méso ; E → RR + SS."},
+   {rx:"Cl₂ ou Br₂",p:"Dihalogénure vicinal",t:["ponte","trans","stereospe"],td:[],why:"X⁺ forme un pont, X⁻ attaque par derrière."}]}
+  ]},
+ {id:"ox",title:"Alcènes : oxydations",short:"Douces ou fortes",c:"--b5",
+  key:"<b>Douce</b> : on garde la chaîne et on ajoute des O (époxyde, diol). <b>Forte</b> : la C=C est coupée en deux carbonylés.",
+  groups:[
+  {h:"Douces (C–C gardée)",items:[
+   {rx:"KMnO₄ dilué, froid",p:"Diol vicinal cis",t:["cis","concerte","stereospe"],td:["TD1 ex1"],why:"Z → méso ; E → RR + SS (racémique). Concentré ou à chaud, KMnO₄ coupe la C=C."},
+   {rx:"Peracide RCO₃H",p:"Époxyde",t:["cis"],td:[],why:"Ouvert ensuite en milieu acide → diol trans."}]},
+  {h:"Fortes (C=C coupée)",items:[
+   {rx:"1) O₃ 2) H₂O",p:"Cétones + acides",t:[],td:["TD1 supp","TD2"],why:"Ozonide hydrolysé ; H₂O₂ formé oxyde l'aldéhyde en acide."},
+   {rx:"1) O₃ 2) Zn / H⁺",p:"Cétones + aldéhydes",t:[],td:["TD2"],why:"Le zinc détruit H₂O₂ : on garde l'aldéhyde."},
+   {rx:"KMnO₄ conc. Δ ou K₂Cr₂O₇",p:"Cétones + acides (=CH₂ → CO₂)",t:[],td:[],why:"Aucun moyen de garder l'aldéhyde."}]}
+  ]},
+ {id:"diene",title:"Diènes conjugués",short:"Deux C=C alternées",c:"--b6",
+  key:"Les électrons π sont délocalisés sur 4 C : on peut ajouter <b>en 1,2 ou en 1,4</b>, ou faire un cycle avec Diels-Alder.",
+  groups:[{h:"Réactions",items:[
+   {rx:"HBr sur buta-1,3-diène",p:"Produit 1,2 (basse T) ou 1,4 (haute T)",t:["markov","cation"],td:[],why:"C⁺ allylique mésomère. 1,2 = cinétique ; 1,4 = thermodynamique (C=C plus substituée)."},
+   {rx:"Diène s-cis + diénophile · Δ",p:"Cyclohexène (Diels-Alder)",t:["concerte","stereospe"],td:[],why:"Diénophile Z → substituants cis ; E → trans. Avec un alcyne → cyclohexadiène."}]}]},
+ {id:"yne",title:"Alcynes",short:"Triple liaison",c:"--b7",
+  key:"Mêmes additions que les alcènes, en deux temps. Et en plus : un <b>alcyne vrai a un H acide</b> qu'on arrache pour faire un C nucléophile.",
+  groups:[
+  {h:"Réductions",items:[
+   {rx:"H₂ · Pd désactivé (Lindlar)",p:"Alcène Z",t:["cis","stereospe"],td:["TD1 ex5"],why:"Catalyseur actif → on va jusqu'à l'alcane."},
+   {rx:"Na ou Li / NH₃ liquide",p:"Alcène E",t:["trans","stereospe"],td:[],why:"Réduction de Birch. Pas sur un alcyne vrai."}]},
+  {h:"Additions",items:[
+   {rx:"HX (2 éq.)",p:"Dihalogénure géminé (2 X sur le même C)",t:["markov"],td:[],why:"Le 2e X va sur le C qui porte déjà X (effet +M)."},
+   {rx:"X₂ (2 éq.)",p:"Tétrahalogénoalcane",t:["trans"],td:[],why:"Partielle → dihalogénoalcène."},
+   {rx:"H₂O / H⁺, Hg²⁺",p:"Énol → cétone",t:["markov","cation"],td:["TD2"],why:"Tautomérie. Acétylène → éthanal."},
+   {rx:"Alcyne vrai · 1) BH₃ 2) H₂O₂/OH⁻",p:"Énol → aldéhyde",t:["antimarkov"],td:[],why:"OH en bout de chaîne puis tautomérie."},
+   {rx:"KMnO₄ conc. Δ",p:"Coupure → 2 acides",t:[],td:[],why:""}]},
+  {h:"Alcyne vrai : H acide",items:[
+   {rx:"R–C≡C–H + NaNH₂ (ou RMgX)",p:"Acétylure R–C≡C⁻",t:["carbanion"],td:["TD2"],why:"Acétylène + 2 éq. de base → les 2 H partent."},
+   {rx:"Acétylure + R'–X",p:"Alcyne disubstitué",t:["carbanion"],td:["TD2"],why:"SN : alkylation."},
+   {rx:"Acétylure + C=O, puis H₂O",p:"Alcool acétylénique",t:["carbanion","racem"],td:["TD2"],why:"Addition sur le C=O plan."}]}
+  ]},
+ {id:"mg",title:"Organomagnésiens",short:"R–MgX",c:"--b8",
+  key:"Le Mg est moins électronégatif que C : le carbone devient <b>δ−</b>, donc <b>nucléophile ET base forte</b>. Toujours en éther anhydre, puis hydrolyse (H₃O⁺) à la fin.",
+  groups:[
+  {h:"Base",items:[
+   {rx:"R–MgX + H₂O, ROH, acide, alcyne vrai",p:"Alcane R–H",t:[],td:["TD2"],why:"Le RMgX est détruit : d'où le solvant anhydre."}]},
+  {h:"Nucléophile sur un C=O (puis H₃O⁺)",items:[
+   {rx:"+ méthanal HCHO",p:"Alcool primaire (+1 C)",t:["carbanion"],td:["TD2"],why:""},
+   {rx:"+ aldéhyde",p:"Alcool secondaire",t:["carbanion","racem"],td:["TD2"],why:"C=O plan → racémique si un C* est créé."},
+   {rx:"+ cétone",p:"Alcool tertiaire",t:["carbanion","racem"],td:["TD2"],why:""},
+   {rx:"+ ester (2 éq.)",p:"Cétone, puis alcool tertiaire",t:["carbanion"],td:[],why:"Addition, départ de RO⁻ → cétone, réattaquée."},
+   {rx:"+ CO₂",p:"Acide carboxylique (+1 C)",t:["carbanion"],td:[],why:""},
+   {rx:"+ nitrile",p:"Cétone (via imine)",t:["carbanion"],td:[],why:""}]},
+  {h:"Nucléophile sur un C sp³",items:[
+   {rx:"+ époxyde, puis H₃O⁺",p:"Alcool (+2 C)",t:["carbanion","moinsenc"],td:["TD2"],why:"SN2 du côté le moins encombré."},
+   {rx:"+ R'–X",p:"R–R'",t:["carbanion"],td:[],why:""},
+   {rx:"Ester α-bromé + Zn, puis C=O",p:"Ester β-hydroxylé (Reformatsky)",t:["carbanion"],td:[],why:"Organozincique, moins réactif."}]}
+  ]},
+ {id:"oh",title:"Alcools, éthers",short:"R–OH, R–O–R'",c:"--b9",
+  key:"On casse soit <b>O–H</b> (l'alcool est acide → alcoolate, ester, éther), soit <b>C–O</b> (après protonation → SN ou élimination).",
+  groups:[
+  {h:"Rupture O–H",items:[
+   {rx:"R–OH + Na",p:"Alcoolate RO⁻ Na⁺",t:[],td:[],why:"Bon Nu et base forte."},
+   {rx:"R–O⁻ + R'–X primaire",p:"Éther-oxyde (Williamson)",t:["concerte","walden"],td:["TD2"],why:"SN2. Avec R'X tertiaire → élimination. Intramoléculaire → éther cyclique (THF)."},
+   {rx:"R–OH + R'COOH / H⁺",p:"Ester (équilibre)",t:[],td:[],why:"Mauvais rendement. Avec R'COCl ou anhydride : quantitatif."},
+   {rx:"C=O + 2 R–OH / H⁺",p:"Acétal / cétal",t:[],td:[],why:"Protège le C=O."}]},
+  {h:"Rupture C–O (milieu acide)",items:[
+   {rx:"H₂SO₄ · ≥ 170 °C",p:"Alcène (déshydratation)",t:["zaitsev","cation","ze"],td:["TD1 ex1"],why:"Alcool tertiaire → E1. Alcène le plus substitué majoritaire."},
+   {rx:"H₂SO₄ · 100–120 °C",p:"Éther-oxyde (2 alcools)",t:[],td:[],why:"Sauf alcool tertiaire → alcène."},
+   {rx:"HCl, HBr, HI ou SOCl₂",p:"Dérivé halogéné",t:[],td:[],why:"OH protoné = bon GP, puis SN."},
+   {rx:"R–O–R' + HI (> HBr > HCl)",p:"R–X (chaîne courte) + R'–OH (chaîne longue)",t:[],td:["TD2"],why:"Coupure d'un éther-oxyde."}]},
+  {h:"Oxydations et réductions",items:[
+   {rx:"KMnO₄ ou K₂Cr₂O₇",p:"I → acide · II → cétone · III → rien",t:[],td:[],why:"L'aldéhyde intermédiaire s'oxyde tout seul en acide."},
+   {rx:"Cu · 300 °C",p:"I → aldéhyde · II → cétone · III → rien",t:[],td:[],why:"Ménagée : l'aldéhyde est gardé."},
+   {rx:"C=O + NaBH₄ ou LiAlH₄",p:"Aldéhyde → alcool I · cétone → alcool II",t:[],td:["TD2"],why:"NaBH₄ est plus doux : il ne réduit pas un ester."},
+   {rx:"Diol + HIO₄",p:"Coupure → 2 carbonylés",t:[],td:[],why:"Mécanisme non demandé ; savoir remonter au diol."}]}
+  ]},
+ {id:"epox",title:"Époxydes",short:"Cycle à 3 tendu",c:"--b10",
+  key:"L'époxyde s'ouvre toujours <b>en trans</b>. Ce qui change avec le milieu, c'est <b>le carbone attaqué</b>.",
+  groups:[{h:"Formation et ouverture",items:[
+   {rx:"Alcène + peracide",p:"Époxyde",t:["cis"],td:[],why:""},
+   {rx:"H₂O ou ROH / H⁺",p:"Diol trans (Nu sur le C le + substitué)",t:["trans","stereospe","plusenc"],td:[],why:"O protoné ; le C qui supporte le mieux la charge + est attaqué."},
+   {rx:"HO⁻, RO⁻, RMgX (milieu basique)",p:"Ouverture SN2 (Nu sur le C le − encombré)",t:["trans","walden","stereospe","moinsenc"],td:["TD2"],why:"Attaque à l'opposé de O."}]}]}
+];
+
+/* index plat */
+const ALL = [];
+F.forEach(f=>f.groups.forEach(g=>g.items.forEach(it=>ALL.push({...it,f,g:g.h}))));
+const TDS = [...new Set(ALL.flatMap(i=>i.td))].sort();
+
+const esc = s => s;
+function chip(kind,id,label){ return `<button type="button" class="chip ${kind}" data-k="${kind==='td'?'td':'tag'}" data-v="${id}" aria-pressed="false">${label}</button>`; }
+function tagChip(id){ return chip(TAGS[id].g,id,TAGS[id].label); }
+
+/* ---- carte ---- */
+const ov = document.getElementById('ov');
+const N = F.length;
+F.forEach((f,i)=>{
+  const a = -Math.PI/2 + i*2*Math.PI/N;
+  const x = 50 + 40*Math.cos(a), y = 50 + 41*Math.sin(a);
+  f.x = x; f.y = y;
+  const count = f.groups.reduce((s,g)=>s+g.items.length,0);
+  const b = document.createElement('button');
+  b.type='button'; b.className='fam'; b.dataset.f=f.id;
+  b.style.cssText = `--bc:var(${f.c});--x:${x}%;--y:${y}%`;
+  b.setAttribute('aria-pressed','false');
+  b.innerHTML = `<span class="d" aria-hidden="true"></span><span class="t">${f.title}<span class="n">${f.short} · ${count}</span></span>`;
+  ov.appendChild(b);
+});
+document.getElementById('lines').innerHTML = F.map(f=>`<line x1="50%" y1="50%" x2="${f.x}%" y2="${f.y}%"/>`).join('');
+
+/* ---- filtres ---- */
+const groups = {regio:"Régiosélectivité",stereo:"Stéréochimie",inter:"Intermédiaire"};
+document.getElementById('filters').innerHTML =
+  Object.entries(groups).map(([g,l])=>`<div class="frow"><span class="flabel">${l}</span>${Object.keys(TAGS).filter(k=>TAGS[k].g===g).map(tagChip).join('')}</div>`).join('') +
+  `<div class="frow"><span class="flabel">Vu en TD</span>${TDS.map(t=>chip('td',t,t)).join('')}</div>` +
+  `<div class="search"><label class="flabel" for="q">Réactif</label><input id="q" type="search" placeholder="ex. KMnO₄, BH₃, Zn, peroxyde" autocomplete="off"></div>`;
+
+/* ---- lexique ---- */
+document.getElementById('lex').innerHTML = Object.keys(TAGS).map(k=>`<div class="litem">${tagChip(k)}<p>${TAGS[k].def}</p></div>`).join('');
+
+/* ---- rendu ---- */
+function row(it, showFam){
+  const chips = it.t.map(tagChip).join('') + it.td.map(t=>chip('td',t,t)).join('');
+  return `<li class="row" style="--bc:var(${it.f.c})">
+    <div class="rx">${it.rx}</div><div class="ar" aria-hidden="true">→</div><div class="pr">${it.p}${showFam?` <span style="font-weight:400;color:var(--muted);font-size:13px">· ${it.f.title}</span>`:''}</div>
+    ${chips?`<div class="meta">${chips}</div>`:''}
+    ${it.why?`<details class="why"><summary>Pourquoi</summary><p>${it.why}</p></details>`:''}
+  </li>`;
+}
+
+const panel = document.getElementById('panel');
+let state = {mode:'fam', v:'mec'}, q = '';
+const norm = s => s.normalize('NFKD').replace(/[̀-ͯ]/g,'')
+  .replace(/[₀-₉]/g,d=>String.fromCharCode(d.charCodeAt(0)-0x2080+48)).replace(/[⁺⁻²]/g,'').toLowerCase();
+
+function render(){
+  document.querySelectorAll('.fam').forEach(b=>b.setAttribute('aria-pressed', String(state.mode==='fam' && b.dataset.f===state.v)));
+  document.querySelectorAll('.chip').forEach(c=>{
+    const on = (state.mode==='tag'&&c.dataset.k==='tag'&&c.dataset.v===state.v)||(state.mode==='td'&&c.dataset.k==='td'&&c.dataset.v===state.v);
+    c.setAttribute('aria-pressed', String(on));
+  });
+  if(state.mode==='fam'){
+    const f = F.find(x=>x.id===state.v);
+    panel.style.setProperty('--bc',`var(${f.c})`);
+    panel.innerHTML = `<div class="phead"><div><h2>${f.title}</h2><div class="sub">${f.short}</div></div></div>
+      <div class="key">${f.key}</div>
+      ${f.groups.map(g=>`<div class="grp" style="--bc:var(${f.c})"><h3>${g.h}</h3><ul class="rows">${g.items.map(it=>row({...it,f},false)).join('')}</ul></div>`).join('')}`;
+    return;
+  }
+  let list, title, sub;
+  if(state.mode==='tag'){ list = ALL.filter(i=>i.t.includes(state.v)); title = TAGS[state.v].label; sub = TAGS[state.v].def; }
+  else if(state.mode==='td'){ list = ALL.filter(i=>i.td.includes(state.v)); title = `Réactions vues en ${state.v}`; sub = state.v==='TD2' ? "Thèmes de la séance 2 : ozonolyse, réduction des C=O, alcynes, organomagnésiens, éthers-oxydes." : ""; }
+  else { list = ALL.filter(i=>norm(i.rx+' '+i.p+' '+(i.why||'')).includes(q)); title = `Recherche : « ${document.getElementById('q').value} »`; sub=''; }
+  panel.style.setProperty('--bc','var(--ink)');
+  const byF = F.map(f=>({f,items:list.filter(i=>i.f===f)})).filter(x=>x.items.length);
+  panel.innerHTML = `<div class="phead"><div><h2>${title}</h2>${sub?`<div class="sub">${sub}</div>`:''}</div>
+    <button type="button" class="back" id="back">Retour aux familles</button></div>
+    ${byF.length? byF.map(x=>`<div class="grp" style="--bc:var(${x.f.c})"><h3>${x.f.title}</h3><ul class="rows">${x.items.map(it=>row(it,false)).join('')}</ul></div>`).join('') : '<p class="empty">Aucune réaction ne correspond.</p>'}
+    <p class="sub" style="margin-top:10px">${list.length} réaction${list.length>1?'s':''}</p>`;
+}
+
+let last = 'mec';
+document.addEventListener('click', e=>{
+  const fb = e.target.closest('.fam');
+  if(fb){ state={mode:'fam',v:fb.dataset.f}; last=fb.dataset.f; render(); panel.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+  const c = e.target.closest('.chip');
+  if(c){
+    const mode = c.dataset.k;
+    if(state.mode===mode && state.v===c.dataset.v){ state={mode:'fam',v:last}; }
+    else { state={mode,v:c.dataset.v}; }
+    render(); panel.scrollIntoView({behavior:'smooth',block:'start'}); return;
+  }
+  if(e.target.id==='back'){ state={mode:'fam',v:last}; document.getElementById('q').value=''; q=''; render(); }
+});
+document.getElementById('q').addEventListener('input', e=>{
+  q = norm(e.target.value.trim());
+  state = q ? {mode:'q',v:q} : {mode:'fam',v:last};
+  render();
+});
+render();
+</script>
+
+
+<a href="../../" class="mes-artefacts-back" aria-label="Retour à tous mes artefacts">← Mes artefacts</a>
+<style>
+.mes-artefacts-back{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2147483000;
+ font:600 13px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:#fff;background:rgba(24,28,36,.86);
+ -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.mes-artefacts-back:hover{background:rgba(24,28,36,.96)}
+.mes-artefacts-back:focus-visible{outline:2px solid #6aa0ff;outline-offset:2px}
+@media print{.mes-artefacts-back{display:none}}
+</style>
+</body></html>

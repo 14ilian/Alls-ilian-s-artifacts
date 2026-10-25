@@ -1,0 +1,167 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Focus révisions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one centred column — task chips, big ring timer, controls, today's log. Focus = teal, pause = amber. */
+:root{
+  --bg:#f4f6f3; --surface:#ffffff; --ink:#17201c; --muted:#5d6863; --line:#dce2dd;
+  --focus:#0d6b5c; --focus-soft:#dbeee8; --rest:#a96a00; --rest-soft:#fbefd8;
+  --f-display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1412; --surface:#171e1b; --ink:#e5ece8; --muted:#9ba8a1; --line:#2a3430;
+  --focus:#4fc6a8; --focus-soft:#17372f; --rest:#f2b84b; --rest-soft:#3a2c12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1412; --surface:#171e1b; --ink:#e5ece8; --muted:#9ba8a1; --line:#2a3430;
+  --focus:#4fc6a8; --focus-soft:#17372f; --rest:#f2b84b; --rest-soft:#3a2c12; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:520px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px;align-items:stretch}
+.lbl{font:600 11px/1 var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{appearance:none;font:500 13.5px/1 var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--focus);background:var(--focus-soft)}
+.chip.done{color:var(--muted);text-decoration:line-through}
+.chip:focus-visible,button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.timer{display:flex;flex-direction:column;align-items:center;gap:14px}
+.ring{position:relative;width:min(300px,80vw);aspect-ratio:1;max-width:100%}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .track{stroke:var(--line)}
+.ring .prog{stroke:var(--focus);transition:stroke-dashoffset .4s linear}
+.rest .ring .prog{stroke:var(--rest)}
+.ring .in{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:0 24px}
+.mode{font:600 12px/1 var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--focus)}
+.rest .mode{color:var(--rest)}
+.time{font:800 clamp(52px,16vw,76px)/1 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.task{font-size:14px;color:var(--muted);max-width:22ch}
+.presets{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.pre{appearance:none;font:600 13px/1 var(--f-body);color:var(--muted);background:none;border:1px solid var(--line);border-radius:8px;padding:8px 10px;cursor:pointer;font-variant-numeric:tabular-nums}
+.pre[aria-pressed="true"]{color:var(--ink);border-color:var(--ink)}
+.ctrl{display:flex;gap:10px;justify-content:center}
+.btn{appearance:none;font:700 16px/1 var(--f-body);border-radius:12px;padding:15px 26px;border:1px solid var(--focus);background:var(--focus);color:var(--bg);cursor:pointer;min-width:140px}
+.rest .btn.main{background:var(--rest);border-color:var(--rest)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);min-width:0}
+.log{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.log .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.big{font:800 26px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.dots{display:flex;gap:5px;flex-wrap:wrap}
+.dot{width:12px;height:12px;border-radius:3px;background:var(--focus)}
+.note{font-size:13px;color:var(--muted);margin:0}
+@media (prefers-reduced-motion:reduce){.ring .prog{transition:none}}
+</style>
+
+<div class="wrap" id="app">
+  <div>
+    <div class="lbl">Je travaille sur</div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="timer">
+    <div class="ring">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="54" fill="none" stroke-width="6"/><circle class="prog" id="prog" cx="60" cy="60" r="54" fill="none" stroke-width="6" stroke-linecap="round"/></svg>
+      <div class="in"><span class="mode" id="mode">Focus</span><span class="time" id="time" role="timer" aria-live="off">25:00</span><span class="task" id="task"></span></div>
+    </div>
+    <div class="presets" id="presets"></div>
+    <div class="ctrl"><button class="btn main" id="go">Démarrer</button><button class="btn ghost" id="skip">Passer</button><button class="btn ghost" id="reset">Reset</button></div>
+    <p class="note" id="hint">Une sonnerie te prévient à la fin. Garde l'onglet ouvert.</p>
+  </div>
+
+  <div class="log">
+    <div class="row"><span class="lbl">Aujourd'hui</span><span class="big" id="mins">0 min</span></div>
+    <div class="dots" id="dots"></div>
+    <p class="note" id="sessions">Aucune session terminée pour l'instant.</p>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const store = { get(k,d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
+const TODAY = new Date().toISOString().slice(0,10);
+
+const TASKS = ["Organisation du génome","Transcription","Traduction","Analyse des acides nucléiques","Microvariants","Fin intro génétique","Enzymo","Environnement juridique"];
+const PRESETS = [{f:25,r:5,l:"25 / 5"},{f:45,r:10,l:"45 / 10"},{f:50,r:10,l:"50 / 10"},{f:15,r:3,l:"15 / 3"}];
+const C = 2*Math.PI*54; $('#prog').style.strokeDasharray = C;
+
+let st = store.get("focus-state", {});
+if (st.day !== TODAY) st = {day:TODAY, log:[], done:[]};
+st.task ??= 0; st.preset ??= 0; st.done ??= []; st.log ??= [];
+let mode = "focus", total = PRESETS[st.preset].f*60, left = total, endAt = null, iv = null, wake = null, ac = null;
+
+function save(){ store.set("focus-state", st); }
+function fmt(s){ s = Math.max(0, Math.round(s)); return String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0"); }
+
+function renderChips(){
+  $('#chips').innerHTML = TASKS.map((t,i) => `<button class="chip${st.done.includes(i)?" done":""}" aria-pressed="${i===st.task}" data-i="${i}">${t}</button>`).join("");
+  document.querySelectorAll('.chip').forEach(b => {
+    b.onclick = () => { const i = +b.dataset.i; if (i === st.task){ st.done = st.done.includes(i) ? st.done.filter(x=>x!==i) : st.done.concat(i); } else st.task = i; save(); renderChips(); paint(); };
+  });
+}
+function renderPresets(){
+  $('#presets').innerHTML = PRESETS.map((p,i) => `<button class="pre" aria-pressed="${i===st.preset}" data-i="${i}">${p.l}</button>`).join("");
+  document.querySelectorAll('.pre').forEach(b => b.onclick = () => { if (iv) return; st.preset = +b.dataset.i; save(); setMode("focus"); renderPresets(); });
+}
+function renderLog(){
+  const m = st.log.reduce((a,x)=>a+x.m,0);
+  $('#mins').textContent = m >= 60 ? `${Math.floor(m/60)} h ${String(m%60).padStart(2,"0")}` : `${m} min`;
+  $('#dots').innerHTML = st.log.map(x => `<span class="dot" title="${x.t} · ${x.m} min"></span>`).join("");
+  $('#sessions').textContent = st.log.length ? st.log.slice(-4).map(x => `${x.h} · ${x.t} (${x.m} min)`).join("  ·  ") : "Aucune session terminée pour l'instant.";
+}
+function paint(){
+  $('#time').textContent = fmt(left);
+  $('#mode').textContent = mode === "focus" ? "Focus" : "Pause";
+  $('#task').textContent = mode === "focus" ? TASKS[st.task] : "Lève-toi, bois de l'eau.";
+  $('#app').classList.toggle('rest', mode === "rest");
+  $('#prog').style.strokeDashoffset = C * (1 - left/total);
+  document.title = iv ? `${fmt(left)} · ${mode==="focus"?"Focus":"Pause"}` : "Focus révisions";
+  $('#go').textContent = iv ? "Pause" : (left < total ? "Reprendre" : (mode === "focus" ? "Démarrer" : "Lancer la pause"));
+}
+function setMode(m){ stop(); mode = m; total = (m === "focus" ? PRESETS[st.preset].f : PRESETS[st.preset].r) * 60; left = total; paint(); }
+function beep(){
+  try{
+    ac ??= new (window.AudioContext || window.webkitAudioContext)();
+    [0, .35, .7].forEach(d => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = mode==="focus" ? 880 : 660; o.connect(g); g.connect(ac.destination);
+      const t = ac.currentTime + d; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.25,t+.02); g.gain.exponentialRampToValueAtTime(0.0001,t+.3); o.start(t); o.stop(t+.32); });
+  }catch(e){}
+}
+async function lock(){ try{ wake = await navigator.wakeLock?.request('screen'); }catch(e){ wake = null; } }
+function unlock(){ try{ wake?.release(); }catch(e){} wake = null; }
+function start(){
+  try{ ac ??= new (window.AudioContext || window.webkitAudioContext)(); ac.resume?.(); }catch(e){}
+  endAt = Date.now() + left*1000;
+  iv = setInterval(tick, 250); lock(); paint();
+}
+function stop(){ clearInterval(iv); iv = null; unlock(); paint(); }
+function tick(){
+  left = (endAt - Date.now())/1000;
+  if (left <= 0){ left = 0; finish(); return; }
+  paint();
+}
+function finish(){
+  stop(); beep();
+  if (mode === "focus"){
+    const now = new Date();
+    st.log.push({t:TASKS[st.task], m:Math.round(total/60), h:now.toTimeString().slice(0,5)}); save(); renderLog();
+    setMode("rest");
+  } else setMode("focus");
+}
+$('#go').onclick = () => iv ? stop() : start();
+$('#skip').onclick = () => setMode(mode === "focus" ? "rest" : "focus");
+$('#reset').onclick = () => setMode(mode);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && iv) lock(); });
+
+renderChips(); renderPresets(); renderLog(); setMode("focus");
+</script>
+
+
+<a href="../../" class="mes-artefacts-back" aria-label="Retour à tous mes artefacts">← Mes artefacts</a>
+<style>
+.mes-artefacts-back{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2147483000;
+ font:600 13px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:#fff;background:rgba(24,28,36,.86);
+ -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.mes-artefacts-back:hover{background:rgba(24,28,36,.96)}
+.mes-artefacts-back:focus-visible{outline:2px solid #6aa0ff;outline-offset:2px}
+@media print{.mes-artefacts-back{display:none}}
+</style>
+</body></html>

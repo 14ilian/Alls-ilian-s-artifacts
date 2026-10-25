@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiche formules — Chromatographie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--bg:#f7f5f0;--paper:#fffdf9;--ink:#1d1f24;--muted:#646a73;--line:#e3ded3;--accent:#0f7c86;--code:#f1ede4}
+@media (prefers-color-scheme:dark){:root{--bg:#131518;--paper:#1a1d21;--ink:#e7e8ea;--muted:#9aa1ab;--line:#2c3036;--accent:#6fd0d8;--code:#22262b;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 "Source Serif 4",Georgia,serif;-webkit-font-smoothing:antialiased}
+.top{max-width:780px;margin:0 auto;padding:28px 20px 0;font:500 13px/1.4 "Public Sans",system-ui,sans-serif;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.top a{color:var(--muted);text-decoration:none} .top a:hover{color:var(--ink)}
+.top .mat{color:var(--accent);font-weight:600}
+article{max-width:780px;margin:12px auto 0;padding:8px 20px 96px}
+h1,h2,h3,h4{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.2;text-wrap:balance}
+h1{font-size:clamp(30px,5vw,42px);margin:.2em 0 .3em}
+h1+p{font:500 14px/1.5 "Public Sans",system-ui,sans-serif;color:var(--muted);margin-bottom:2.2em}
+h2{font-size:26px;margin:2em 0 .6em;padding-top:.6em;border-top:1px solid var(--line)}
+h3{font-size:20px;margin:1.6em 0 .5em}
+h4{font-size:17px;margin:1.4em 0 .4em}
+p,ul,ol{margin:0 0 1em}
+li{margin:.25em 0} li>p{margin:0}
+a{color:var(--accent)}
+strong{font-weight:600}
+blockquote{margin:1.2em 0;padding:.6em 1.1em;border-left:3px solid var(--accent);background:var(--paper);border-radius:0 8px 8px 0}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+.tbl{overflow-x:auto;margin:1.2em 0;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font:14.5px/1.5 "Public Sans",system-ui,sans-serif}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-weight:600;font-size:12.5px;letter-spacing:.03em;color:var(--muted);background:var(--bg)}
+code{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.1em .35em;border-radius:4px}
+pre{background:var(--code);padding:14px 16px;border-radius:10px;overflow-x:auto}
+pre code{background:none;padding:0}
+.math{margin:1.1em 0;padding:14px 12px;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow-x:auto;text-align:center}
+.orig{font:500 13px/1.5 "Public Sans",system-ui,sans-serif;color:var(--muted);margin-top:4em;padding-top:1.2em;border-top:1px solid var(--line)}
+@media print{.top,.orig{display:none} body{background:#fff}}
+</style>
+</head>
+<body>
+<nav class="top"><a href="../../">← Mes artefacts</a><span aria-hidden="true">/</span><span class="mat">Sciences analytiques</span></nav>
+<article>
+<h1>Fiche formules — Chromatographie</h1>
+<p>12 oct. 2026</p>
+<h2>1. Les temps et les volumes</h2>
+<p>Le temps de rétention tR sert à identifier une molécule ; le temps mort tM est le temps de traversée d'une molécule non retenue (la phase mobile elle-même).</p>
+<p><strong>Temps de rétention réduit</strong> : le temps passé accroché à la phase stationnaire.</p>
+<pre><code class="language-latex">t'_R = t_R - t_M
+</code></pre>
+<p><strong>Volumes</strong> : on multiplie un temps par le débit D de la pompe.</p>
+<pre><code class="language-latex">V_R = t_R \times D \qquad V_M = t_M \times D
+</code></pre>
+<p><strong>Exemple.</strong> Débit D = 0,8 mL/min, tM = 1 min, molécule X à tR = 5 min.</p>
+<ul>
+<li>t'R = 5 − 1 = <strong>4 min</strong> (X passe 4 min accrochée)</li>
+<li>VR = 5 × 0,8 = <strong>4 mL</strong> de phase mobile pour faire sortir X</li>
+<li>VM = 1 × 0,8 = <strong>0,8 mL</strong> (volume mort)</li>
+</ul>
+<h2>2. La rétention : K et k</h2>
+<p><strong>Coefficient de distribution K</strong> : l'affinité de la molécule pour la phase stationnaire (rapport de concentrations).</p>
+<pre><code class="language-latex">K = \frac{C_S}{C_M}
+</code></pre>
+<p><strong>Facteur de rétention k</strong> : combien de fois plus de temps la molécule passe accrochée que libre. C'est celui qu'on calcule sur le chromatogramme.</p>
+<pre><code class="language-latex">k = \frac{m_S}{m_M} = K \times \frac{V_S}{V_M} = \frac{t_R - t_M}{t_M} = \frac{t'_R}{t_M}
+</code></pre>
+<p>Zone idéale : <strong>k entre 2 et 6</strong>. Trop petit, la molécule n'est pas séparée ; trop grand, l'analyse dure des heures.</p>
+<p><strong>Exemple.</strong> tM = 1,2 min, A à tR = 4,8 min, B à tR = 5,6 min.</p>
+<ul>
+<li>kA = (4,8 − 1,2) / 1,2 = <strong>3</strong></li>
+<li>kB = (5,6 − 1,2) / 1,2 = <strong>3,67</strong></li>
+<li>Les deux sont entre 2 et 6 : conditions bien choisies.</li>
+<li>Contre-exemple : C à tR = 1,5 min donne k = 0,25, trop peu retenue, elle sort presque avec le temps mort.</li>
+</ul>
+<h2>3. L'efficacité : N, H, Neff</h2>
+<p><strong>Nombre de plateaux théoriques N</strong> : plus il est grand, plus les pics sont fins et la colonne efficace. ω = largeur à la base, δ = largeur à mi-hauteur (préférée, car les pics traînent à la base).</p>
+<pre><code class="language-latex">N = 16 \left(\frac{t_R}{\omega}\right)^2 = 5{,}54 \left(\frac{t_R}{\delta}\right)^2
+</code></pre>
+<p><strong>Hauteur d'un plateau H</strong> : plus H est petit, plus on fait tenir de plateaux dans la même longueur L, plus la colonne est efficace.</p>
+<pre><code class="language-latex">H = \frac{L}{N}
+</code></pre>
+<p><strong>Plateaux effectifs</strong> : même formule avec t'R, car le temps mort ne sert pas à la séparation.</p>
+<pre><code class="language-latex">N_{eff} = 16 \left(\frac{t'_R}{\omega}\right)^2
+</code></pre>
+<p><strong>Exemple.</strong> Colonne de 15 cm, A à tR = 4,8 min, t'R = 3,6 min, ω = 0,30 min.</p>
+<ul>
+<li>N = 16 × (4,8 / 0,30)² = 16 × 256 = <strong>4 096 plateaux</strong></li>
+<li>H = 150 mm / 4 096 = 0,0366 mm = <strong>36,6 µm</strong> (attention aux unités)</li>
+<li>Neff = 16 × (3,6 / 0,30)² = 16 × 144 = <strong>2 304</strong> (toujours inférieur à N)</li>
+<li>Pic deux fois plus fin (ω = 0,15) : N est multiplié par 4, car le rapport est au carré.</li>
+</ul>
+<h2>4. La séparation de deux pics : α et R</h2>
+<p><strong>Facteur de séparation α</strong> : la colonne fait-elle une différence entre les deux composés ? Le plus retenu au numérateur, donc α ≥ 1. Si α = 1, ils sortent ensemble.</p>
+<pre><code class="language-latex">\alpha = \frac{k_2}{k_1} = \frac{t'_{R2}}{t'_{R1}}
+</code></pre>
+<p><strong>Résolution R</strong> : l'écart entre les sommets comparé à la largeur des pics. <strong>Séparation complète si R ≥ 1,5.</strong></p>
+<pre><code class="language-latex">R = \frac{2\,(t_{R2} - t_{R1})}{\omega_1 + \omega_2} = \frac{1{,}18\,(t_{R2} - t_{R1})}{\delta_1 + \delta_2}
+</code></pre>
+<p><strong>Exemple.</strong> A : tR = 4,8 min, ω = 0,30 min, k = 3. B : tR = 5,6 min, ω = 0,34 min, k = 3,67.</p>
+<ul>
+<li>α = 3,67 / 3 = <strong>1,22</strong> : la colonne distingue A et B</li>
+<li>R = 2 × (5,6 − 4,8) / (0,30 + 0,34) = 1,6 / 0,64 = <strong>2,5</strong> : supérieur à 1,5, pics complètement séparés</li>
+<li>Si R était trop faible : allonger la colonne (plus de plateaux, pics plus fins) ou changer la phase mobile (écarter les pics).</li>
+</ul>
+<h2>5. La CCM : le rapport frontal Rf</h2>
+<p>Rf est toujours entre 0 et 1. <strong>Plus Rf est grand, moins la molécule est retenue.</strong> Sur silice (polaire), le composé le plus polaire a le plus petit Rf.</p>
+<pre><code class="language-latex">R_f = \frac{\text{distance parcourue par le composé}}{\text{distance parcourue par le front du solvant}}
+</code></pre>
+<p><strong>Exemple.</strong> Front du solvant à 10 cm. X à 7,5 cm, Y à 2,5 cm, Z à 5 cm.</p>
+<ul>
+<li>Rf(X) = 7,5 / 10 = <strong>0,75</strong> ; Rf(Y) = 2,5 / 10 = <strong>0,25</strong> ; Rf(Z) = 5 / 10 = <strong>0,5</strong></li>
+<li>Du plus polaire au moins polaire : <strong>Y &gt; Z &gt; X</strong></li>
+</ul>
+<p>Révélation UV : <strong>254 nm = la plaque brille</strong> (tache sombre, la molécule absorbe) ; <strong>366 nm = la molécule brille</strong> (fluorescence).</p>
+<h2>6. pH et pKa : rendre l'analyte chargé</h2>
+<p>En appariement d'ions comme en échange d'ions, l'analyte doit être <strong>ionisé</strong> pour être retenu. Tout part de Henderson-Hasselbalch :</p>
+<pre><code class="language-latex">pH = pK_a + \log \frac{[\text{base}]}{[\text{acide}]}
+</code></pre>
+<p>À pKa + 2, il y a <strong>100 fois</strong> plus de forme basique ; à pKa − 2, 100 fois plus de forme acide (à ± 1 : 10 fois). Moyen de ne pas se tromper : <strong>pH bas = beaucoup de H⁺ = molécule protonée.</strong></p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Forme acide</th>
+<th>Forme basique</th>
+<th>Forme chargée</th>
+<th>pH à choisir</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acide carboxylique</td>
+<td>COOH</td>
+<td>COO⁻</td>
+<td>COO⁻ (basique)</td>
+<td><strong>pKa + 2</strong></td>
+</tr>
+<tr>
+<td>Amine</td>
+<td>NH3⁺</td>
+<td>NH2</td>
+<td>NH3⁺ (acide)</td>
+<td><strong>pKa − 2</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Exemple 1 (appariement).</strong> Amine de pKa = 9 : pH = 9 − 2 = <strong>7</strong> pour avoir NH3⁺ ; contre-ion <strong>anionique</strong> (sulfonate SO3⁻).</p>
+<p><strong>Exemple 2 (appariement, cours).</strong> Mélange d'acides, pKa le plus haut = 6,28 : idéal 8,28 ; la prof prend <strong>7,5</strong> (10 fois plus de forme ionisée suffit) ; contre-ion <strong>cationique</strong> (ammonium quaternaire).</p>
+<p><strong>Exemple 3 (échange d'ions, examen).</strong> Résine <strong>anionique</strong>, pH 7 : les acides (pKa 3,88 à 4,6) sont en COO⁻ et retenus ; le paracétamol (pKa 9,38) est neutre et sort en premier. Gradient de pH de 7 à 3 : les acides se reprotonent du <strong>pKa le plus haut au plus bas</strong> → valproate (4,6), naproxène (4,19), kétoprofène (3,88).</p>
+<h2>7. L'exclusion de taille (CET)</h2>
+<p>Aucune interaction : on sépare uniquement par la taille. <strong>Les grosses molécules sortent en premier, les petites en dernier.</strong> V1 = volume entre les billes, Vp = volume dans les pores.</p>
+<pre><code class="language-latex">V_{PM} = V_1 + V_p
+</code></pre>
+<pre><code class="language-latex">V_e = V_1 + K \times V_p
+</code></pre>
+<pre><code class="language-latex">K = \frac{V_e - V_1}{V_p} = \frac{V_e - V_1}{V_{PM} - V_1}
+</code></pre>
+<p>K = fraction du volume des pores accessible à la molécule, toujours <strong>entre 0 et 1</strong>.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>K</th>
+<th>Ve</th>
+<th>Cas</th>
+<th>Séparation ?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Ve = V1</td>
+<td>Exclusion totale (trop grosse)</td>
+<td>Non : toutes les trop grosses sortent ensemble</td>
+</tr>
+<tr>
+<td>entre 0 et 1</td>
+<td>V1 &lt; Ve &lt; VPM</td>
+<td>Exclusion et diffusion</td>
+<td><strong>Oui</strong></td>
+</tr>
+<tr>
+<td>1</td>
+<td>Ve = VPM</td>
+<td>Perméation totale (trop petite)</td>
+<td>Non : toutes les trop petites sortent ensemble</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Exemple.</strong> V1 = 4 mL, Vp = 6 mL, donc VPM = 10 mL.</p>
+<ul>
+<li>A sort à Ve = 4 mL : K = (4 − 4) / 6 = <strong>0</strong>, exclusion totale</li>
+<li>B sort à Ve = 7 mL : K = (7 − 4) / 6 = <strong>0,5</strong>, zone de séparation</li>
+<li>C sort à Ve = 10 mL : K = (10 − 4) / 6 = <strong>1</strong>, perméation totale</li>
+<li>Aucune molécule ne peut sortir après VPM : sans attraction, le plus long détour est d'explorer tous les pores.</li>
+</ul>
+<h2>8. Anti-confusion et pièges</h2>
+<p>Trois grandeurs se ressemblent : regarde le contexte. Des <strong>volumes V1, Vp, VPM</strong> → K de l'exclusion ; des <strong>temps de rétention</strong> → k.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Symbole</th>
+<th>Nom</th>
+<th>Formule</th>
+<th>Mesure</th>
+<th>Valeurs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>K</td>
+<td>Coefficient de distribution</td>
+<td>Cs / Cm</td>
+<td>Affinité pour la PS</td>
+<td>Pas de limite</td>
+</tr>
+<tr>
+<td>k</td>
+<td>Facteur de rétention</td>
+<td>(tR − tM) / tM</td>
+<td>Temps accroché / temps libre</td>
+<td>Idéal 2 à 6</td>
+</tr>
+<tr>
+<td>K (CET)</td>
+<td>Coefficient d'exclusion</td>
+<td>(Ve − V1) / (VPM − V1)</td>
+<td>Fraction des pores accessible</td>
+<td>0 à 1</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pièges fréquents :</p>
+<ul>
+<li><strong>Force éluante ε°</strong> mesurée sur alumine (polaire) : sur une C18, inverser la conclusion. Acétonitrile (0,51) à la place du méthanol (0,70) sur C18 → les tR <strong>diminuent</strong>.</li>
+<li><strong>Résine cationique</strong> = retient les cations, donc chargée <strong>−</strong> ; <strong>résine anionique</strong> = retient les anions, chargée <strong>+</strong>.</li>
+<li><strong>Charges</strong> : + attire −, jamais + avec +.</li>
+<li><strong>Unités</strong> dans H = L / N : convertir L dans l'unité voulue (cm → mm → µm).</li>
+<li><strong>Dilutions</strong> : toujours vérifier s'il faut multiplier à la fin.</li>
+</ul>
+<p class="orig">Copie du document du 12 oct. 2026. L'original, modifiable, est sur <a href="https://claude.ai/artifact/UfCoSECbnHbD1BJvrnxemF">claude.ai</a> (accessible seulement avec ton compte).</p>
+</article>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+document.querySelectorAll('pre > code.language-latex').forEach(function(c){
+  var box=document.createElement('div');box.className='math';
+  try{katex.render(c.textContent,box,{displayMode:true,throwOnError:false});c.parentNode.replaceWith(box);}catch(e){}
+});
+</script>
+</body>
+</html>

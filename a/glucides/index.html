@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Métabolisme des glucides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--bg:#f7f5f0;--paper:#fffdf9;--ink:#1d1f24;--muted:#646a73;--line:#e3ded3;--accent:#b4532a;--code:#f1ede4}
+@media (prefers-color-scheme:dark){:root{--bg:#131518;--paper:#1a1d21;--ink:#e7e8ea;--muted:#9aa1ab;--line:#2c3036;--accent:#ef9a6b;--code:#22262b;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 "Source Serif 4",Georgia,serif;-webkit-font-smoothing:antialiased}
+.top{max-width:780px;margin:0 auto;padding:28px 20px 0;font:500 13px/1.4 "Public Sans",system-ui,sans-serif;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.top a{color:var(--muted);text-decoration:none} .top a:hover{color:var(--ink)}
+.top .mat{color:var(--accent);font-weight:600}
+article{max-width:780px;margin:12px auto 0;padding:8px 20px 96px}
+h1,h2,h3,h4{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.2;text-wrap:balance}
+h1{font-size:clamp(30px,5vw,42px);margin:.2em 0 .3em}
+h1+p{font:500 14px/1.5 "Public Sans",system-ui,sans-serif;color:var(--muted);margin-bottom:2.2em}
+h2{font-size:26px;margin:2em 0 .6em;padding-top:.6em;border-top:1px solid var(--line)}
+h3{font-size:20px;margin:1.6em 0 .5em}
+h4{font-size:17px;margin:1.4em 0 .4em}
+p,ul,ol{margin:0 0 1em}
+li{margin:.25em 0} li>p{margin:0}
+a{color:var(--accent)}
+strong{font-weight:600}
+blockquote{margin:1.2em 0;padding:.6em 1.1em;border-left:3px solid var(--accent);background:var(--paper);border-radius:0 8px 8px 0}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+.tbl{overflow-x:auto;margin:1.2em 0;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font:14.5px/1.5 "Public Sans",system-ui,sans-serif}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-weight:600;font-size:12.5px;letter-spacing:.03em;color:var(--muted);background:var(--bg)}
+code{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.1em .35em;border-radius:4px}
+pre{background:var(--code);padding:14px 16px;border-radius:10px;overflow-x:auto}
+pre code{background:none;padding:0}
+.math{margin:1.1em 0;padding:14px 12px;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow-x:auto;text-align:center}
+.orig{font:500 13px/1.5 "Public Sans",system-ui,sans-serif;color:var(--muted);margin-top:4em;padding-top:1.2em;border-top:1px solid var(--line)}
+@media print{.top,.orig{display:none} body{background:#fff}}
+</style>
+</head>
+<body>
+<nav class="top"><a href="../../">← Mes artefacts</a><span aria-hidden="true">/</span><span class="mat">Biochimie</span></nav>
+<article>
+<h1>Métabolisme des glucides – cours expliqué</h1>
+<p>Poly UE 3.3, pages 92 à 101 (cours du Pr Delcourt) · 4 oct. 2026</p>
+<h2>Introduction : pourquoi ce chapitre est central</h2>
+<p>Ce chapitre répond à une seule question : <strong>comment l'organisme garde une glycémie stable, qu'on vienne de manger ou qu'on soit à jeun ?</strong> Pour y répondre, il faut connaître deux voies opposées : la <strong>glycolyse</strong> (on casse le glucose pour faire de l'énergie) et la <strong>néoglucogenèse</strong> (on fabrique du glucose à partir d'autre chose).</p>
+<p>Pourquoi c'est si important ? La glycémie (concentration de glucose dans le sang) doit rester dans des valeurs très encadrées. Trop de glucose de façon chronique est <strong>toxique</strong> pour les cellules. Pas assez, et certains organes très dépendants du glucose (le cerveau, les globules rouges) souffrent tout de suite.</p>
+<p>La glycolyse, tu la connais déjà (cours « Vue d'ensemble du métabolisme »). La nouveauté, c'est la néoglucogenèse : la voie qui permet de <strong>refaire du glucose quand il n'y en a plus assez dans l'alimentation</strong>.</p>
+<h3>L'idée clé à garder en tête dès maintenant</h3>
+<p>Beaucoup de cellules savent faire la néoglucogenèse <strong>jusqu'au glucose-6-phosphate (G6P)</strong>. Mais le G6P est piégé : avec son phosphate chargé négativement, il <strong>ne peut pas sortir de la cellule</strong>.</p>
+<p>Pour libérer du glucose dans le sang, il faut enlever ce phosphate. L'enzyme qui fait ça (la glucose-6-phosphatase) n'existe que dans les <strong>hépatocytes</strong> (cellules du foie). Conclusion :</p>
+<blockquote>
+<p><strong>Seul le foie peut fabriquer du glucose et le sécréter dans le sang.</strong> C'est donc lui qui maintient la glycémie. Le muscle, lui, garde son glucose pour ses propres besoins.</p>
+</blockquote>
+<p>Retiens bien cette phrase : elle revient sans arrêt aux QCM, et elle explique la moitié du chapitre.</p>
+<p class="orig">Copie du document du 4 oct. 2026. L'original, modifiable, est sur <a href="https://claude.ai/artifact/KPYj2rm6vKWyBZK42tMYc9">claude.ai</a> (accessible seulement avec ton compte).</p>
+</article>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+document.querySelectorAll('pre > code.language-latex').forEach(function(c){
+  var box=document.createElement('div');box.className='math';
+  try{katex.render(c.textContent,box,{displayMode:true,throwOnError:false});c.parentNode.replaceWith(box);}catch(e){}
+});
+</script>
+</body>
+</html>

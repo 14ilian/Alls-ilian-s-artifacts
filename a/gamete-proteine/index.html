@@ -1,0 +1,445 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Du gamète à la protéine</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: scrollytelling — text steps scroll on the left, the schema stays pinned on the right (top on phones) and redraws for each step; a scrubber bar at the bottom moves through the 19 steps. */
+:root{
+  --bg:#f4f6f3; --surface:#ffffff; --cell:#fbfcfa; --ink:#18211d; --muted:#5a655f; --line:#d6ddd8;
+  --pat:#2f6fd6; --mat:#d4477a; --exon:#0d6b5c; --exon-soft:#d8eee7; --intron:#a3aca7;
+  --amb:#a86a00; --amb-soft:#fcefd6; --purp:#6a4fb3; --purp-soft:#e9e4fa; --red:#c23a2c; --red-soft:#fbe4e1;
+  --f-d:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --f-b:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-m:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1412; --surface:#171e1b; --cell:#1b2320; --ink:#e4ebe7; --muted:#9ba8a1; --line:#2d3833;
+  --pat:#6fa2ff; --mat:#ff79a6; --exon:#45c3a3; --exon-soft:#163a31; --intron:#6e7a74;
+  --amb:#f2b84b; --amb-soft:#3a2c12; --purp:#a991f5; --purp-soft:#2a2245; --red:#ff7d6e; --red-soft:#3d1c19; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1412; --surface:#171e1b; --cell:#1b2320; --ink:#e4ebe7; --muted:#9ba8a1; --line:#2d3833;
+  --pat:#6fa2ff; --mat:#ff79a6; --exon:#45c3a3; --exon-soft:#163a31; --intron:#6e7a74;
+  --amb:#f2b84b; --amb-soft:#3a2c12; --purp:#a991f5; --purp-soft:#2a2245; --red:#ff7d6e; --red-soft:#3d1c19; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-b);font-size:16px;line-height:1.6}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.layout{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:40px}
+.stage-col{position:relative}
+.stage{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);height:calc(100vh - 120px);display:flex;flex-direction:column;justify-content:center;gap:10px}
+.stage svg{width:100%;height:auto;max-height:100%;display:block;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.stage .cap{font:600 12px/1 var(--f-b);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.steps{padding-block:12vh 45vh}
+.step{min-height:78vh;display:flex;flex-direction:column;justify-content:center;opacity:.35;transition:opacity .3s}
+.step.on{opacity:1}
+.step .k{font:600 12px/1 var(--f-m);color:var(--exon);letter-spacing:.06em;text-transform:uppercase}
+.step h2{font-family:var(--f-d);font-weight:800;font-size:clamp(24px,3.2vw,32px);line-height:1.1;margin:10px 0 12px;text-wrap:balance;letter-spacing:-.01em}
+.step p{margin:0 0 10px}
+.step ul{margin:0 0 10px;padding-left:18px}
+.step li{margin:4px 0}
+.step li::marker{color:var(--exon)}
+.trap{background:var(--amb-soft);border-radius:10px;padding:10px 12px;font-size:15px;margin-top:6px}
+.trap b:first-child{color:var(--amb)}
+.key{background:var(--exon-soft);border-radius:10px;padding:10px 12px;font-size:15px;margin-top:6px}
+.key b:first-child{color:var(--exon)}
+.lvl{display:inline-block;font:600 11px/1 var(--f-b);letter-spacing:.05em;text-transform:uppercase;color:var(--amb);border:1px solid var(--amb);border-radius:999px;padding:5px 9px;margin-bottom:8px}
+.intro h1{font-family:var(--f-d);font-weight:800;font-size:clamp(34px,5vw,52px);line-height:1;margin:6px 0 14px;letter-spacing:-.02em;text-wrap:balance}
+.mono{font-family:var(--f-m);font-size:.9em}
+
+.ptabs{display:flex;gap:6px}
+.ptabs.top{padding-block:calc(env(safe-area-inset-top,0px) + 16px) 0;flex-wrap:wrap}
+.ptab{appearance:none;display:flex;align-items:center;gap:8px;font:600 14px/1 var(--f-b);color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 14px;cursor:pointer}
+.ptab span{font:700 11px/1 var(--f-m);width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--muted)}
+.ptab[aria-selected="true"]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.ptab[aria-selected="true"] span{background:var(--exon);color:#fff}
+.ptab:focus-visible{outline:2px solid var(--exon);outline-offset:2px}
+.ptabs.mini .ptab{padding:7px 9px;font-size:12px}
+.ptabs.mini .ptab{font-size:0;gap:0}
+.ptabs.mini .ptab span{font-size:11px}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bar .in{display:flex;align-items:center;gap:12px;padding-block:10px}
+.bar button{appearance:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:600 18px/1 var(--f-b);cursor:pointer;flex:none}
+.bar button:focus-visible,.bar input:focus-visible{outline:2px solid var(--exon);outline-offset:2px}
+.bar input[type=range]{flex:1;min-width:0;accent-color:var(--exon);height:28px}
+.bar .lab{font:600 13px/1.2 var(--f-b);min-width:0;width:220px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .lab span{font-family:var(--f-m);color:var(--muted);margin-right:6px}
+
+svg .t{font:500 13px var(--f-b);fill:var(--ink)}
+svg .tb{font:700 13px var(--f-b);fill:var(--ink)}
+svg .ts{font:400 11.5px var(--f-b);fill:var(--muted)}
+svg .th{font:800 19px var(--f-d);fill:var(--ink)}
+svg .tm{font:700 13px var(--f-m);fill:var(--ink)}
+svg .sc{animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){svg .sc{animation:none}.step{transition:none}}
+
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr;gap:0}
+  .stage-col{order:-1;position:sticky;top:0;z-index:5;background:var(--bg);padding-block:calc(env(safe-area-inset-top,0px) + 8px) 8px}
+  .stage{position:static;height:auto}
+  .stage svg{max-height:40vh;width:auto;max-width:100%;margin:0 auto}
+  .stage .cap{text-align:center}
+  .steps{padding-block:4vh 50vh}
+  .step{min-height:62vh}
+  .bar .lab{width:120px}
+}
+</style>
+
+<div class="wrap"><div class="ptabs top" role="tablist" aria-label="Parties"></div>
+  <div class="layout">
+    <div class="steps" id="steps"></div>
+    <div class="stage-col"><div class="stage"><div class="cap" id="cap">Schéma</div><svg id="svg" viewBox="0 0 600 380" role="img" aria-label="Schéma de l'étape en cours"></svg></div></div>
+  </div>
+</div>
+<div class="bar"><div class="wrap in"><div class="ptabs mini" role="tablist" aria-label="Parties"></div>
+  <button id="prev" aria-label="Étape précédente">‹</button>
+  <input type="range" id="rng" min="0" max="18" value="0" aria-label="Étape">
+  <button id="next" aria-label="Étape suivante">›</button>
+  <div class="lab" id="lab"></div>
+</div></div>
+
+<script>
+/* ---------- SVG primitives ---------- */
+const BL="var(--pat)", PK="var(--mat)";
+const I=(x,y,L,c,w=4.5)=>`<line x1="${x}" y1="${y-L/2}" x2="${x}" y2="${y+L/2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+const X=(x,y,L,c,w=4.5)=>{const d=L*.22;return `<line x1="${x-d}" y1="${y-L/2}" x2="${x+d}" y2="${y+L/2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/><line x1="${x+d}" y1="${y-L/2}" x2="${x-d}" y2="${y+L/2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;};
+const C=(x,y,r,f="var(--cell)",s="var(--ink)")=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}" stroke="${s}" stroke-width="1.3"/>`;
+const E=(x,y,rx,ry,f="var(--cell)",s="var(--ink)",o="")=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="${f}" stroke="${s}" stroke-width="1.3" ${o}/>`;
+const A=(x1,y1,x2,y2,c="var(--ink)",w=1.6,d="")=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${d?`stroke-dasharray="${d}"`:""} marker-end="url(#ah)" style="color:${c}"/>`;
+const L=(x1,y1,x2,y2,c="var(--ink)",w=1.5,d="")=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" ${d?`stroke-dasharray="${d}"`:""}/>`;
+const T=(x,y,s,c="t",a="middle",fill="")=>`<text x="${x}" y="${y}" class="${c}" text-anchor="${a}" ${fill?`style="fill:${fill}"`:""}>${s}</text>`;
+const R=(x,y,w,h,f,s,rx=4)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${f}" stroke="${s}" stroke-width="1.2"/>`;
+const pill=(x,y,s,c="var(--amb)",bg="var(--amb-soft)")=>{const w=s.length*6.4+20;return `<rect x="${x}" y="${y}" width="${w}" height="22" rx="11" fill="${bg}" stroke="${c}" stroke-width="1"/><text x="${x+w/2}" y="${y+15}" class="tb" text-anchor="middle" style="font-size:11px;fill:${c}">${s}</text>`;};
+const title=s=>T(22,34,s,"th","start");
+const seq=(x,y,s,step=16,c="tm",fill="")=>s.split("").map((ch,i)=>T(x+i*step,y,ch,c,"middle",fill||({A:"var(--exon)",T:"var(--red)",U:"var(--red)",G:"var(--ink)",C:"var(--pat)"}[ch]||""))).join("");
+const cap5=(x,y)=>`<circle cx="${x}" cy="${y}" r="10" fill="var(--amb)"/>`+T(x,y+4,"m7G","tb","middle","var(--bg)").replace('class="tb"','class="tb" style="font-size:8px;fill:var(--bg)"');
+const LL=46, LS=28;
+
+/* ---------- scènes ---------- */
+const S = [];
+S[0]=()=>{
+  const items=[["Méiose","2n → n"],["Fécondation","n + n → 2n"],["Mitose","2n → 2n"],["Noyau","ADN → ARNm"],["Cytoplasme","ARNm → protéine"]];
+  let g=T(300,70,"Du gamète à la protéine","th");
+  items.forEach((it,i)=>{const x=18+i*116;g+=R(x,125,98,58,"var(--exon-soft)","var(--exon)",8)+T(x+49,150,it[0],"tb")+T(x+49,168,it[1],"ts");if(i<4)g+=A(x+100,154,x+114,154,"var(--muted)",1.4);});
+  g+=I(60,262,30,BL)+T(78,267,"1 chromatide","t","start")+X(200,262,30,BL)+T(218,267,"2 chromatides","t","start");
+  g+=I(360,262,30,BL)+T(376,267,"du père","t","start")+I(470,262,30,PK)+T(486,267,"de la mère","t","start");
+  g+=T(300,330,"Fais défiler, ou utilise la barre en bas","ts");
+  return g;};
+S[1]=()=>title("Cellule germinale (après la phase S)")+C(300,195,128)+X(222,195,LL,BL)+X(262,195,LL,PK)+X(338,195,LS,BL)+X(374,195,LS,PK)
+  +L(207,250,277,250,"var(--muted)",1)+T(242,268,"paire 1","ts")+L(325,250,388,250,"var(--muted)",1)+T(356,268,"paire 2","ts")
+  +T(300,350,"2n = 4 chromosomes, chacun à 2 chromatides (2C)","t");
+S[2]=()=>title("Méiose I : les homologues se séparent")+C(110,195,72)+X(80,195,34,BL)+X(100,195,34,PK)+X(124,195,22,BL)+X(142,195,22,PK)
+  +A(186,175,330,122)+A(186,215,330,268)+C(410,112,66)+X(392,112,42,BL)+X(430,112,26,PK)+C(410,280,66)+X(392,280,42,PK)+X(430,280,26,BL)
+  +T(520,108,"n 2C","tb","start")+T(520,276,"n 2C","tb","start")+T(258,200,"au hasard","ts")
+  +T(300,370,"Les X restent des X : on sépare les paires, pas les chromatides","ts");
+S[3]=()=>{let g=title("Méiose II : les chromatides sœurs se séparent")+C(110,120,50)+X(95,120,34,BL)+X(125,120,22,PK)+C(110,280,50)+X(95,280,34,PK)+X(125,280,22,BL);
+  [[120,72],[120,160],[280,240],[280,330]].forEach(([s,y],i)=>{g+=A(162,s,393,y,"var(--ink)",1.3);g+=C(430,y,34);const a=i<2?BL:PK,b=i<2?PK:BL;g+=I(418,y,30,a)+I(442,y,18,b);});
+  return g+T(478,205,"4 gamètes n 1C","tb","start");};
+S[4]=()=>title("Fécondation")+`<path d="M80 108 C 66 96, 56 120, 40 108 S 18 100, 8 108" fill="none" stroke="var(--ink)" stroke-width="1.4"/>`+C(110,108,30)+I(100,108,28,BL)+I(120,108,17,BL)+T(110,160,"spermatozoïde n","ts")
+  +C(110,275,58,"var(--red-soft)")+I(97,275,30,PK)+I(123,275,18,PK)+T(110,352,"ovocyte n","ts")
+  +A(146,118,322,170)+A(172,258,322,214)+C(435,192,98)+I(398,192,LL,BL)+I(422,192,LL,PK)+I(448,192,LS,BL)+I(472,192,LS,PK)+T(435,318,"Zygote 2n 1C","tb");
+S[5]=()=>{let g=title("Mitose (1/2) : réplication et métaphase");
+  g+=C(100,180,74)+I(70,180,LL,BL)+I(90,180,LL,PK)+I(112,180,LS,BL)+I(130,180,LS,PK)+A(180,180,218,180);
+  g+=C(300,180,74)+X(262,180,LL,BL)+X(287,180,LL,PK)+X(316,180,LS,BL)+X(340,180,LS,PK)+A(380,180,418,180);
+  g+=C(500,180,74)+L(500,110,500,250,"var(--muted)",1.2,"4 4")+X(500,132,26,BL)+X(500,163,26,PK)+X(500,196,17,BL)+X(500,222,17,PK);
+  [[100,"G1","2n 1C"],[300,"Phase S","2n 2C : I → X"],[500,"Métaphase","alignés un par un"]].forEach(([x,a,b])=>g+=T(x,285,a,"tb")+T(x,303,b,"ts"));
+  return g;};
+S[6]=()=>{let g=title("Mitose (2/2) : anaphase et cellules filles")+E(190,185,140,88)+L(190,100,190,270,"var(--muted)",1.2,"4 4");
+  [80,96,112,128].forEach((x,i)=>g+=I(x,185,i<2?40:26,i%2?PK:BL));[252,268,284,300].forEach((x,i)=>g+=I(x,185,i<2?40:26,i%2?PK:BL));
+  g+=A(170,300,100,300,"var(--muted)",1.2)+A(210,300,280,300,"var(--muted)",1.2)+A(336,185,382,185);
+  g+=C(442,185,52)+[420,434,450,464].map((x,i)=>I(x,185,i<2?36:22,i%2?PK:BL)).join("")+C(552,185,44)+[532,545,560,573].map((x,i)=>I(x,185,i<2?32:20,i%2?PK:BL)).join("");
+  return g+T(190,330,"chaque X se coupe : 4 I de chaque côté","ts")+T(497,262,"2 cellules 2n 1C","tb")+T(497,280,"identiques à la mère","ts");};
+S[7]=()=>{let g=title("La chromatine")+T(22,78,"Euchromatine : ouverte → gène transcrit","tb","start")+L(30,120,570,120,"var(--ink)",1.5);
+  for(let i=0;i<7;i++)g+=C(70+i*76,120,16,"var(--exon-soft)","var(--exon)")+T(70+i*76,124,"Ac","tb","middle","var(--exon)");
+  g+=T(22,232,"Hétérochromatine : condensée → silence","tb","start");
+  for(let i=0;i<17;i++)for(let j=0;j<2;j++)g+=C(48+i*30+j*15,268+j*24,13,"var(--purp-soft)","var(--purp)")+T(48+i*30+j*15,272+j*24,"Me","ts","middle","var(--purp)");
+  g+=A(260,148,260,206,"var(--purp)")+T(250,182,"méthylation","ts","end","var(--purp)")+A(340,206,340,148,"var(--exon)")+T(350,182,"acétylation","ts","start","var(--exon)");
+  return g+pill(22,340,"Niveau 1 · chromatinien");};
+S[8]=()=>{let g=title("Le gène")+L(30,196,575,196)+L(30,212,575,212)+T(22,192,"5'","ts","end")+T(22,222,"3'","ts","end")+T(585,192,"3'","ts","start")+T(585,222,"5'","ts","start");
+  const seg=[[40,100,"enhancer","var(--purp-soft)","var(--purp)"],[150,198,"CAAT","var(--cell)","var(--ink)"],[212,258,"TATA","var(--cell)","var(--ink)"],[300,350,"exon 1","var(--exon-soft)","var(--exon)"],[392,440,"exon 2","var(--exon-soft)","var(--exon)"],[482,526,"exon 3","var(--exon-soft)","var(--exon)"],[536,574,"term.","var(--cell)","var(--ink)"]];
+  seg.forEach(([a,b,l,f,s])=>g+=R(a,186,b-a,36,f,s,4)+T((a+b)/2,208,l,"tb","middle",s));
+  g+=T(371,250,"intron","ts")+T(461,250,"intron","ts");
+  g+=L(300,186,300,140,"var(--red)",2)+A(300,140,334,140,"var(--red)",2)+T(290,138,"+1","tb","end","var(--red)");
+  g+=L(150,172,258,172,"var(--muted)",1)+T(204,164,"promoteur","tb")+T(70,250,"élément cis","ts");
+  g+=L(300,270,574,270,"var(--exon)",1)+T(437,290,"partie transcrite","ts","middle","var(--exon)");
+  return g+T(300,350,"non à l'échelle · introns et exons dans la partie transcrite","ts");};
+S[9]=()=>{let g=title("Zoom sur le promoteur");
+  g+=R(64,228,148,82,"var(--purp-soft)","var(--purp)",8)+R(286,228,110,82,"var(--amb-soft)","var(--amb)",8);
+  g+=L(20,252,580,252)+L(20,276,580,276);for(let x=26;x<580;x+=14)g+=L(x,252,x,276,"var(--line)",1);
+  g+=seq(80,244,"GGCCAATCT",15)+seq(80,296,"CCGGTTAGA",15)+seq(302,244,"TATAAA",16)+seq(302,296,"ATATTT",16);
+  g+=T(138,326,"CAAT ≈ −80","tb","middle","var(--purp)")+T(341,326,"TATA ≈ −30","tb","middle","var(--amb)");
+  g+=E(138,198,58,20,"var(--purp-soft)","var(--purp)")+T(138,203,"facteurs","ts","middle","var(--purp)");
+  g+=R(298,206,86,20,"var(--purp-soft)","var(--purp)",10)+T(341,220,"TFIID","ts","middle","var(--purp)");
+  g+=E(440,142,88,38,"var(--amb-soft)","var(--amb)")+T(440,140,"ARN pol II","tb","middle","var(--amb)")+T(440,157,"recrutée par les TFII","ts");
+  g+=L(520,252,520,200,"var(--red)",2)+A(520,200,556,200,"var(--red)",2)+T(536,192,"+1","tb","start","var(--red)");
+  g+=A(500,172,516,240,"var(--amb)",1.2,"3 3");
+  g+=L(400,326,518,326,"var(--red)",1)+L(400,320,400,332,"var(--red)",1)+L(518,320,518,332,"var(--red)",1)+T(459,344,"≈ 35 nt","ts","middle","var(--red)");
+  return g+pill(22,348,"pas d'amorce","var(--exon)","var(--exon-soft)")+pill(150,348,"promoteur obligatoire","var(--red)","var(--red-soft)");};
+S[10]=()=>{let g=title("Transcription : la bulle");
+  g+=E(315,182,150,98,"var(--amb-soft)","var(--amb)",'opacity=".75"');
+  g+=`<path d="M20 120 L190 120 Q250 72 315 72 Q380 72 440 120 L580 120" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+  g+=`<path d="M20 244 L190 244 Q250 284 315 284 Q380 284 440 244 L580 244" fill="none" stroke="var(--ink)" stroke-width="1.6"/>`;
+  g+=seq(222,262,"TACCGATTC",17)+seq(222,234,"AUGGCU",17);
+  g+=T(205,234,"5'","ts","end")+A(316,230,350,230,"var(--red)",1.5)+T(30,110,"brin codant 5'→3' (non lu)","ts","start")+T(30,262,"brin matrice 3'→5' (lu)","ts","start");
+  g+=A(380,182,450,182,"var(--amb)",2)+T(315,152,"ARN pol II","tb","middle","var(--amb)");
+  g+=C(478,300,9,"var(--exon-soft)","var(--exon)")+C(500,312,9,"var(--exon-soft)","var(--exon)")+T(520,316,"NTP","ts","start")+A(470,292,420,260,"var(--muted)",1.2);
+  return g+T(300,360,"ARN complémentaire et antiparallèle de la matrice, synthétisé 5'→3'","ts");};
+S[11]=()=>{let g=title("Terminaison")+L(20,150,580,150)+L(20,174,580,174)+R(410,140,92,44,"var(--cell)","var(--ink)",4)+T(456,167,"terminateur","ts");
+  g+=E(470,92,62,28,"var(--amb-soft)","var(--amb)")+T(470,97,"ARN pol II","tb","middle","var(--amb)")+A(520,72,566,48,"var(--amb)",1.6);
+  g+=`<path d="M60 260 L300 260 L340 260 L340 228 Q340 206 356 206 Q372 206 372 228 L372 260 L420 260" fill="none" stroke="var(--red)" stroke-width="2.4"/>`;
+  g+=T(356,196,"épingle riche en GC","ts","middle","var(--red)")+T(240,284,"…AAUAAA…","tm","middle","var(--amb)")+T(60,284,"5' pré-ARNm","ts","start");
+  return g+T(300,350,"La polymérase se décroche : le pré-ARNm est libéré","ts");};
+S[12]=()=>{let g=title("Maturation du pré-ARNm");
+  const pre=[[80,160,1,"E1"],[160,220,0],[220,300,1,"E2"],[300,360,0],[360,440,1,"E3"]];
+  pre.forEach(([a,b,ex,l])=>{if(ex)g+=R(a,82,b-a,22,"var(--exon)","var(--exon)",2)+T((a+b)/2,98,l,"tb","middle","var(--bg)");else g+=L(a,93,b,93,"var(--intron)",3)+T(a+4,120,"GU","tm","start","var(--red)")+T(b-4,120,"AG","tm","end","var(--red)");});
+  g+=T(70,98,"pré-ARNm","ts","end");
+  g+=`<circle cx="190" cy="178" r="13" fill="none" stroke="var(--intron)" stroke-width="2.5"/><circle cx="330" cy="178" r="13" fill="none" stroke="var(--intron)" stroke-width="2.5"/>`+T(260,214,"introns retirés en lasso","ts");
+  g+=A(260,128,260,250,"var(--exon)",1.6);
+  g+=cap5(60,280)+L(70,280,96,280)+R(96,269,96,22,"var(--exon)","var(--exon)",0)+R(192,269,96,22,"var(--exon)","var(--exon)",0)+R(288,269,96,22,"var(--exon)","var(--exon)",0);
+  g+=T(144,285,"E1","tb","middle","var(--bg)")+T(240,285,"E2","tb","middle","var(--bg)")+T(336,285,"E3","tb","middle","var(--bg)")+L(384,280,408,280)+T(412,285,"AAAAA…","tm","start","var(--amb)");
+  g+=T(60,314,"1 coiffe","tb","middle","var(--amb)")+T(450,314,"2 queue polyA","tb","middle","var(--amb)")+T(240,314,"3 épissage","tb","middle","var(--exon)");
+  return g+pill(22,340,"Niveau 3 · post-transcriptionnel");};
+S[13]=()=>{let g=title("Épissage alternatif");let x=40;const ex=["E1","E2","E3","E4","E5"];
+  ex.forEach((l,i)=>{const f=l==="E3"?"var(--amb)":"var(--exon)";g+=R(x,70,54,22,f,f,2)+T(x+27,86,l,"tb","middle","var(--bg)");x+=54;if(i<4){g+=L(x,81,x+28,81,"var(--intron)",3);x+=28;}});
+  g+=A(240,104,180,168)+A(240,104,300,250);
+  const row=(y,list)=>{let xx=40,s="";list.forEach(l=>{const f=l==="E3"?"var(--amb)":"var(--exon)";s+=R(xx,y,54,22,f,f,0)+T(xx+27,y+16,l,"tb","middle","var(--bg)");xx+=54;});return s;};
+  g+=row(180,ex)+T(330,196,"→ protéine 1","t","start")+row(262,["E1","E2","E4","E5"])+T(276,278,"→ protéine 2","t","start");
+  return g+T(300,340,"Exons gardés ou sautés, mais toujours dans l'ordre : jamais E3 avant E2","ts");};
+S[14]=()=>{let g=title("Sortie et stabilité de l'ARNm");
+  g+=`<path d="M0 60 Q140 190 0 330" fill="var(--exon-soft)" stroke="var(--exon)" stroke-width="1.5"/>`+T(14,196,"noyau","ts","start","var(--exon)");
+  g+=A(96,190,160,190,"var(--exon)",1.8)+T(118,178,"pore","ts");
+  g+=cap5(178,190)+L(188,190,210,190)+R(210,180,210,20,"var(--exon)","var(--exon)",0)+T(315,195,"ORF","tb","middle","var(--bg)")+L(420,190,520,190)+T(524,195,"AAAA","tm","start","var(--amb)");
+  g+=E(450,166,28,14,"var(--purp-soft)","var(--purp)")+T(450,170,"HuR","ts","middle","var(--purp)")+T(450,138,"stabilise · demi-vie ↑","ts","middle","var(--purp)");
+  g+=R(452,214,70,24,"var(--red-soft)","var(--red)",12)+T(487,230,"RISC","tb","middle","var(--red)")+L(460,206,512,206,"var(--red)",2.5)+T(487,258,"dégrade ou bloque","ts","middle","var(--red)");
+  g+=T(330,300,"ARN double brin → Dicer → petits ARN de 21–23 nt → RISC","ts");
+  return g+pill(22,340,"Niveau 3 · post-transcriptionnel");};
+const ribo=(x,y,big=true,sites=false)=>{let g=E(x,y+40,62,16,"var(--cell)");if(big)g+=E(x,y,70,40,"var(--cell)");if(sites&&big)g+=R(x-48,y-14,40,40,"var(--surface)","var(--muted)",4)+R(x+8,y-14,40,40,"var(--surface)","var(--muted)",4)+T(x-28,y-20,"P","tb")+T(x+28,y-20,"A","tb");return g;};
+const trna=(x,y,aa,ac,c="var(--exon)")=>L(x,y,x,y-22,c,2.5)+L(x-10,y,x+10,y,c,2.5)+C(x,y-30,8,c,c)+T(x,y-26,aa,"ts","middle","var(--bg)").replace('class="ts"','class="ts" style="font-size:8px;fill:var(--bg)"')+(ac?T(x,y+16,ac,"tm","middle",c).replace('class="tm"','class="tm" style="font-size:10px;fill:'+c+'"'):"");
+S[15]=()=>{let g=title("Traduction : initiation")+L(30,270,575,270,"var(--ink)",1.8)+cap5(30,270);
+  g+=E(118,262,48,14,"var(--cell)")+trna(118,248,"Met","")+T(118,296,"40S + eIF + Met-ARNt","ts");
+  g+=A(176,224,262,224,"var(--exon)",1.6,"5 4")+T(219,214,"scanne 5'→3'","ts","middle","var(--exon)");
+  g+=ribo(370,212)+trna(352,236,"Met","")+T(370,300,"AUG","tm","middle","var(--red)")+T(370,320,"contexte Kozak","ts");
+  g+=T(370,180,"60S","ts")+T(470,262,"40S","ts","start")+T(470,212,"→ ribosome 80S","tb","start");
+  return g+pill(22,340,"Niveau 4 · eIF2-GTP, tige-boucle 5'UTR");};
+S[16]=()=>{let g=title("Traduction : élongation")+L(30,280,575,280,"var(--ink)",1.8)+ribo(300,210,true,true);
+  g+=seq(222,300,"GCU",14,"tm")+seq(278,300,"AAG",14,"tm")+seq(176,300,"AUG",14,"tm")+seq(334,300,"UUC",14,"tm");
+  g+=trna(252,262,"Ala","CGA")+trna(328,262,"Lys","UUC","var(--purp)");
+  [[252,196],[236,180],[220,166],[204,152]].forEach(([x,y],i)=>g+=C(x,y-8,8,"var(--exon)","var(--exon)"));
+  g+=A(318,228,268,228,"var(--red)",1.4)+T(300,98,"peptidyl-transférase : COOH (site P) → NH2 (site A)","ts","middle","var(--red)");
+  g+=A(380,336,440,336,"var(--amb)",1.8)+T(372,341,"translocase : avance d'un codon","ts","end","var(--amb)");
+  return g;};
+S[17]=()=>{let g=title("Terminaison et maturation de la protéine")+L(30,290,575,290,"var(--ink)",1.8)+E(200,282,62,16,"var(--cell)")+E(220,180,70,40,"var(--cell)")+A(220,132,220,104,"var(--muted)",1.3);
+  g+=seq(186,314,"UGA",14,"tm")+R(196,250,48,26,"var(--purp-soft)","var(--purp)",6)+T(220,268,"RF","tb","middle","var(--purp)")+T(220,340,"facteur de relargage (pas d'ARNt)","ts");
+  const pts=[[360,190],[380,172],[402,182],[420,164],[442,176],[460,158],[480,172],[500,190],[486,212],[464,222],[444,206]];
+  g+=pts.map(([x,y])=>C(x,y,8,"var(--exon)","var(--exon)")).join("");
+  g+=C(442,152,9,"var(--amb)","var(--amb)")+T(442,156,"P","ts","middle","var(--bg)").replace('class="ts"','class="ts" style="font-size:9px;fill:var(--bg)"')+`<polygon points="512,222 524,215 536,222 536,236 524,243 512,236" fill="var(--purp-soft)" stroke="var(--purp)"/>`;
+  g+=T(430,268,"phosphorylation, glycosylation, clivage…","ts");
+  return g+pill(22,348,"Niveau 5 · post-traductionnel");};
+S[18]=()=>{let g=title("Les 5 niveaux de régulation");const lv=[["Chromatinien","méthylation ADN, acétylation / méthylation des histones"],["Transcriptionnel","promoteur, facteurs de transcription, cis / trans"],["Post-transcriptionnel","coiffe, polyA, épissage, stabilité, miARN"],["Traductionnel","eIF2-GTP, tige-boucle 5'UTR, choix de l'AUG"],["Post-traductionnel","phosphorylation, glycosylation, clivage"]];
+  lv.forEach(([a,b],i)=>{const y=58+i*60;g+=R(40,y,520,48,"var(--surface)","var(--amb)",10)+C(70,y+24,14,"var(--amb)","var(--amb)")+T(70,y+29,String(i+1),"tb","middle","var(--bg)")+T(96,y+21,a,"tb","start")+T(96,y+38,b,"ts","start");});
+  return g;};
+
+/* ---------- partie 2 : techniques ---------- */
+const gel=(x,y,w,h,lanes,lad,mn,mx)=>{let g=R(x,y,w,h,"var(--cell)","var(--ink)",6);const yb=b=>y+14+(Math.log(mx)-Math.log(b))/(Math.log(mx)-Math.log(mn))*(h-28);const lw=w/(lanes.length+1);
+  lad.forEach(b=>{g+=L(x+lw*.25,yb(b),x+lw*.75,yb(b),"var(--muted)",2)+T(x-6,yb(b)+4,b,"ts","end");});
+  lanes.forEach(([lab,bs],i)=>{const cx=x+lw*(i+1.5);bs.forEach(b=>g+=R(cx-lw*.3,yb(b)-3,lw*.6,6,"var(--ink)","var(--ink)",1));g+=T(cx,y+h+16,lab,"ts");});return g;};
+const BC={A:"var(--exon)",G:"var(--ink)",C:"var(--pat)",T:"var(--red)"};
+S[19]=()=>{let g=title("Partie 2 · Techniques d'analyse");const st=[["Prélèvement","sang ou biopsie"],["Extraction","ADN ou ARNm"],["Dosage","DO à 260 nm"],["Détection","PCR, FISH, Sanger"]];
+  st.forEach((s,i)=>{const x=20+i*145;g+=R(x,92,128,58,"var(--exon-soft)","var(--exon)",8)+T(x+64,117,s[0],"tb")+T(x+64,136,s[1],"ts");if(i<3)g+=A(x+130,121,x+143,121,"var(--muted)",1.4);});
+  g+=R(20,190,272,120,"var(--surface)","var(--purp)",10)+T(36,218,"Macrolésions (> 50 pb)","tb","start","var(--purp)")+T(36,244,"caryotype · FISH","t","start")+T(36,266,"puces / CGH array · NGS","t","start")+T(36,292,"souvent sur tout le génome","ts","start");
+  g+=R(308,190,272,120,"var(--surface)","var(--red)",10)+T(324,218,"Microvariants (≤ 50 pb)","tb","start","var(--red)")+T(324,244,"RFLP · PCR · ARMS · multiplex","t","start")+T(324,266,"PCRq · HRM · PCR digitale · Sanger","t","start")+T(324,292,"une mutation connue, ciblée","ts","start");
+  return g+T(300,350,"Point commun : presque tout repose sur l'hybridation","ts");};
+S[20]=()=>{let g=title("Extraire l'ADN")+R(50,70,70,240,"var(--cell)","var(--ink)",10);
+  g+=R(52,74,66,68,"var(--amb-soft)","none",0)+R(52,142,66,14,"var(--purp-soft)","var(--purp)",0)+R(52,156,66,82,"var(--surface)","none",0)+R(52,238,66,68,"var(--red-soft)","none",8);
+  g+=T(130,112,"plasma","ts","start")+T(130,154,"lymphocytes","tb","start","var(--purp)")+T(130,200,"Ficoll","ts","start")+T(130,276,"hématies","ts","start")+T(85,334,"après centrifugation","ts");
+  [["1. Lyse","SDS + protéinase K"],["2. Précipiter les membranes","AcK 3 M → au culot"],["3. Récupérer l'ADN","alcool + NaCl, ou colonne de silice"],["4. Conserver","−20 °C, ou papier Whatman"]].forEach((s,i)=>{const y=66+i*66;g+=R(250,y,330,48,"var(--surface)","var(--exon)",8)+T(266,y+21,s[0],"tb","start")+T(266,y+39,s[1],"ts","start");if(i<3)g+=A(415,y+50,415,y+64,"var(--muted)",1.3);});
+  return g+T(415,350,"ARN : −80 °C uniquement (OH en 2', fragile)","ts","middle","var(--red)");};
+S[21]=()=>{let g=title("ARNm et reverse transcription")+R(40,70,90,224,"var(--cell)","var(--ink)",8);
+  for(let i=0;i<6;i++){const y=96+i*34;g+=L(52,y,118,y,"var(--exon)",2)+T(85,y-5,"TTTTTT","tm").replace('class="tm"','class="tm" style="font-size:9px;fill:var(--exon)"');}
+  g+=T(85,316,"oligo-dT","tb")+T(85,334,"retient les polyA","ts");
+  const red="var(--red)",row=(n,y)=>T(204,y+5,n,"tb","middle","var(--exon)");
+  g+=row("1",92)+L(220,92,520,92,red,3)+T(526,96,"AAAA","tm","start","var(--amb)")+L(470,104,520,104,BL,4)+T(495,122,"amorce oligo-dT","ts");
+  g+=row("2",162)+L(220,162,520,162,red,3)+T(526,166,"AAAA","tm","start","var(--amb)")+A(520,174,234,174,BL,3)+T(375,194,"reverse transcriptase → ADNc","ts");
+  g+=row("3",232)+L(220,232,520,232,red,3,"5 5")+L(230,244,520,244,BL,3)+T(375,264,"une RNase dégrade l'ARN","ts");
+  g+=row("4",302)+L(230,302,520,302,BL,3)+A(230,314,516,314,"var(--exon)",3)+T(375,336,"ADN pol + amorces aléatoires → ADNc double brin","ts");
+  return g;};
+S[22]=()=>{let g=title("Doser, puis hybrider")+C(46,140,14,"var(--amb)","var(--amb)")+A(62,140,104,140,"var(--amb)",2)+T(83,128,"UV","ts");
+  g+=R(108,108,40,64,"var(--exon-soft)","var(--ink)",4)+A(152,140,184,140,"var(--amb)",2)+R(188,116,64,48,"var(--surface)","var(--ink)",6)+T(220,145,"DO","tb");
+  g+=T(150,204,"DO = ε · C · l","tm")+T(150,224,"lecture à 260 nm","ts");
+  g+=R(20,262,270,86,"var(--surface)","var(--line)",8)+T(34,286,"Sonde chaude : radioactive","tb","start")+T(34,302,"→ autoradiographie","ts","start")+T(34,324,"Sonde froide : fluorophore,","tb","start")+T(34,340,"biotine ou digoxigénine","ts","start");
+  g+=L(330,84,560,84)+L(330,98,560,98);for(let x=338;x<560;x+=14)g+=L(x,84,x,98,"var(--line)",1);
+  g+=A(445,108,445,140,"var(--red)",1.5)+T(432,128,"90–100 °C : dénaturer","ts","end","var(--red)");
+  g+=L(330,158,560,158)+L(330,196,560,196)+A(445,208,445,240,"var(--exon)",1.5)+T(432,228,"≥ 60 °C : hybrider","ts","end","var(--exon)");
+  g+=L(330,262,560,262)+L(400,276,480,276,"var(--exon)",4)+C(486,276,7,"var(--amb)","var(--amb)")+T(440,298,"sonde marquée collée","ts")+T(440,316,"complémentaire, antiparallèle","ts");
+  return g;};
+S[23]=()=>{let g=title("FISH : compter les signaux");const red="var(--red)",grn="var(--exon)";
+  const nuc=[[70,[[-14,-10],[14,12]],"normal","2 copies"],[185,[[0,0]],"1 signal","délétion"],[300,[[-16,-8],[14,-14],[2,16]],"3 signaux","trisomie"],[415,[[-20,-14],[-6,-20],[8,-12],[20,-2],[-18,6],[-4,4],[12,14],[-12,20],[4,22]],"nombreux","amplification"]];
+  nuc.forEach(([x,pts,a,b])=>{g+=C(x,180,50,"var(--pat)").replace('fill="var(--pat)"','fill="var(--pat)" fill-opacity=".12"');pts.forEach(([dx,dy])=>g+=C(x+dx,180+dy,6,red,red));g+=T(x,256,a,"tb")+T(x,274,b,"ts");});
+  g+=C(530,180,50,"var(--pat)").replace('fill="var(--pat)"','fill="var(--pat)" fill-opacity=".12"')+C(510,168,6,red,red)+C(548,194,6,grn,grn)+C(522,198,6,red,red)+C(532,198,6,grn,grn);
+  g+=T(530,256,"rouge + vert","tb")+T(530,274,"translocation","ts");
+  return g+T(300,322,"Sur chromosomes en métaphase (colchicine) ou sur noyau en interphase","ts")+T(300,342,"Lecture au microscope à fluorescence","ts");};
+S[24]=()=>{let g=title("Séquençage de Sanger")+L(40,78,300,78)+T(34,82,"3'","ts","end")+T(306,82,"5'","ts","start")+L(40,90,96,90,"var(--purp)",4)+A(96,90,112,90,"var(--purp)",2)+T(68,108,"amorce","ts");
+  const fr="AGCTTA".split("");fr.forEach((b,i)=>{const y=134+i*20,len=70+i*22;g+=L(40,y,40+len,y,"var(--muted)",4)+C(40+len,y,5,BC[b],BC[b])+T(54+len,y+5,b,"tm","start",BC[b]);});
+  g+=A(250,196,322,210,"var(--muted)",1.4)+T(286,186,"capillaire","ts");
+  g+=L(330,262,585,262,"var(--muted)",1);
+  fr.forEach((b,i)=>{const x=352+i*38,h=i===3?54:62+((i*7)%14);const pk=(xx,col,hh)=>`<path d="M${xx-14} 262 Q ${xx} ${262-hh*2} ${xx+14} 262" fill="none" stroke="${col}" stroke-width="2"/>`;
+    g+=pk(x,BC[b],h);if(i===3){g+=pk(x,BC.C,46);g+=T(x,262-h-10,"T/C","tm","middle","var(--amb)");}else g+=T(x,262-h-10,b,"tm","middle",BC[b]);});
+  g+=T(466,284,"pic à 2 couleurs = hétérozygote","ts","middle","var(--amb)");
+  return g+T(300,330,"ddNTP : pas de OH en 3' → la synthèse s'arrête au hasard","ts")+T(300,348,"petits fragments plus rapides · laser · couleur = dernière base","ts");};
+S[25]=()=>{let g=title("Séquençage haut débit (NGS)");const hd=[["1 Fragmenter",85],["2 Adaptateurs",230],["3 Fixer",375],["4 Lire",520]];
+  hd.forEach(([s,x])=>g+=T(x,78,s,"tb"));
+  g+=L(30,100,140,100)+[0,1,2].map(i=>L(36+i*14,122+i*20,90+i*16,122+i*20)).join("");
+  [0,1,2].forEach(i=>{const y=102+i*28;g+=L(196,y,264,y)+R(184,y-5,12,10,"var(--purp)","var(--purp)",2)+R(264,y-5,12,10,"var(--purp)","var(--purp)",2);});
+  g+=R(318,94,114,82,"var(--cell)","var(--ink)",6);for(let r=0;r<4;r++)for(let c=0;c<6;c++)g+=C(332+c*17,108+r*18,4,"var(--exon)","var(--exon)");
+  ["A","C","G","T"].forEach((b,i)=>g+=C(478+i*28,110,9,BC[b==="T"?"T":b],BC[b==="T"?"T":b])+T(478+i*28,136,b,"tm"));g+=T(520,162,"1 base, photo,","ts")+T(520,178,"on recommence","ts");
+  g+=T(300,212,"adaptateurs connus → une seule paire d'amorces pour tous les fragments","ts");
+  g+=L(40,330,560,330,"var(--ink)",3)+T(300,350,"génome de référence","ts");
+  [[50,150,248],[110,230,262],[60,200,276],[180,330,290],[240,350,248],[420,540,262],[440,555,276],[410,500,290],[230,320,304]].forEach(([a,b,y])=>g+=L(a,y,b,y,"var(--pat)",5));
+  g+=L(360,240,404,240,"var(--red)",1)+T(382,234,"gap","ts","middle","var(--red)")+T(46,240,"reads → contigs","ts","start");
+  return g;};
+S[26]=()=>{let g=title("Puce à ADN · CGH array");const amp=[[2,1],[3,1],[6,3]],del=[[1,3],[5,0],[0,2]];
+  for(let r=0;r<5;r++)for(let c=0;c<8;c++){const isA=amp.some(([a,b])=>a===c&&b===r),isD=del.some(([a,b])=>a===c&&b===r);const f=isA?"var(--red)":isD?"var(--exon)":"var(--amb)";g+=C(66+c*44,92+r*42,14,f,f).replace('fill="'+f+'"','fill="'+f+'" fill-opacity="'+(isA||isD?1:.55)+'"');}
+  const lg=[["var(--amb)","autant des deux","normal"],["var(--red)","le tumoral domine","gain / amplification"],["var(--exon)","le sain domine","perte / délétion"]];
+  lg.forEach(([c,a,b],i)=>{const y=110+i*60;g+=C(440,y,10,c,c)+T(458,y-2,a,"tb","start")+T(458,y+15,b,"ts","start");});
+  return g+T(300,322,"ADN sain marqué en vert + ADN tumoral marqué en rouge, sur la même puce","ts")+T(300,342,"Puce simple : puits vide = délétion · puits saturé = amplification","ts");};
+S[27]=()=>{let g=title("PCR : le cycle");const ty=t=>200-(t-50)*2.6;
+  g+=L(60,70,60,200,"var(--muted)",1)+L(60,200,575,200,"var(--muted)",1)+T(54,ty(95)+4,"95","ts","end")+T(54,ty(72)+4,"72","ts","end")+T(54,ty(60)+4,"60","ts","end")+T(30,64,"°C","ts","start");
+  let d="M60 "+ty(95);[0,1,2].forEach(k=>{const x0=60+k*170;d+=` L${x0+56} ${ty(95)} L${x0+56} ${ty(60)} L${x0+112} ${ty(60)} L${x0+112} ${ty(72)} L${x0+170} ${ty(72)}`+(k<2?` L${x0+170} ${ty(95)}`:"");});
+  g+=`<path d="${d}" fill="none" stroke="var(--red)" stroke-width="2.5"/>`;
+  g+=T(88,ty(95)-8,"1 dénaturer","ts","middle","var(--red)")+T(144,ty(60)+18,"2 hybrider","ts","middle","var(--red)")+T(200,ty(72)-8,"3 allonger","ts","middle","var(--red)");
+  g+=T(318,224,"× 25 à 40 cycles · hybridation à Tm − 5 °C · ADN polymérase thermostable","ts");
+  g+=L(80,266,520,266)+L(80,298,520,298)+T(74,270,"5'","ts","end")+T(526,270,"3'","ts","start")+T(74,302,"3'","ts","end")+T(526,302,"5'","ts","start");
+  g+=L(100,286,150,286,"var(--purp)",4)+A(150,286,180,286,"var(--purp)",2)+L(500,278,450,278,"var(--amb)",4)+A(450,278,420,278,"var(--amb)",2);
+  g+=T(100,322,"amorce sens : séquence du brin codant, côté 5'","ts","start","var(--purp)")+T(500,344,"amorce reverse : complémentaire, côté 3'","ts","end","var(--amb)");
+  return g;};
+S[28]=()=>{let g=title("RFLP : un site de restriction en plus ou en moins");
+  g+=R(60,72,220,16,"var(--exon-soft)","var(--exon)",3)+T(292,85,"sauvage : 438 pb, pas coupé","ts","start");
+  g+=R(60,104,63,16,"var(--red-soft)","var(--red)",3)+R(127,104,153,16,"var(--red-soft)","var(--red)",3)+L(125,98,125,126,"var(--red)",2)+T(292,117,"muté : site créé → 130 + 318","ts","start");
+  g+=gel(110,150,360,166,[["P1",[438]],["P2",[438,318,130]],["P3",[318,130]]],[500,300,100],90,600);
+  g+=T(245,352,"homo sauv.","tb")+T(335,352,"hétéro","tb")+T(425,352,"homo muté","tb");
+  g+=T(500,200,"PCR","ts","start")+T(500,216,"→ digestion","ts","start")+T(500,232,"→ gel","ts","start");
+  return g;};
+S[29]=()=>{let g=title("ARMS et PCR multiplex");
+  g+=gel(60,74,230,200,[["sauv.",[300]],["hétéro",[300,200]],["muté",[200]]],[400,300,200,100],80,500);
+  g+=T(175,316,"1 PCR, 3 amorces","tb")+T(175,334,"longue = sauvage · courte = muté","ts");
+  g+=gel(400,74,170,200,[["panel",[150,300,550,700,900]],["Mr Z",[550]]],[900,550,150],120,1100);
+  g+=T(485,316,"1 couple par virus","tb")+T(485,334,"550 pb = rhinovirus","ts");
+  return g;};
+S[30]=()=>{let g=title("PCR quantitative : le Ct");const X0=60,Y0=260,cx=c=>X0+c*8.5,cy=(c,ct)=>Y0-170/(1+Math.exp(-(c-ct)/1.6));
+  g+=L(X0,70,X0,Y0,"var(--muted)",1)+L(X0,Y0,X0+340,Y0,"var(--muted)",1)+T(X0+4,64,"fluorescence","ts","start")+T(X0+340,282,"cycles →","ts","end");
+  const th=Y0-17;g+=L(X0,th,X0+340,th,"var(--red)",1.2,"5 4")+T(X0+344,th+4,"seuil","ts","start","var(--red)");
+  [[14,"var(--exon)","patient"],[21,"var(--pat)","contrôle"],[29,"var(--mat)","peu d'ADN"]].forEach(([ct,col,lab])=>{let d="";for(let c=0;c<=40;c+=0.5)d+=(c?" L":"M")+cx(c).toFixed(1)+" "+cy(c,ct).toFixed(1);g+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2.4"/>`;const cc=ct-3.5;g+=L(cx(cc),th,cx(cc),Y0,col,1,"2 3")+T(cx(cc),Y0+14,"Ct","ts","middle",col)+T(cx(ct)+10,cy(ct,ct)+4,lab,"ts","start",col);});
+  g+=T(400,74,"plateau","ts","end");
+  g+=T(430,118,"SYBR Green","tb","start")+T(430,134,"brille lié à l'ADN","ts","start");
+  g+=T(430,170,"Sonde TaqMan","tb","start")+C(440,190,6,"var(--exon)","var(--exon)")+C(456,190,6,"var(--muted)","var(--muted)")+T(468,194,"R + Q : éteint","ts","start");
+  g+=C(440,214,6,"var(--exon)","var(--exon)")+T(468,218,"coupée : R brille","ts","start");
+  return g+T(300,320,"Plus d'ADN au départ → seuil franchi plus tôt → Ct plus bas","tb")+T(300,342,"absolue : gamme étalon · relative : comparée à un contrôle","ts");};
+S[31]=()=>{let g=title("HRM et PCR digitale");const X0=40,Y0=230,tx=t=>X0+(t-64)*15;
+  g+=L(X0,76,X0,Y0,"var(--muted)",1)+L(X0,Y0,X0+240,Y0,"var(--muted)",1)+T(X0+240,250,"température →","ts","end")+T(X0+4,70,"double brin","ts","start");
+  const mc=(tm,t)=>Y0-140/(1+Math.exp((t-tm)/0.7));
+  [[71,"var(--exon)","sauvage"],[73,"var(--mat)","muté"],[null,"var(--purp)","hétéro"]].forEach(([tm,col,lab],k)=>{let d="";for(let t=64;t<=80;t+=0.25){const y=tm?mc(tm,t):(mc(71,t)+mc(73,t))/2;d+=(t>64?" L":"M")+tx(t).toFixed(1)+" "+y.toFixed(1);}g+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2.2"/>`+C(60+k*80,276,6,col,col)+T(72+k*80,280,lab,"ts","start");});
+  g+=T(150,312,"Une mutation décale légèrement le Tm","ts")+T(150,330,"(ex. drépanocytose)","ts");
+  let pos=0;for(let r=0;r<7;r++)for(let c=0;c<10;c++){const on=((r*7+c*3)%11)<3;pos+=on;g+=on?C(330+c*24,86+r*24,8,"var(--exon)","var(--exon)"):C(330+c*24,86+r*24,8,"none","var(--muted)");}
+  g+=T(438,268,`${pos} positives sur 70 partitions`,"tb")+T(438,288,"0 ou 1 copie par partition","ts")+T(438,312,"loi de Poisson → quantité absolue","ts")+T(438,330,"détecte les allèles rares","ts");
+  return g;};
+S[32]=()=>{let g=title("Quelle technique choisir ?");
+  g+=R(20,56,275,250,"var(--surface)","var(--exon)",10)+T(36,82,"Avec a priori","tb","start","var(--exon)")+T(36,100,"je sais où chercher","ts","start");
+  [["FISH ciblée","région, gène, microdélétion"],["PCR, PCRq","délétion, quantité"],["RFLP, ARMS, HRM","mutation ponctuelle connue"],["Sanger","lire une région connue"],["PCR digitale","allèle rare, ADN circulant"]].forEach(([a,b],i)=>{const y=130+i*34;g+=T(36,y,a,"tb","start")+T(36,y+15,b,"ts","start");});
+  g+=R(305,56,275,250,"var(--surface)","var(--purp)",10)+T(321,82,"Sans a priori","tb","start","var(--purp)")+T(321,100,"je cherche partout","ts","start");
+  [["Caryotype","nombre, grosse structure (> 5 Mb)"],["Peinture chromosomique","FISH sur tous les chromosomes"],["Puce / CGH array","gains et pertes sur tout le génome"],["NGS","tout le génome ou les exons"],["RNA-seq","tous les transcrits (après RT)"]].forEach(([a,b],i)=>{const y=130+i*34;g+=T(321,y,a,"tb","start")+T(321,y+15,b,"ts","start");});
+  return g+pill(20,330,"Départ ARN → toujours une RT d'abord","var(--red)","var(--red-soft)");};
+
+/* ---------- textes ---------- */
+const STEPS=[
+ {k:"Introduction",cap:"Le trajet complet",h:"Du gamète à la protéine",b:`<p>Un seul fil conducteur pour relier tes cours : un gamète se forme par méiose, la fécondation crée le zygote, les mitoses fabriquent le corps, puis dans chaque cellule un gène est transcrit et traduit.</p><p>Fais défiler doucement : le schéma se redessine à chaque étape. La barre en bas te permet de sauter directement à une étape. L'onglet « Techniques d'analyse », en haut, schématise toutes les techniques.</p><div class="key"><b>Convention.</b> I = chromosome à 1 chromatide · X = chromosome à 2 chromatides (après la phase S). Bleu = du père, rose = de la mère.</div>`},
+ {k:"Méiose · 1",cap:"Cellule germinale",h:"Une cellule germinale 2n après la phase S",b:`<p>Exemple avec 2 paires : n = 2, donc 2n = 4 (chez l'humain n = 23, 2n = 46).</p><ul><li>Dans chaque paire, un chromosome vient du père, l'autre de la mère : ce sont des <b>homologues</b> (mêmes gènes, allèles parfois différents).</li><li>Après la phase S, chaque chromosome a <b>2 chromatides sœurs identiques</b> : notation <b>2n 2C</b>.</li></ul>`},
+ {k:"Méiose · 2",cap:"Méiose I",h:"Méiose I : réductionnelle",b:`<ul><li>Les <b>homologues</b> s'apparient, puis se séparent : chaque cellule reçoit un seul chromosome de chaque paire → <b>n</b>.</li><li>Les X restent des X (les chromatides ne se séparent pas encore).</li><li><b>Prophase I</b> : crossing-over entre homologues = brassage <i>intrachromosomique</i>.</li><li>Répartition des paires au hasard = brassage <i>interchromosomique</i>.</li></ul><div class="trap"><b>Piège.</b> Non-disjonction en méiose I → un gamète n+1 et un n−1.</div>`},
+ {k:"Méiose · 3",cap:"Méiose II",h:"Méiose II : comme une mitose",b:`<ul><li>Les <b>chromatides sœurs</b> se séparent : les X deviennent des I.</li><li>Résultat : <b>4 gamètes n 1C</b>, génétiquement différents.</li></ul><div class="trap"><b>Piège QCM.</b> La méiose n'est pas « deux mitoses » : la méiose I sépare les homologues, ce que la mitose ne fait jamais.</div>`},
+ {k:"Fécondation",cap:"Fécondation",h:"n + n → 2n",b:`<ul><li>Le spermatozoïde (n) et l'ovocyte (n) fusionnent : le <b>zygote</b> est 2n.</li><li>Le spermatozoïde n'apporte que son noyau : les <b>mitochondries</b> du zygote viennent toutes de l'ovocyte (hérédité maternelle).</li><li>Le zygote se divise ensuite par mitoses pour donner toutes les cellules somatiques.</li></ul>`},
+ {k:"Mitose · 1",cap:"Mitose",h:"Réplication, puis métaphase",b:`<ul><li><b>G1</b> : 2n 1C, chaque chromosome est un I.</li><li><b>Phase S</b> : réplication, chaque I devient un X (2n 2C). Les chromatides sœurs sont identiques : impossible d'avoir A et a sur un même X.</li><li><b>Prophase</b> : condensation ; les chromosomes deviennent visibles <b>au microscope</b>.</li><li><b>Métaphase</b> : les chromosomes s'alignent un par un sur la plaque équatoriale (pas par paires).</li></ul>`},
+ {k:"Mitose · 2",cap:"Mitose",h:"Anaphase, télophase, cytodiérèse",b:`<ul><li><b>Anaphase</b> : chaque X se coupe au centromère, une chromatide part à chaque pôle.</li><li>Chaque pôle reçoit donc <b>une copie de chaque chromosome</b>.</li><li><b>Télophase + cytodiérèse</b> : 2 cellules filles <b>2n 1C</b>, identiques à la cellule mère.</li></ul><div class="key"><b>Vérification rapide.</b> Compte les chromosomes d'une cellule fille : il en faut autant que dans la cellule mère.</div>`},
+ {k:"Noyau · 1",cap:"Chromatine",h:"La chromatine décide si le gène est lisible",b:`<span class="lvl">Niveau 1 · chromatinien</span><ul><li><b>Euchromatine</b> : décondensée, accessible aux enzymes → transcrite. <b>Acétylation</b> des histones = ouvre.</li><li><b>Hétérochromatine</b> : condensée → silence. <b>Méthylation de l'ADN</b> (cytosines des îlots CpG) et <b>méthylation des histones</b> = ferme.</li><li>Constitutive (jamais exprimée, autour du centromère) ou facultative (parfois exprimée, ex. X inactivé).</li></ul><p>Exemples : X inactivé par l'ARN <b>XIST</b> ; empreinte parentale (Prader-Willi / Angelman).</p>`},
+ {k:"Noyau · 2",cap:"Structure du gène",h:"Le gène, de l'enhancer au terminateur",b:`<ul><li>Le <b>promoteur</b> (CAAT + TATA) est en amont du site <b>+1</b>, là où commence la transcription.</li><li>La partie transcrite va du +1 au <b>terminateur</b> : elle contient exons et introns.</li><li>Les <b>enhancers / silencers</b> (éléments cis) peuvent être n'importe où : avant, dans le gène, après.</li></ul><div class="trap"><b>Piège.</b> Un gène n'est pas forcément « codant pour une protéine » : tout ce qui est transcrit en ARN fonctionnel est un gène (ARNt, ARNr…).</div>`},
+ {k:"Noyau · 3",cap:"Promoteur",h:"CAAT, TATA : le promoteur",b:`<span class="lvl">Niveau 2 · transcriptionnel</span><ul><li><b>CAAT box</b> (vers −80) : séquence reconnue par des facteurs ; c'est là que se fixe l'ARN polymérase selon le cours.</li><li><b>TATA box</b> (vers −30) : riche en <b>A–T</b>, qui ne font que <b>2 liaisons H</b> (contre 3 pour G–C) → la double hélice s'y ouvre facilement.</li><li>Les <b>facteurs généraux TFII</b> (dont TFIID sur la TATA) se fixent et <b>recrutent l'ARN pol II</b>.</li><li>La polymérase est grosse : son site catalytique est <b>~35 nt plus loin</b>, au +1. Pas de « codon d'initiation de la transcription ».</li></ul><div class="key"><b>À retenir.</b> L'ARN polymérase n'a <b>pas besoin d'amorce</b>, contrairement à l'ADN polymérase. Elle a besoin d'un <b>promoteur</b> : pas de promoteur, pas de transcription. Le promoteur est nécessaire mais pas suffisant : sans facteurs activateurs, la transcription reste très faible.</div>`},
+ {k:"Noyau · 4",cap:"Élongation",h:"La polymérase lit la matrice",b:`<ul><li>L'ARN pol II ouvre une <b>bulle</b> et lit le <b>brin matrice 3'→5'</b>.</li><li>Elle ajoute des ribonucléotides (NTP) complémentaires : A→U, T→A, C→G, G→C. L'ARN grandit de <b>5' vers 3'</b>.</li><li>L'ARN a donc la même séquence que le <b>brin codant</b>, avec U à la place de T.</li><li>Il faut : ribonucléotides + ADN matrice + promoteur.</li></ul><div class="trap"><b>Piège.</b> Le brin « codant » n'est pas celui que l'enzyme lit.</div>`},
+ {k:"Noyau · 5",cap:"Terminaison",h:"Fin de la transcription",b:`<ul><li>Le <b>terminateur</b> est riche en G–C : l'ARN forme une <b>épingle à cheveux</b> qui décroche la polymérase.</li><li>Un signal <span class="mono">AAUAAA</span> marque aussi la fin et le site de polyadénylation.</li><li>3 ARN polymérases chez les eucaryotes : <b>I</b> = ARNr, <b>II</b> = ARNm (et miARN), <b>III</b> = ARNt.</li></ul>`},
+ {k:"Noyau · 6",cap:"Maturation",h:"Coiffe, polyA, épissage",b:`<span class="lvl">Niveau 3 · post-transcriptionnel</span><ol><li><b>Coiffe 5'</b> (7-méthylguanosine), ajoutée très tôt : protège des RNases, aide la sortie du noyau, et est <b>reconnue par la 40S</b>. Sans coiffe, pas de traduction.</li><li><b>Queue polyA 3'</b> : la <b>poly(A) polymérase</b> (pas l'ARN pol II) ajoute 50 à 200 A. Plus elle est longue, plus la demi-vie est longue.</li><li><b>Épissage</b> : les snRNP reconnaissent les sites donneur (<span class="mono">GU</span>) et accepteur (<span class="mono">AG</span>), coupent l'intron et religuent les exons.</li></ol><div class="trap"><b>Piège.</b> Mutation sur un site d'épissage = grave ; au milieu d'un intron = souvent sans effet. Un gène sans intron (histones) n'est pas épissé.</div>`},
+ {k:"Noyau · 7",cap:"Épissage alternatif",h:"Un gène, plusieurs protéines",b:`<ul><li>Selon le tissu ou l'âge, certains exons sont gardés ou sautés.</li><li>~20 000 gènes codants donnent ~100 000 protéines.</li><li>Autre façon d'obtenir plusieurs transcrits : <b>plusieurs promoteurs</b> (ex. dystrophine).</li></ul><div class="trap"><b>Piège QCM.</b> L'ordre des exons n'est jamais modifié : jamais E3 suivi de E2.</div>`},
+ {k:"Cytoplasme · 1",cap:"Stabilité",h:"Sortie du noyau et durée de vie",b:`<span class="lvl">Niveau 3 · post-transcriptionnel</span><ul><li>L'ARNm mature sort par les <b>pores nucléaires</b>.</li><li>Des protéines sur la <b>3'UTR</b> règlent sa durée de vie : <b>HuR</b> stabilise l'ARNm de RhoB après UV (TD1).</li><li><b>Interférence à ARN</b> : <b>Dicer</b> coupe un ARN double brin en fragments de 21–23 nt, chargés dans le complexe <b>RISC</b>. Appariement parfait → dégradation ; imparfait (3'UTR) → blocage de la traduction.</li></ul>`},
+ {k:"Cytoplasme · 2",cap:"Initiation",h:"La 40S cherche l'AUG",b:`<span class="lvl">Niveau 4 · traductionnel</span><ul><li>La petite sous-unité <b>40S</b> + l'ARNt initiateur (Met) + les <b>eIF</b> reconnaissent la <b>coiffe</b>, pas l'AUG.</li><li>Elle <b>scanne</b> de 5' vers 3' jusqu'au premier AUG en bon contexte (<b>Kozak</b>).</li><li>La <b>60S</b> arrive → ribosome <b>80S</b>.</li><li>Régulation : <b>eIF2</b> actif lié au GTP ; une tige-boucle en 5'UTR bloque le scanning (ferritine / aconitase) ; le picornavirus détruit les eIF.</li></ul>`},
+ {k:"Cytoplasme · 3",cap:"Élongation",h:"Codon par codon",b:`<ul><li>Chaque codon est reconnu par l'<b>anticodon</b> complémentaire et antiparallèle d'un ARNt chargé.</li><li>La <b>peptidyl-transférase</b> lie le COOH de l'acide aminé du <b>site P</b> au NH₂ de celui du <b>site A</b> (liaison peptidique covalente).</li><li>La <b>translocase</b> fait avancer le ribosome d'un codon.</li><li>Code génétique : 64 codons, 20 acides aminés → <b>dégénéré</b> ; universel à quelques exceptions près.</li></ul>`},
+ {k:"Cytoplasme · 4",cap:"Terminaison",h:"STOP, puis protéine mature",b:`<span class="lvl">Niveau 5 · post-traductionnel</span><ul><li>Codons STOP : <span class="mono">UAA, UAG, UGA</span>. Aucun ARNt ne les lit : des <b>facteurs de relargage</b> libèrent la protéine.</li><li>La protéine est ensuite modifiée : phosphorylation, glycosylation, palmitoylation, isoprénylation, clivage (ex. ectodysplasine A libérée de la membrane).</li></ul><div class="trap"><b>Piège.</b> Un exon n'est pas forcément codant : les UTR sont dans des exons mais ne sont pas traduites.</div>`},
+ {k:"Synthèse",cap:"Récapitulatif",h:"La question de cours à 6 points",b:`<p>« Citer et définir les niveaux de régulation de l'expression génique chez les eucaryotes. »</p><p>Pour chaque niveau : <b>nom</b>, <b>définition</b>, <b>mécanisme</b>, <b>un exemple</b>. Commence par une phrase d'introduction : un gène doit s'exprimer au bon moment, au bon endroit, en bonne quantité.</p><div class="key"><b>Réflexe TD.</b> ARN modifié sans changement de transcription → stabilité (niveau 3). ARN normal mais protéine modifiée → traduction ou post-traduction (niveaux 4–5).</div>`},
+ {k:"Partie 2",cap:"Techniques d'analyse",h:"Partie 2 : les techniques d'analyse",b:`<p>Toutes les techniques suivent le même chemin : prélever, extraire, doser, puis détecter. Ce qui change, c'est la question posée.</p><ul><li><b>Grosse anomalie</b> (chromosome en plus ou en moins, translocation) → techniques qui regardent de loin : caryotype, FISH, puces, NGS.</li><li><b>Petite mutation connue</b> → techniques ciblées, presque toutes basées sur la PCR.</li></ul><div class="key"><b>Fil rouge.</b> Presque tout repose sur l'hybridation : un petit brin complémentaire va se coller tout seul à sa cible.</div>`},
+ {k:"Analyse · 1",cap:"Extraction de l'ADN",h:"Isoler les cellules, sortir l'ADN",b:`<ul><li><b>Constitutionnel</b> (maladie héréditaire) : prise de sang. Le <b>Ficoll</b> sépare par densité, et on garde la bande de <b>lymphocytes</b>, les seules cellules nucléées en nombre (les hématies n'ont pas de noyau).</li><li><b>Somatique</b> (tumeur) : biopsie broyée.</li><li>On casse les membranes (SDS + protéinase K), on fait tomber les débris (AcK) et on garde l'ADN du surnageant.</li></ul><div class="trap"><b>Logique de conservation.</b> L'ADN a un H en 2', il est stable : −20 °C ou même sur papier. L'ARN a un OH en 2' qui l'attaque lui-même : −80 °C obligatoire.</div>`},
+ {k:"Analyse · 2",cap:"ARNm et RT",h:"Pêcher les ARNm, les recopier en ADN",b:`<ul><li>Les ARNm sont <b>minoritaires</b> (ARNr &gt; ARNt &gt; ARNm). Pour les isoler, on utilise ce qu'ils sont seuls à avoir : la <b>queue polyA</b>, qui s'accroche aux <b>oligo-dT</b> de la colonne.</li><li>L'ARN est trop fragile pour être analysé tel quel : on le recopie en <b>ADNc</b> par <b>reverse transcription</b>.</li><li>La RT est une polymérase d'ADN, donc elle a besoin d'une <b>amorce</b> : l'oligo-dT, collé sur la polyA.</li></ul><div class="key"><b>Réflexe.</b> Dès que l'énoncé part de l'ARN (RT-PCR, RNA-seq, virus à ARN), il faut une étape de RT au début.</div>`},
+ {k:"Analyse · 3",cap:"Dosage et hybridation",h:"Combien, puis où ?",b:`<ul><li><b>Dosage</b> : les bases absorbent les UV à <b>260 nm</b> ; plus il y a d'ADN, plus la lumière est absorbée (Beer-Lambert).</li><li><b>Hybridation</b> : on sépare les brins par la chaleur, puis on laisse un petit brin complémentaire se coller à sa cible.</li><li>La <b>température</b> règle la sévérité du tri (stringence) : à ≥ 60 °C, seuls les appariements parfaits tiennent.</li><li><b>Sonde</b> = drapeau marqué qu'on regarde. <b>Amorce</b> = point de départ qu'une polymérase allonge.</li></ul>`},
+ {k:"Analyse · 4",cap:"FISH",h:"FISH : compter des points lumineux",b:`<ul><li>On pose une <b>sonde fluorescente</b> sur la région qu'on soupçonne, directement sur les chromosomes ou dans le noyau, et on <b>compte les points</b> au microscope.</li><li>Une cellule normale a <b>2 copies</b>, donc 2 points. Un point en moins, en plus ou beaucoup plus se voit tout de suite.</li><li>Avec deux couleurs (une sonde par chromosome), une <b>fusion rouge + vert</b> signe une translocation (BCR-ABL).</li></ul><div class="trap"><b>Piège.</b> 1 seul point ne dit pas si c'est le chromosome entier ou une délétion : on confirme par PCR. Et 3 points = trisomie, pas triploïdie.</div>`},
+ {k:"Analyse · 5",cap:"Sanger",h:"Sanger : des arrêts au hasard",b:`<ul><li>On copie la région avec une amorce, en ajoutant un peu de <b>ddNTP</b> colorés. Un ddNTP n'a <b>pas de OH en 3'</b> : la polymérase ne peut plus rien accrocher derrière, la copie s'arrête.</li><li>Comme l'arrêt tombe au hasard, on obtient des fragments de <b>toutes les longueurs</b>, chacun coloré par sa dernière base.</li><li>On les trie par taille (électrophorèse capillaire) : en lisant les couleurs du plus court au plus long, on lit la séquence.</li></ul><div class="trap"><b>Piège QCM.</b> Deux couleurs au même endroit = les deux allèles diffèrent = <b>hétérozygote</b>.</div>`},
+ {k:"Analyse · 6",cap:"NGS",h:"NGS : des millions de Sanger en parallèle",b:`<ul><li>On coupe tout l'ADN en petits morceaux, et on colle aux bouts des <b>adaptateurs</b> de séquence connue : une seule paire d'amorces suffit alors pour tous les fragments.</li><li>Les fragments sont fixés sur une plaque. À chaque cycle, une base fluorescente est ajoutée, on <b>prend une photo</b>, on enlève la fluorescence, et on recommence.</li><li>L'ordinateur recolle les lectures (<b>reads</b>) en <b>contigs</b> sur le génome de référence ; une zone jamais lue est un <b>gap</b>.</li></ul><p>Génome entier en ~3 jours, moins cher qu'un gène isolé. Mais on ne rend que le gène demandé (éthique).</p>`},
+ {k:"Analyse · 7",cap:"Puces et CGH",h:"Puces : qui a gagné, qui a perdu ?",b:`<ul><li>Une puce porte des milliers de petits brins connus, chacun d'une région du génome. Les fragments du patient viennent s'y hybrider.</li><li><b>CGH array</b> : on met l'ADN <b>sain en vert</b> et l'ADN <b>tumoral en rouge</b> sur la même puce. Chaque puits « vote » : autant des deux donne du jaune, sinon une couleur domine.</li><li>Rouge qui domine = la tumeur a <b>gagné</b> cette région (amplification) ; vert qui domine = elle l'a <b>perdue</b> (délétion).</li></ul><p>Utile pour mesurer l'instabilité du génome tumoral, donc l'agressivité du cancer.</p>`},
+ {k:"Analyse · 8",cap:"PCR",h:"PCR : la photocopieuse",b:`<ul><li><b>Chauffer</b> (95 °C) pour ouvrir l'ADN, <b>refroidir</b> (Tm − 5 °C) pour que les amorces se collent, puis <b>72 °C</b> pour que la polymérase allonge. Chaque cycle double la quantité.</li><li>Il faut une polymérase <b>thermostable</b> qui survit à 95 °C (Taq : pas de correction d'erreur ; Phusion : fidèle).</li><li>Les deux amorces se collent sur les <b>deux brins opposés</b> et se font face : seule la région entre elles est copiée.</li></ul><div class="trap"><b>Pièges.</b> Le produit de PCR contient les amorces. L'amorce reverse s'écrit en complémentaire inversé, de 5' vers 3'. Trop froid : moins spécifique ; trop chaud : moins efficace.</div>`},
+ {k:"Analyse · 9",cap:"RFLP",h:"RFLP : les ciseaux révèlent la mutation",b:`<ul><li>Une enzyme de restriction coupe seulement une séquence précise. Si la mutation <b>crée ou détruit</b> ce site, l'allèle muté n'est plus coupé de la même façon.</li><li>On amplifie la région (PCR), on coupe (enzyme), on fait migrer (gel).</li><li>Lecture : chaque allèle donne son motif de bandes. Les deux motifs ensemble = <b>hétérozygote</b>.</li></ul><p>Exemple mucoviscidose : 438 seul = homo sauvage ; 130 + 318 + 438 = hétérozygote ; 130 + 318 = homo muté.</p>`},
+ {k:"Analyse · 10",cap:"ARMS et multiplex",h:"Plusieurs réponses en une seule PCR",b:`<ul><li><b>ARMS</b> : une amorce commune + une amorce qui ne colle qu'à l'allèle sauvage + une qui ne colle qu'au muté. Elles donnent des produits de tailles différentes : sur le gel, la taille dit quel allèle est présent.</li><li><b>PCR multiplex</b> : plusieurs couples d'amorces, chacun pour une cible, chacun avec sa taille. Une seule PCR pour tester plusieurs virus (Mr Z : 550 pb = rhinovirus) ou plusieurs exons (Duchenne au TD3).</li></ul>`},
+ {k:"Analyse · 11",cap:"PCR quantitative",h:"PCRq : qui franchit la ligne en premier",b:`<ul><li>On mesure la fluorescence à chaque cycle. Le <b>Ct</b> est le cycle où la courbe franchit le seuil.</li><li>Logique : avec beaucoup d'ADN au départ, il faut <b>moins de cycles</b> pour atteindre le seuil. <b>Ct bas = beaucoup d'ADN.</b></li><li><b>SYBR Green</b> brille dès qu'il est coincé dans de l'ADN double brin. <b>TaqMan</b> : une sonde avec un rapporteur et un quencher collés ; la polymérase la coupe en passant, le rapporteur s'éloigne et brille.</li><li><b>Relative</b> : plus ou moins que le contrôle. <b>Absolue</b> : combien exactement, grâce à une gamme étalon.</li></ul>`},
+ {k:"Analyse · 12",cap:"HRM et PCR digitale",h:"Fondre l'ADN, ou le compter molécule par molécule",b:`<ul><li><b>HRM</b> : on chauffe le produit de PCR et on regarde à quelle température il fond. Une seule base différente suffit à <b>décaler le Tm</b> ; l'hétérozygote donne une courbe intermédiaire (drépanocytose).</li><li><b>PCR digitale</b> : on dilue l'échantillon en milliers de gouttes contenant 0 ou 1 molécule, puis une PCR par goutte. On <b>compte</b> les gouttes positives : quantité absolue (loi de Poisson).</li><li>Elle repère un allèle muté <b>rare</b> au milieu de beaucoup de sauvage : ADN tumoral circulant, charge virale. Le Sanger est bien moins sensible.</li></ul>`},
+ {k:"Analyse · 13",cap:"Choisir la technique",h:"La question qui tombe à tous les coups",b:`<p>« Quelle technique proposez-vous ? » Pose-toi deux questions :</p><ol><li><b>Est-ce que je sais où chercher ?</b> Oui → technique ciblée (FISH, PCR, RFLP…). Non → technique globale (caryotype, puce, NGS).</li><li><b>Grosse anomalie ou petite mutation ?</b> Grosse → FISH, caryotype, puce. Petite → PCR et dérivés, Sanger.</li></ol><div class="key"><b>Et toujours.</b> Le matériel de départ : ADN (sang, biopsie) ou ARN, avec une RT d'abord si c'est de l'ARN.</div>`}
+];
+
+/* ---------- montage ---------- */
+const PARTS=[{id:"parcours",name:"Du gamète à la protéine",a:0,b:18},{id:"techniques",name:"Techniques d'analyse",a:19,b:STEPS.length-1}];
+const stepsEl=document.getElementById("steps"), svg=document.getElementById("svg"), rng=document.getElementById("rng"), lab=document.getElementById("lab"), cap=document.getElementById("cap");
+const defs=`<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="context-stroke"/></marker></defs>`;
+let part=0, secs=[], cur=-1, jumping=false, ticking=false;
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function tabsHTML(){return PARTS.map((p,k)=>`<button class="ptab" role="tab" aria-selected="${k===part}" data-p="${k}"><span>${k+1}</span>${p.name}</button>`).join("");}
+function renderTabs(){document.querySelectorAll(".ptabs").forEach(el=>{el.innerHTML=tabsHTML();el.querySelectorAll(".ptab").forEach(b=>b.onclick=()=>setPart(+b.dataset.p));});}
+function setPart(k){
+  part=k; const {a,b}=PARTS[k];
+  stepsEl.innerHTML=STEPS.slice(a,b+1).map((s,j)=>{const i=a+j;return `<section class="step" data-i="${i}"><div class="k">${String(j+1).padStart(2,"0")} · ${s.k}</div>${j===0?`<h1>${s.h}</h1>`:`<h2>${s.h}</h2>`}${s.b}</section>`;}).join("");
+  secs=[...stepsEl.querySelectorAll(".step")]; secs[0].classList.add("intro");
+  rng.min=a; rng.max=b; cur=-1; renderTabs();
+  try{history.replaceState(null,"","#"+PARTS[k].id);}catch(e){}
+  scrollTo({top:0}); show(a);
+}
+function show(i){
+  if(i===cur)return; cur=i; const {a,b}=PARTS[part];
+  svg.innerHTML=defs+`<g class="sc">${S[i]()}</g>`;
+  secs.forEach(s=>s.classList.toggle("on",+s.dataset.i===i));
+  rng.value=i; const n=String(i-a+1).padStart(2,"0");
+  cap.textContent=`${n} / ${b-a+1} · ${STEPS[i].cap}`;
+  lab.innerHTML=`<span>${n}</span>${STEPS[i].cap}`;
+}
+function onScroll(){
+  if(jumping||!secs.length)return;
+  const line=innerHeight*(innerWidth<=860?0.66:0.5);
+  let best=+secs[0].dataset.i;
+  secs.forEach(s=>{if(s.getBoundingClientRect().top<line)best=+s.dataset.i;});
+  show(best);
+}
+addEventListener("scroll",()=>{if(!ticking){ticking=true;requestAnimationFrame(()=>{onScroll();ticking=false;});}},{passive:true});
+addEventListener("resize",onScroll);
+function go(i){
+  const {a,b}=PARTS[part]; i=Math.max(a,Math.min(b,i)); show(i);
+  jumping=true; const s=secs[i-a], off=innerWidth<=860?innerHeight*0.66-60:innerHeight*0.5-80;
+  scrollTo({top:s.getBoundingClientRect().top+scrollY-off+40,behavior:reduce?"auto":"smooth"});
+  clearTimeout(go.t); go.t=setTimeout(()=>{jumping=false;},reduce?50:700);
+}
+rng.addEventListener("input",()=>go(+rng.value));
+document.getElementById("prev").onclick=()=>go(cur-1);
+document.getElementById("next").onclick=()=>go(cur+1);
+addEventListener("keydown",e=>{if(e.target===rng)return;if(e.key==="ArrowRight"||e.key==="PageDown"){e.preventDefault();go(cur+1);}if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();go(cur-1);}});
+const h=(location.hash||"").slice(1);
+setPart(Math.max(0,PARTS.findIndex(p=>p.id===h)));
+</script>
+
+
+<a href="../../" class="mes-artefacts-back" aria-label="Retour à tous mes artefacts">← Mes artefacts</a>
+<style>
+.mes-artefacts-back{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2147483000;
+ font:600 13px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:#fff;background:rgba(24,28,36,.86);
+ -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.mes-artefacts-back:hover{background:rgba(24,28,36,.96)}
+.mes-artefacts-back:focus-visible{outline:2px solid #6aa0ff;outline-offset:2px}
+@media print{.mes-artefacts-back{display:none}}
+</style>
+</body></html>

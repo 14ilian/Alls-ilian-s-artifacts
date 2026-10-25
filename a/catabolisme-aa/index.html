@@ -1,0 +1,532 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Catabolisme des acides aminés</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout : même cahier que « Azote et nucléotides » ; texte à gauche, diapos à droite, carte interactive des squelettes carbonés au centre du cours */
+:root{
+  --bg:#f5f8f6; --paper:#ffffff; --ink:#18241f; --muted:#56655e; --line:#dbe3df;
+  --accent:#1f6b52;
+  --link:#2c4fb8; --link-bg:#e9eefb;
+  --key:#1f6b52; --key-bg:#e3f2ec;
+  --trap:#b3261e; --trap-bg:#fbeceb;
+  --prof:#7a4d00; --prof-bg:#fbf1dc;
+  --rx-bg:#eef3f0;
+  --ok:#1f7a3a; --ko:#b3261e;
+  --glu:#2c4fb8; --glu-bg:#e9eefb;     /* glucoformateur */
+  --ket:#1f7a3a; --ket-bg:#e2f3e7;     /* cétogène */
+  --mix:#b3261e; --mix-bg:#fbeceb;     /* les deux */
+  --f-display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --f-body:"Literata",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#111815; --paper:#17201c; --ink:#e3ebe7; --muted:#9bada5; --line:#2a3631;
+  --accent:#6fd3ad; --link:#9db3ff; --link-bg:#1c2540; --key:#6fd3ad; --key-bg:#163028;
+  --trap:#ff8f86; --trap-bg:#3a1d1b; --prof:#f0c46b; --prof-bg:#33280f; --rx-bg:#1d2823;
+  --ok:#6fd38c; --ko:#ff8f86; --glu:#9db3ff; --glu-bg:#1c2540; --ket:#6fd38c; --ket-bg:#173022; --mix:#ff8f86; --mix-bg:#3a1d1b;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#111815; --paper:#17201c; --ink:#e3ebe7; --muted:#9bada5; --line:#2a3631;
+  --accent:#6fd3ad; --link:#9db3ff; --link-bg:#1c2540; --key:#6fd3ad; --key-bg:#163028;
+  --trap:#ff8f86; --trap-bg:#3a1d1b; --prof:#f0c46b; --prof-bg:#33280f; --rx-bg:#1d2823;
+  --ok:#6fd38c; --ko:#ff8f86; --glu:#9db3ff; --glu-bg:#1c2540; --ket:#6fd38c; --ket-bg:#173022; --mix:#ff8f86; --mix-bg:#3a1d1b;
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.62;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto;overflow-x:clip}
+#squel .txt > p, #squel .txt > ul, #squel .box{max-width:68ch}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}
+h3{font-size:21px;font-weight:700}
+h4{font-size:17px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+a{color:var(--accent)}
+
+header.top{padding-block:36px 20px;display:grid;gap:14px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.tag.key{color:var(--key);background:var(--key-bg)}
+.tag.link{color:var(--link);background:var(--link-bg)}
+.tag.trap{color:var(--trap);background:var(--trap-bg)}
+.tag.prof{color:var(--prof);background:var(--prof-bg)}
+
+nav.chap{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  display:flex;gap:6px;overflow-x:auto;padding-block:10px;scrollbar-width:none}
+nav.chap a{font-family:var(--f-display);font-weight:500;font-size:14px;text-decoration:none;color:var(--muted);padding:6px 12px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+nav.chap a:hover,nav.chap a:focus-visible{color:var(--ink);border-color:var(--line);outline:none}
+nav.chap a.on{color:var(--paper);background:var(--accent)}
+
+main{display:grid;gap:28px;padding-block:32px 8px}
+.sec{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:24px;display:grid;
+  grid-template-columns:minmax(0,1fr) 300px;gap:28px;scroll-margin-top:64px}
+.sec.full{grid-template-columns:minmax(0,1fr)}
+.sec .txt{display:grid;gap:14px;min-width:0;max-width:68ch}
+.sec.full .txt{max-width:none}
+.sec .slides{display:grid;gap:14px;align-content:start;min-width:0}
+.sec-head{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:baseline}
+.sec-head .ref{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+@media (max-width:900px){
+  .sec{grid-template-columns:minmax(0,1fr)}
+  .sec .slides{order:-1;grid-auto-flow:column;grid-auto-columns:min(78%,320px);overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+  .sec .slides figure{scroll-snap-align:start}
+}
+@media (max-width:520px){ .sec{padding:18px 14px} body{font-size:16px} }
+
+figure.slide{margin:0;display:grid;gap:6px}
+figure.slide button{all:unset;cursor:zoom-in;display:block;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+figure.slide button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+figure.slide img{display:block;width:100%;height:auto}
+figure.slide figcaption{font-family:var(--f-mono);font-size:11.5px;line-height:1.4;color:var(--muted)}
+figure.slide figcaption b{color:var(--ink);font-weight:600}
+
+pre.rx{margin:0;background:var(--rx-bg);border-radius:6px;padding:12px 14px;font-family:var(--f-mono);font-size:13.5px;line-height:1.55;overflow-x:auto;white-space:pre;color:var(--ink)}
+pre.rx .e{color:var(--accent);font-weight:600}
+.box{border-radius:6px;padding:12px 14px;display:grid;gap:6px}
+.box .tag{justify-self:start}
+.box.key{background:var(--key-bg)} .box.link{background:var(--link-bg)} .box.trap{background:var(--trap-bg)} .box.prof{background:var(--prof-bg)}
+ul,ol{margin:0;padding-left:1.25em;display:grid;gap:4px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{font-family:var(--f-display);font-weight:500;color:var(--muted);font-size:13px;letter-spacing:.03em}
+
+/* Carte des squelettes carbonés */
+.map{display:grid;gap:14px}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.fbtn{font-family:var(--f-display);font-weight:500;font-size:14px;cursor:pointer;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+.fbtn[aria-pressed="true"]{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.fbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dest{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.dcard{border:1px solid var(--line);border-radius:8px;padding:12px;display:grid;gap:8px;align-content:start;background:var(--bg)}
+.dcard h4{font-size:15px}
+.dcard .where{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--f-display);font-size:13.5px;padding:3px 9px;border-radius:999px;border:1px solid transparent}
+.chip.g{color:var(--glu);background:var(--glu-bg)} .chip.k{color:var(--ket);background:var(--ket-bg)} .chip.m{color:var(--mix);background:var(--mix-bg)}
+.chip.dim{opacity:.22}
+.keyrow{display:flex;flex-wrap:wrap;gap:12px;font-size:14px;color:var(--muted)}
+.keyrow span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.g{background:var(--glu)} .dot.k{background:var(--ket)} .dot.m{background:var(--mix)}
+
+/* QCM */
+.quiz{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:24px;display:grid;gap:22px;scroll-margin-top:64px}
+.quiz-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:baseline}
+.score{font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.q{display:grid;gap:10px;padding-top:18px;border-top:1px solid var(--line)}
+.q:first-of-type{border-top:0;padding-top:0}
+.q-prompt{font-weight:600}
+.q-prompt .qn{font-family:var(--f-mono);color:var(--accent);margin-right:6px}
+.opts{display:grid;gap:8px}
+.opt{font:inherit;text-align:left;cursor:pointer;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;gap:10px}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.opt .l{font-family:var(--f-mono);font-weight:600;color:var(--muted)}
+.opt.good{border-color:var(--ok);box-shadow:inset 3px 0 0 var(--ok)}
+.opt.bad{border-color:var(--ko);box-shadow:inset 3px 0 0 var(--ko)}
+.opt:disabled{cursor:default}
+.fb{font-size:15px;border-radius:6px;padding:10px 12px;background:var(--rx-bg)}
+.fb b.ok{color:var(--ok)} .fb b.ko{color:var(--ko)}
+.recap{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.btn{font-family:var(--f-display);font-weight:500;font-size:14px;cursor:pointer;background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:6px 14px}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.lb{position:fixed;inset:0;z-index:20;background:rgba(10,14,12,.9);display:grid;place-items:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lb[hidden],.fb[hidden]{display:none}
+.lb img{max-width:100%;max-height:82vh;background:#fff;border-radius:6px}
+.lb .cap{color:#e9efec;font-family:var(--f-mono);font-size:13px;margin-top:10px;text-align:center}
+.lb button{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:calc(12px + env(safe-area-inset-right,0px));font:600 15px var(--f-display);background:#fff;color:#18241f;border:0;border-radius:999px;padding:8px 14px;cursor:pointer}
+@media (prefers-reduced-motion:no-preference){ .opt,.chip{transition:opacity .15s,border-color .15s} }
+footer{padding-block:40px 0;color:var(--muted);font-size:14px;max-width:70ch}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">UE 3.3 · Pr Delcourt · semaine 6 · ronéo du 08/10</div>
+  <h1>Catabolisme des acides aminés</h1>
+  <p class="muted" style="max-width:70ch">Ce que deviennent les trois parties d'un acide aminé : l'azote, le carboxyle et le squelette carboné. Expliqué d'après les diapos « acides aminés » (1 à 24) et ta ronéo. Touche une diapo pour l'agrandir.</p>
+  <div class="legend">
+    <span class="tag key">À retenir</span>
+    <span class="tag link">Lien entre voies</span>
+    <span class="tag trap">Piège</span>
+    <span class="tag prof">Ce que dit le prof</span>
+  </div>
+</header>
+
+<nav class="chap" aria-label="Parties du cours">
+  <a href="#attentes">Attentes</a>
+  <a href="#origine">Origine</a>
+  <a href="#transam">Transamination</a>
+  <a href="#desam">Désamination</a>
+  <a href="#decarb">Décarboxylation</a>
+  <a href="#squel">Squelettes</a>
+  <a href="#precurseurs">Précurseurs</a>
+  <a href="#liens">Liens</a>
+  <a href="#qcm">QCM</a>
+</nav>
+
+<main>
+  <!-- attentes -->
+  <article class="sec" id="attentes">
+    <div class="txt">
+      <div class="sec-head"><h3>Ce que le prof attend</h3></div>
+      <div class="box prof"><span class="tag prof">Ronéos 08/10 et 14/10</span>
+        <ul>
+          <li>Le prof insiste sur les <b>squelettes carbonés</b> et leurs liens avec le <b>cycle de Krebs</b>, la <b>cétogenèse</b> et la <b>néoglucogenèse</b> : « questions posées le jour de l'examen ».</li>
+          <li>Pour les nucléotides on sera peu interrogé, mais il conseille de <b>bien connaître le métabolisme des acides aminés</b>.</li>
+          <li><i>Pas à apprendre</i> : la structure des aminotransférases.</li>
+          <li>Pas de QCM sur les acides aminés au <b>CC du 03/11</b> : ce cours sert pour l'examen terminal.</li>
+        </ul>
+      </div>
+      <p>Le plan du cours suit les trois morceaux d'un acide aminé : on enlève l'<b>azote</b> (III), puis le <b>carboxyle</b> (IV), puis on regarde ce que devient la <b>chaîne carbonée</b> (V). La dernière partie (VI) montre que les acides aminés servent aussi à fabriquer d'autres molécules.</p>
+    </div>
+    <div class="slides">
+      <figure class="slide"><button data-src="img/aa-02.jpg" aria-label="Agrandir la diapo 2"><img loading="lazy" src="img/aa-02.jpg" alt="Diapo 2, plan du cours"></button><figcaption><b>Diapo 2</b> · Plan du cours</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- origine -->
+  <article class="sec" id="origine">
+    <div class="txt">
+      <div class="sec-head"><h3>I. D'où viennent les acides aminés</h3><span class="ref">diapos 1–3</span></div>
+      <p>Les glucides se stockent en glycogène et les lipides en triglycérides, qu'on mobilise quand on a besoin d'énergie. <b>Les acides aminés, eux, ne se stockent pas.</b> Ils viennent de deux sources : l'<b>alimentation</b> (protéines des aliments) et le <b>renouvellement protéique</b> (nos propres protéines, surtout celles des <b>muscles striés</b>).</p>
+<pre class="rx">Protéines corporelles ──dégradation (1 à 2 %)──→ Acides aminés
+Acides aminés ──synthèse protéique (75 à 80 %)──→ Protéines
+Acides aminés ──<span class="e">catabolisme (20 à 25 %)</span>──→ déchets + squelettes</pre>
+      <p>Comme il n'y a pas de stock, l'excès doit être dégradé. C'est ce catabolisme qui produit de l'ammoniac, un toxique qu'il faudra éliminer (uréogenèse, ammoniogenèse).</p>
+      <div class="box link"><span class="tag link">Lien glucides</span><p>Au jeûne prolongé, le muscle sert de réserve : les protéines musculaires sont dégradées en acides aminés, qui partent au foie faire du <b>glucose</b> (néoglucogenèse). C'est la <b>fonte musculaire</b> de la grève de la faim, vue dans le cours sur les glucides.</p></div>
+    </div>
+    <div class="slides">
+      <figure class="slide"><button data-src="img/aa-03.jpg" aria-label="Agrandir la diapo 3"><img loading="lazy" src="img/aa-03.jpg" alt="Diapo 3, devenir des acides aminés"></button><figcaption><b>Diapo 3</b> · Devenir des acides aminés</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- 3 parties -->
+  <article class="sec" id="trois">
+    <div class="txt">
+      <div class="sec-head"><h3>II. Les trois parties d'un acide aminé</h3><span class="ref">diapo 5</span></div>
+      <p>Un acide aminé = un <b>groupement α-aminé</b> (NH₃⁺) + un <b>groupement carboxyle</b> (COO⁻) + une <b>chaîne latérale R</b>, différente pour chaque acide aminé. Chaque partie a sa propre voie :</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Partie</th><th>Réaction</th><th>Ce que ça donne</th></tr></thead>
+        <tbody>
+          <tr><td><b>α-aminé</b></td><td>Transamination, désamination oxydative</td><td>Glutamate, puis NH₄⁺ → urée</td></tr>
+          <tr><td><b>Carboxyle</b></td><td>Décarboxylation (+ CO₂)</td><td>Amines biologiques : GABA, histamine, dopamine, sérotonine…</td></tr>
+          <tr><td><b>Chaîne carbonée</b></td><td>Catabolisme du squelette</td><td>Pyruvate, acétyl-CoA, intermédiaires de Krebs</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="slides">
+      <figure class="slide"><button data-src="img/aa-05.jpg" aria-label="Agrandir la diapo 5"><img loading="lazy" src="img/aa-05.jpg" alt="Diapo 5"></button><figcaption><b>Diapo 5</b> · Les trois parties mises en jeu</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- transamination -->
+  <article class="sec" id="transam">
+    <div class="txt">
+      <div class="sec-head"><h3>III.1 La transamination : on déplace l'azote</h3><span class="ref">diapos 7–9</span></div>
+      <p>Une transamination fait passer le NH₂ d'un acide aminé sur un <b>acide α-cétonique</b>. Il y a toujours un couple : l'acide aminé 1 perd son NH₂ et devient l'acide α-cétonique 1 ; l'acide α-cétonique 2 reçoit le NH₂ et devient l'acide aminé 2.</p>
+<pre class="rx">Acide aminé 1 + Acide α-cétonique 2  ⇌  Acide α-cétonique 1 + Acide aminé 2
+
+Aspartate + α-cétoglutarate  ⇌  <span class="e">Oxaloacétate</span> + Glutamate   (ASAT)
+Alanine   + α-cétoglutarate  ⇌  <span class="e">Pyruvate</span>     + Glutamate   (ALAT)</pre>
+      <div class="box trap"><span class="tag trap">Piège · ton erreur du 14/10</span><p>La transamination n'est <b>pas réservée</b> à l'aspartate et à l'alanine. La première ligne est la <b>règle générale</b>, valable pour presque tous les acides aminés (chacun a son aminotransférase). ASAT et ALAT sont seulement <b>les deux réactions les plus courantes</b>, données en exemple. Le receveur du NH₂ est presque toujours l'<b>α-cétoglutarate</b>, qui devient <b>glutamate</b>.</p></div>
+      <div class="box trap"><span class="tag trap">Piège · définition</span><p>Un acide α-cétonique n'est pas « un acide aminé sans l'amine » : l'amine est <b>remplacée par une cétone C=O</b> sur le carbone α. R–CH(NH₃⁺)–COO⁻ devient R–C(=O)–COO⁻. Alanine → pyruvate, aspartate → oxaloacétate, glutamate → α-cétoglutarate.</p></div>
+      <h4>Le coenzyme : le phosphate de pyridoxal (PLP)</h4>
+      <p>Les aminotransférases utilisent le <b>PLP</b> (dérivé de la <b>vitamine B6</b>), lié à une lysine de l'enzyme par une base de Schiff (aldimine). Le principe de la diapo 9 : le PLP <b>prend</b> le NH₂ du premier acide aminé et devient <b>pyridoxamine phosphate</b>, puis il le <b>rend</b> au second acide α-cétonique et redevient PLP. C'est un relais : l'azote ne flotte jamais librement.</p>
+      <p class="muted">La structure des aminotransférases n'est pas à apprendre (ronéo).</p>
+      <div class="box key"><span class="tag key">À retenir</span><p>Transamination = <b>réversible</b>, coenzyme <b>PLP (B6)</b>, <b>aucun NH₃ libéré</b> : l'azote change seulement de molécule.</p></div>
+      <div class="box link"><span class="tag link">Lien néoglucogenèse</span><p>Les produits de l'ASAT et de l'ALAT sont l'<b>oxaloacétate</b> (intermédiaire de Krebs) et le <b>pyruvate</b> (produit final de la glycolyse) : les deux portes d'entrée de la néoglucogenèse. Au jeûne prolongé, l'aspartate et l'alanine issus des protéines deviennent du glucose, et dans le foie ce glucose maintient la glycémie.</p></div>
+    </div>
+    <div class="slides">
+      <figure class="slide"><button data-src="img/aa-07.jpg" aria-label="Agrandir la diapo 7"><img loading="lazy" src="img/aa-07.jpg" alt="Diapo 7, transamination"></button><figcaption><b>Diapo 7</b> · Réaction de transamination</figcaption></figure>
+      <figure class="slide"><button data-src="img/aa-08.jpg" aria-label="Agrandir la diapo 8"><img loading="lazy" src="img/aa-08.jpg" alt="Diapo 8, PLP"></button><figcaption><b>Diapo 8</b> · Aminotransférases et PLP (structure pas à apprendre)</figcaption></figure>
+      <figure class="slide"><button data-src="img/aa-09.jpg" aria-label="Agrandir la diapo 9"><img loading="lazy" src="img/aa-09.jpg" alt="Diapo 9, mécanisme"></button><figcaption><b>Diapo 9</b> · Mécanisme (PLP ⇌ pyridoxamine)</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- désamination -->
+  <article class="sec" id="desam">
+    <div class="txt">
+      <div class="sec-head"><h3>III.2 La désamination oxydative : on libère le NH₄⁺</h3><span class="ref">diapos 11–14</span></div>
+      <p>Après la transamination, l'azote de presque tous les acides aminés se retrouve sur le <b>glutamate</b>. La <b>L-glutamate déshydrogénase (GDH)</b> l'en détache : l'α-cétoglutarate est régénéré et peut capter un nouveau NH₂. C'est une navette.</p>
+<pre class="rx">Glutamate + NAD(P)⁺ + H₂O  →  α-cétoglutarate + <span class="e">NH₄⁺</span> + NAD(P)H,H⁺
+          (via l'α-iminoglutarate)          L-glutamate déshydrogénase</pre>
+      <p class="muted">GDH activée par ADP et GDP, inhibée par ATP, GTP et NADH (diapo 11).</p>
+      <h4>Les voies secondaires</h4>
+      <ul>
+        <li><b>L-aminoacide oxydase</b> (diapo 12) : quelques acides aminés sont désaminés directement, sans passer par le glutamate. Coenzyme : une <b>flavine</b>. Elle produit du <b>H₂O₂</b>, détruit par la <b>catalase</b>.</li>
+        <li><b>Désamination directe de la sérine</b> (diapo 13) : sérine → α-iminopyruvate → <b>pyruvate</b> + NH₄⁺.</li>
+      </ul>
+      <div class="tbl"><table>
+        <thead><tr><th></th><th>Voie principale</th><th>Voies secondaires</th></tr></thead>
+        <tbody>
+          <tr><td>Qui l'emprunte</td><td>Presque tous les acides aminés</td><td>Quelques acides aminés</td></tr>
+          <tr><td>Chemin</td><td>Transamination → glutamate → GDH</td><td>Désamination directe</td></tr>
+          <tr><td>Coenzyme</td><td>PLP, puis NAD(P)⁺</td><td>Flavine (oxydase) ; aucun pour la sérine</td></tr>
+          <tr><td>Produit</td><td>α-cétoglutarate + NH₄⁺</td><td>Acide α-cétonique correspondant + NH₄⁺</td></tr>
+        </tbody>
+      </table></div>
+      <div class="box trap"><span class="tag trap">Piège · ronéo</span><p>La ronéo appelle l'α-iminopyruvate « l'acide α-cétonique correspondant pour la sérine ». C'est seulement l'<b>intermédiaire</b> (un imino, C=NH). L'acide α-cétonique final, c'est le <b>pyruvate</b>, comme le montre la diapo 13.</p></div>
+      <div class="box key"><span class="tag key">À retenir · diapo 14</span><p>Le flux global : <b>acide aminé → (transamination) → glutamate → (désamination) → NH₄⁺ → uréogenèse → urée</b>. L'α-cétoglutarate tourne en boucle entre les deux réactions.</p></div>
+    </div>
+    <div class="slides">
+      <figure class="slide"><button data-src="img/aa-11.jpg" aria-label="Agrandir la diapo 11"><img loading="lazy" src="img/aa-11.jpg" alt="Diapo 11, GDH"></button><figcaption><b>Diapo 11</b> · L-glutamate déshydrogénase</figcaption></figure>
+      <figure class="slide"><button data-src="img/aa-12.jpg" aria-label="Agrandir la diapo 12"><img loading="lazy" src="img/aa-12.jpg" alt="Diapo 12, aminoacide oxydase"></button><figcaption><b>Diapo 12</b> · L-aminoacide oxydase</figcaption></figure>
+      <figure class="slide"><button data-src="img/aa-13.jpg" aria-label="Agrandir la diapo 13"><img loading="lazy" src="img/aa-13.jpg" alt="Diapo 13, sérine"></button><figcaption><b>Diapo 13</b> · Désamination directe de la sérine</figcaption></figure>
+      <figure class="slide"><button data-src="img/aa-14.jpg" aria-label="Agrandir la diapo 14"><img loading="lazy" src="img/aa-14.jpg" alt="Diapo 14, flux global"></button><figcaption><b>Diapo 14</b> · Flux global de l'azote</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- décarboxylation -->
+  <article class="sec" id="decarb">
+    <div class="txt">
+      <div class="sec-head"><h3>IV. La décarboxylation : des acides aminés aux amines biologiques</h3><span class="ref">diapos 16–18</span></div>
+      <p>Cette fois on retire le <b>COO⁻</b>, qui part en CO₂. Il reste une <b>amine</b>. Les enzymes sont des <b>décarboxylases à PLP</b> : le même coenzyme que la transamination.</p>
+<pre class="rx">R–CH(NH₃⁺)–COO⁻  ──décarboxylase (PLP)──→  R–CH₂–NH₂ + CO₂
+
+Glutamate  →  <span class="e">GABA</span> (acide γ-aminobutyrique) + CO₂</pre>
+      <p>L'exemple du glutamate est frappant : le glutamate est le <b>principal neurotransmetteur excitateur</b> du système nerveux central, le GABA le <b>principal inhibiteur</b>. Une seule décarboxylation fait passer de l'un à l'autre.</p>
+      <h4>Les acides aminés aromatiques (diapo 17)</h4>
+      <div class="tbl"><table>
+        <thead><tr><th>Acide aminé</th><th>Étapes</th><th>Produit</th><th>Rôle (ronéo)</th></tr></thead>
+        <tbody>
+          <tr><td>Histidine</td><td>décarboxylation</td><td><b>Histamine</b></td><td>Réaction inflammatoire, allergie</td></tr>
+          <tr><td>Tyrosine</td><td>décarboxylation</td><td>Tyramine</td><td>—</td></tr>
+          <tr><td>Tyrosine</td><td>hydroxylation → <b>DOPA</b> → décarboxylation</td><td><b>Dopamine</b> → mélanine, adrénaline</td><td>Récompense, coordination motrice ; Parkinson, traité par L-DOPA</td></tr>
+          <tr><td>Tryptophane</td><td>décarboxylation</td><td>Tryptamine</td><td>—</td></tr>
+          <tr><td>Tryptophane</td><td>hydroxylation → 5-OH-tryptophane → décarboxylation</td><td><b>Sérotonine</b></td><td>Humeur ; dépression</td></tr>
+        </tbody>
+      </table></div>
+      <p>Retiens l'ordre : pour la dopamine et la sérotonine, on <b>hydroxyle d'abord</b>, puis on <b>décarboxyle</b>.</p>
+      <h4>Les polyamines (diapo 18)</h4>
+      <ul>
+        <li>Ornithine → <b>putrescine</b> ; lysine → <b>cadavérine</b> ; arginine → <b>agmatine</b> (chaque fois − CO₂).</li>
+        <li>La putrescine sert à former la <b>spermidine</b> puis la <b>spermine</b>, retrouvées dans les spermatozoïdes.</li>
+        <li>Putrescine et cadavérine donnent l'odeur des cadavres ; elles sont peu importantes pour le métabolisme.</li>
+      </ul>
+      <div class="box key"><span class="tag key">À retenir</span><p>La décarboxylation n'a <b>aucun rôle énergétique</b> : elle ne fait pas d'ATP. Elle sert à fabriquer des molécules physiologiques (neurotransmetteurs, médiateurs de l'allergie).</p></div>
+      <div class="box link"><span class="tag link">Lien cycle de l'urée</span><p>L'<b>ornithine</b> qui donne la putrescine est l'ornithine du cycle de l'urée, et l'<b>arginine</b> en est un intermédiaire. Les mêmes acides aminés servent à éliminer l'azote et à fabriquer des polyamines.</p></div>
+    </div>
+    <div class="slides">
+      <figure class="slide"><button data-src="img/aa-16.jpg" aria-label="Agrandir la diapo 16"><img loading="lazy" src="img/aa-16.jpg" alt="Diapo 16, décarboxylation"></button><figcaption><b>Diapo 16</b> · Décarboxylation, glutamate → GABA</figcaption></figure>
+      <figure class="slide"><button data-src="img/aa-17.jpg" aria-label="Agrandir la diapo 17"><img loading="lazy" src="img/aa-17.jpg" alt="Diapo 17, aromatiques"></button><figcaption><b>Diapo 17</b> · Acides aminés aromatiques</figcaption></figure>
+      <figure class="slide"><button data-src="img/aa-18.jpg" aria-label="Agrandir la diapo 18"><img loading="lazy" src="img/aa-18.jpg" alt="Diapo 18, polyamines"></button><figcaption><b>Diapo 18</b> · Polyamines</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- squelettes -->
+  <article class="sec full" id="squel">
+    <div class="txt">
+      <div class="sec-head"><h3>V. Le devenir des squelettes carbonés</h3><span class="tag prof">Question d'examen</span><span class="ref">diapo 20</span></div>
+      <p>Une fois l'azote retiré, il reste la chaîne carbonée. Selon l'acide aminé, elle entre dans le métabolisme à <b>sept portes</b> : le pyruvate, l'acétyl-CoA, l'acétoacétyl-CoA, ou quatre intermédiaires du cycle de Krebs. La porte décide de la catégorie :</p>
+      <ul>
+        <li><b>Glucoformateur</b> : le squelette donne du pyruvate ou un intermédiaire de Krebs, qui peut redevenir de l'oxaloacétate puis du <b>glucose</b> (néoglucogenèse).</li>
+        <li><b>Cétogène</b> : le squelette donne de l'acétyl-CoA ou de l'acétoacétyl-CoA (= deux acétyl-CoA liés), qui peuvent faire des <b>corps cétoniques</b> quand il n'y a plus de glycogène, ou lors d'un effort, pour faire de l'ATP.</li>
+        <li><b>Les deux</b> : une partie de la chaîne part d'un côté, une partie de l'autre.</li>
+      </ul>
+      <div class="map" aria-label="Carte des squelettes carbonés">
+        <div class="filters" role="group" aria-label="Filtrer les acides aminés">
+          <button type="button" class="fbtn" id="f-all" data-f="all" aria-pressed="true">Tous</button>
+          <button type="button" class="fbtn" id="f-g" data-f="g" aria-pressed="false">Glucoformateurs</button>
+          <button type="button" class="fbtn" id="f-k" data-f="k" aria-pressed="false">Cétogènes stricts</button>
+          <button type="button" class="fbtn" id="f-m" data-f="m" aria-pressed="false">Les deux</button>
+        </div>
+        <div class="keyrow"><span><i class="dot g"></i>Glucoformateur</span><span><i class="dot k"></i>Cétogène</span><span><i class="dot m"></i>Glucoformateur et cétogène</span></div>
+        <div class="dest" id="dest"></div>
+      </div>
+      <div class="box key"><span class="tag key">À retenir</span><p>Seuls <b>la leucine et la lysine</b> sont <b>strictement cétogènes</b>. Les mixtes : <b>phénylalanine, tyrosine, tryptophane, isoleucine</b>. Tous les autres sont glucoformateurs.</p></div>
+      <div class="box link"><span class="tag link">Lien néoglucogenèse et cétogenèse</span><p>Au jeûne, les deux voies tournent en même temps dans le foie (cours glucides : « la néoglucogenèse et la cétogenèse sont liées »). Les squelettes glucoformateurs alimentent le glucose qui maintient la glycémie ; les squelettes cétogènes et les acides gras alimentent les corps cétoniques pour le cerveau et les muscles.</p></div>
+      <div class="box link"><span class="tag link">Lien Krebs · le double destin du pyruvate</span><p>Le pyruvate issu d'un acide aminé peut donner de l'<b>oxaloacétate</b> (pyruvate carboxylase) puis du glucose, ou de l'<b>acétyl-CoA</b> (pyruvate déshydrogénase) puis du citrate et de l'ATP. Le choix dépend de l'état énergétique, comme dans le cours sur Krebs.</p></div>
+      <div class="box trap"><span class="tag trap">Piège</span><p>Un acide aminé qui donne de l'acétyl-CoA ne peut <b>pas</b> faire de glucose par cette voie : l'acétyl-CoA ne redevient jamais du pyruvate (la PDH est irréversible). C'est la même raison que pour les acides gras.</p></div>
+    </div>
+  </article>
+
+  <!-- précurseurs -->
+  <article class="sec" id="precurseurs">
+    <div class="txt">
+      <div class="sec-head"><h3>VI. Les acides aminés, précurseurs d'autres molécules</h3><span class="ref">diapos 22–24</span></div>
+      <h4>La S-adénosylméthionine (SAM), donneur de méthyle (diapo 22)</h4>
+<pre class="rx">Méthionine + ATP  →  <span class="e">SAM</span> + Pi + PPi
+SAM + R–H  →(méthyltransférase)→  R–CH₃ + S-adénosylhomocystéine
+S-adénosylhomocystéine + H₂O  →  homocystéine + adénosine
+Homocystéine + N⁵-méthyl-THF  →  méthionine + THF</pre>
+      <p>La SAM est le <b>principal donneur de groupes méthyle</b>. Après avoir donné son CH₃, elle est recyclée en méthionine grâce au <b>N⁵-méthyl-THF</b>.</p>
+      <div class="box link"><span class="tag link">Lien nucléotides</span><p>Le <b>THF</b> (vitamine B9) est le même transporteur d'unités à un carbone que dans la synthèse des purines et de la thymine. Les folates relient donc le métabolisme des acides aminés à celui des nucléotides.</p></div>
+
+      <h4>Le glutathion, antioxydant (diapo 23)</h4>
+      <p>Tripeptide <b>glutamate + cystéine + glycine</b> (γ-glutamyl-cystéinyl-glycine). Son groupement <b>–SH</b>, porté par la cystéine, réduit les molécules oxydées et limite la formation de radicaux, toxiques à long terme pour les organes (maladies cardiovasculaires, hépatiques, rénales).</p>
+<pre class="rx">2 GSH + RO–OH  →  GSSG + H₂O + ROH        (glutathion peroxydase, GPx)
+GSSG + <span class="e">NADPH</span> + H⁺  →  2 GSH + NADP⁺        (glutathion réductase)</pre>
+      <p>Deux glutathions réduits (GSH) forment un glutathion oxydé (GSSG) relié par un <b>pont disulfure</b>. Pour qu'il resserve, il faut le régénérer avec du <b>NADPH</b>.</p>
+      <div class="box link"><span class="tag link">Lien voie des pentoses phosphates</span><p>Ce NADPH vient principalement de la <b>voie des pentoses phosphates</b>. C'est un de ses deux grands rôles, avec la synthèse des acides gras.</p></div>
+
+      <h4>Le monoxyde d'azote (NO), vasodilatateur (diapo 24)</h4>
+<pre class="rx">Arginine + O₂ + NADPH  →(NO synthase)→  <span class="e">Citrulline</span> + ·NO
+·NO  →  active la guanylate cyclase  →  GTP → GMPc  →  vasodilatation</pre>
+      <div class="box link"><span class="tag link">Lien cycle de l'urée</span><p>L'<b>arginine</b> et la <b>citrulline</b> sont deux intermédiaires du cycle de l'urée. Dans l'hyperammoniémie, un des mécanismes de toxicité est justement le <b>déficit en arginine</b>, donc en NO.</p></div>
+      <p class="muted">Deux erreurs probables dans la ronéo : la NO synthase libère du <b>NO</b>, pas du monoxyde de carbone ; et « antioxydant au niveau du froid » est sûrement « du foie ». Fie-toi aux diapos.</p>
+    </div>
+    <div class="slides">
+      <figure class="slide"><button data-src="img/aa-22.jpg" aria-label="Agrandir la diapo 22"><img loading="lazy" src="img/aa-22.jpg" alt="Diapo 22, SAM"></button><figcaption><b>Diapo 22</b> · S-adénosylméthionine</figcaption></figure>
+      <figure class="slide"><button data-src="img/aa-23.jpg" aria-label="Agrandir la diapo 23"><img loading="lazy" src="img/aa-23.jpg" alt="Diapo 23, glutathion"></button><figcaption><b>Diapo 23</b> · Glutathion</figcaption></figure>
+      <figure class="slide"><button data-src="img/aa-24.jpg" aria-label="Agrandir la diapo 24"><img loading="lazy" src="img/aa-24.jpg" alt="Diapo 24, NO"></button><figcaption><b>Diapo 24</b> · Monoxyde d'azote</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- squelettes slide placed as full card -->
+  <article class="sec" id="squel-diapo">
+    <div class="txt">
+      <div class="sec-head"><h3>La diapo des squelettes, à savoir refaire</h3><span class="ref">diapo 20</span></div>
+      <p>Exercice conseillé : cache la diapo, redessine le cycle de Krebs avec ses portes (pyruvate, acétyl-CoA, acétoacétyl-CoA, oxaloacétate, fumarate, succinyl-CoA, α-cétoglutarate), puis place les acides aminés et colorie-les. Compare ensuite avec la carte au-dessus.</p>
+      <p>La suite du cours (diapos 25 à 48 : glutamine, uréogenèse, ammoniogenèse) est expliquée dans la page <a href="../azote-nucleotides/" target="_blank" rel="noopener">Azote et nucléotides</a>.</p>
+    </div>
+    <div class="slides">
+      <figure class="slide"><button data-src="img/aa-20.jpg" aria-label="Agrandir la diapo 20"><img loading="lazy" src="img/aa-20.jpg" alt="Diapo 20, squelettes carbonés"></button><figcaption><b>Diapo 20</b> · Devenir des squelettes carbonés</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- liens -->
+  <article class="sec full" id="liens">
+    <div class="txt">
+      <div class="sec-head"><h3>Tous les liens du chapitre</h3></div>
+      <div class="tbl"><table>
+        <thead><tr><th>Ce que tu vois ici</th><th>Où ça mène</th><th>Pourquoi</th></tr></thead>
+        <tbody>
+          <tr><td>ALAT → pyruvate, ASAT → oxaloacétate</td><td><b>Néoglucogenèse</b></td><td>Les deux portes d'entrée de la synthèse de glucose ; jeûne, fonte musculaire</td></tr>
+          <tr><td>Squelettes → acétyl-CoA, acétoacétyl-CoA</td><td><b>Cétogenèse</b></td><td>Corps cétoniques quand le glucose manque</td></tr>
+          <tr><td>Squelettes → α-KG, succinyl-CoA, fumarate, OAA</td><td><b>Cycle de Krebs</b></td><td>Énergie, ou sortie vers le glucose par l'oxaloacétate</td></tr>
+          <tr><td>Glutamate → NH₄⁺ (GDH)</td><td><b>Uréogenèse</b>, ammoniogenèse</td><td>Élimination de l'azote toxique</td></tr>
+          <tr><td>Glutathion réduit par le NADPH</td><td><b>Voie des pentoses phosphates</b></td><td>Source principale de NADPH</td></tr>
+          <tr><td>SAM recyclée par le N⁵-méthyl-THF</td><td><b>Folates, nucléotides</b></td><td>Même transporteur de carbone que pour les purines et la thymine</td></tr>
+          <tr><td>Arginine → citrulline + NO ; ornithine → putrescine</td><td><b>Cycle de l'urée</b></td><td>Mêmes intermédiaires</td></tr>
+          <tr><td>PLP (B6) pour la transamination et la décarboxylation</td><td><b>Coenzymes</b></td><td>Un seul coenzyme pour deux familles de réactions</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </article>
+
+  <div class="quiz" id="qcm" data-quiz="aa">
+    <div class="quiz-head"><h3>QCM · Catabolisme des acides aminés</h3><span class="score" aria-live="polite"></span></div>
+  </div>
+</main>
+
+<footer>
+  <p>Sources : diapos du Pr Delcourt « Réactions générales du catabolisme des acides aminés » (1 à 24) et ronéo Pharmasutra du 08/10/2025. Tes réponses restent sur cet appareil ; envoie-moi ton score et les numéros ratés pour ton carnet d'erreurs.</p>
+</footer>
+</div>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Diapo agrandie">
+  <button type="button" id="lb-close">Fermer</button>
+  <div><img id="lb-img" alt=""><div class="cap" id="lb-cap"></div></div>
+</div>
+
+<script>
+/* Carte des squelettes (diapo 20) : g = glucoformateur, k = cétogène, m = les deux */
+const DEST = [
+  {n:"Pyruvate", w:"fin de la glycolyse", aa:[["Alanine","g"],["Glycine","g"],["Cystéine","g"],["Sérine","g"],["Thréonine","g"],["Tryptophane","m"]]},
+  {n:"Acétyl-CoA", w:"→ corps cétoniques, citrate", aa:[["Leucine","k"],["Isoleucine","m"],["Tryptophane","m"]]},
+  {n:"Acétoacétyl-CoA", w:"= 2 acétyl-CoA → corps cétoniques", aa:[["Leucine","k"],["Lysine","k"],["Phénylalanine","m"],["Tyrosine","m"],["Tryptophane","m"]]},
+  {n:"Oxaloacétate", w:"Krebs → néoglucogenèse", aa:[["Asparagine","g"],["Aspartate","g"]]},
+  {n:"Fumarate", w:"Krebs", aa:[["Aspartate","g"],["Tyrosine","m"],["Phénylalanine","m"]]},
+  {n:"Succinyl-CoA", w:"Krebs", aa:[["Méthionine","g"],["Valine","g"],["Isoleucine","m"]]},
+  {n:"α-cétoglutarate", w:"Krebs", aa:[["Glutamate","g"],["Glutamine","g"],["Histidine","g"],["Proline","g"],["Arginine","g"]]}
+];
+const destEl=document.getElementById('dest');
+DEST.forEach(d=>{
+  const c=document.createElement('div'); c.className='dcard';
+  const h=document.createElement('h4'); h.textContent=d.n;
+  const w=document.createElement('div'); w.className='where'; w.textContent=d.w;
+  const chips=document.createElement('div'); chips.className='chips';
+  d.aa.forEach(([name,t])=>{const s=document.createElement('span'); s.className='chip '+t; s.dataset.t=t; s.textContent=name; chips.append(s);});
+  c.append(h,w,chips); destEl.append(c);
+});
+document.querySelectorAll('.fbtn').forEach(b=>b.addEventListener('click',()=>{
+  const f=b.dataset.f;
+  document.querySelectorAll('.fbtn').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  document.querySelectorAll('.chip').forEach(ch=>ch.classList.toggle('dim',f!=='all'&&ch.dataset.t!==f));
+}));
+
+const QUIZ={aa:[
+ {p:"La transamination concerne :", o:["Uniquement l'aspartate et l'alanine","Presque tous les acides aminés ; ASAT et ALAT sont les exemples les plus courants","Uniquement le glutamate","Uniquement les acides aminés cétogènes"], a:1, e:"La réaction générale « AA₁ + α-cétoacide₂ ⇌ α-cétoacide₁ + AA₂ » s'applique à presque tous les acides aminés. Le receveur habituel est l'α-cétoglutarate."},
+ {p:"Un acide α-cétonique, c'est :", o:["Un acide aminé sans son amine","Un acide aminé dont l'amine du carbone α est remplacée par une cétone C=O","Un acide aminé décarboxylé","Un corps cétonique"], a:1, e:"Alanine → pyruvate, aspartate → oxaloacétate, glutamate → α-cétoglutarate."},
+ {p:"Le coenzyme des aminotransférases est :", o:["Le NAD⁺","La flavine","Le phosphate de pyridoxal (vitamine B6)","Le THF"], a:2, e:"Le PLP, lié à une lysine par une base de Schiff. Il prend le NH₂ (pyridoxamine phosphate) puis le rend. Les décarboxylases utilisent aussi le PLP."},
+ {p:"La transamination libère-t-elle du NH₃ ?", o:["Oui, un NH₃ par acide aminé","Non : l'azote passe d'une molécule à l'autre ; le NH₄⁺ est libéré ensuite par la GDH","Oui, sous forme d'urée","Seulement pour la sérine"], a:1, e:"Transamination = réversible, sans libération d'ammoniac. C'est la désamination oxydative du glutamate qui libère le NH₄⁺."},
+ {p:"La L-aminoacide oxydase :", o:["Est la voie principale pour tous les acides aminés sauf le glutamate","Est une voie secondaire, à flavine, qui produit du H₂O₂ détruit par la catalase","Utilise le PLP","Produit de l'α-cétoglutarate"], a:1, e:"Voie principale = transamination puis GDH. L'oxydase désamine directement quelques acides aminés et donne leur propre acide α-cétonique."},
+ {p:"La décarboxylation du glutamate donne :", o:["De l'α-cétoglutarate","Du GABA, principal neurotransmetteur inhibiteur","De la glutamine","De l'histamine"], a:1, e:"Glutamate (excitateur) → GABA (inhibiteur) + CO₂."},
+ {p:"Comment obtient-on la dopamine ?", o:["Décarboxylation directe de la tyrosine","Tyrosine → hydroxylation (DOPA) → décarboxylation","Décarboxylation du tryptophane","Hydroxylation de l'histidine"], a:1, e:"Décarboxylation directe de la tyrosine = tyramine. Pour la dopamine (et la sérotonine depuis le tryptophane), on hydroxyle d'abord."},
+ {p:"Quels acides aminés sont strictement cétogènes ?", o:["Leucine et lysine","Leucine et isoleucine","Phénylalanine et tyrosine","Alanine et sérine"], a:0, e:"Leucine et lysine → acétyl-CoA / acétoacétyl-CoA uniquement. Isoleucine, phénylalanine, tyrosine, tryptophane sont mixtes."},
+ {p:"Pourquoi un squelette qui donne seulement de l'acétyl-CoA ne peut-il pas faire de glucose ?", o:["Parce que l'acétyl-CoA est toxique","Parce que l'acétyl-CoA ne peut pas redevenir pyruvate : la PDH est irréversible","Parce que le foie ne fait pas de néoglucogenèse","Parce que l'acétyl-CoA est stocké en glycogène"], a:1, e:"Même raison que pour les acides gras : pas de retour de l'acétyl-CoA vers le pyruvate, donc pas d'oxaloacétate net."},
+ {p:"Le glutathion oxydé est régénéré grâce à :", o:["L'ATP de la glycolyse","Le NADPH, fourni surtout par la voie des pentoses phosphates","Le NADH de Krebs","La SAM"], a:1, e:"Glutathion réductase : GSSG + NADPH + H⁺ → 2 GSH + NADP⁺."},
+ {p:"La NO synthase transforme l'arginine en :", o:["Ornithine + urée","Citrulline + NO","Agmatine + CO₂","Fumarate + arginine"], a:1, e:"Arginine et citrulline sont des intermédiaires du cycle de l'urée. Le NO active la guanylate cyclase (GTP → GMPc)."},
+ {p:"Après avoir donné son méthyle, la SAM est recyclée en méthionine grâce à :", o:["Le PLP","Le N⁵-méthyl-THF","La catalase","Le NADPH"], a:1, e:"Homocystéine + N⁵-méthyl-THF → méthionine + THF. Le THF est le même transporteur de carbone que pour les nucléotides."}
+]};
+function buildQuiz(root){
+  const id=root.dataset.quiz, qs=QUIZ[id], score=root.querySelector('.score');
+  let answered=0, good=0; const wrong=[];
+  const recap=document.createElement('span'); recap.className='recap';
+  const upd=()=>{score.textContent=answered?`${good}/${answered} juste${good>1?'s':''} · ${qs.length-answered} restante${qs.length-answered>1?'s':''}`:`${qs.length} questions`;
+    recap.textContent=answered===qs.length?`Score final ${good}/${qs.length}`+(wrong.length?` · ratées : ${wrong.map(n=>'Q'+n).join(', ')}`:' · aucune erreur'):'';};
+  qs.forEach((q,i)=>{
+    const box=document.createElement('div'); box.className='q';
+    const pr=document.createElement('div'); pr.className='q-prompt'; pr.innerHTML=`<span class="qn">Q${i+1}</span>`; pr.append(q.p);
+    const opts=document.createElement('div'); opts.className='opts';
+    const fb=document.createElement('div'); fb.className='fb'; fb.hidden=true;
+    q.o.forEach((t,j)=>{
+      const b=document.createElement('button'); b.type='button'; b.className='opt'; b.id=`${id}-q${i+1}-${j}`;
+      b.innerHTML=`<span class="l">${'ABCD'[j]}</span>`; const s=document.createElement('span'); s.textContent=t; b.append(s);
+      b.addEventListener('click',()=>{
+        opts.querySelectorAll('button').forEach(x=>x.disabled=true);
+        const ok=j===q.a; answered++; if(ok) good++; else wrong.push(i+1);
+        b.classList.add(ok?'good':'bad'); opts.children[q.a].classList.add('good');
+        fb.innerHTML=ok?'<b class="ok">Juste.</b> ':'<b class="ko">Faux.</b> '; fb.append(q.e); fb.hidden=false; upd();
+      });
+      opts.append(b);
+    });
+    box.append(pr,opts,fb); root.append(box);
+  });
+  const foot=document.createElement('div'); foot.style.cssText='display:flex;flex-wrap:wrap;gap:12px;align-items:center';
+  const reset=document.createElement('button'); reset.type='button'; reset.className='btn'; reset.textContent='Recommencer le QCM';
+  reset.addEventListener('click',()=>{root.querySelectorAll('.q').forEach(n=>n.remove()); foot.remove(); buildQuiz(root);});
+  foot.append(reset,recap); root.append(foot); upd();
+}
+document.querySelectorAll('[data-quiz]').forEach(buildQuiz);
+
+const lb=document.getElementById('lb'), lbImg=document.getElementById('lb-img'), lbCap=document.getElementById('lb-cap');
+let lastBtn=null;
+document.querySelectorAll('figure.slide button').forEach(b=>b.addEventListener('click',()=>{
+  lastBtn=b; lbImg.src=b.dataset.src; lbImg.alt=b.querySelector('img').alt;
+  lbCap.textContent=b.closest('figure').querySelector('figcaption').textContent; lb.hidden=false; document.getElementById('lb-close').focus();
+}));
+const closeLb=()=>{lb.hidden=true; lbImg.removeAttribute('src'); lastBtn&&lastBtn.focus();};
+document.getElementById('lb-close').addEventListener('click',closeLb);
+lb.addEventListener('click',e=>{if(e.target===lb) closeLb();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!lb.hidden) closeLb();});
+
+const links=[...document.querySelectorAll('nav.chap a')];
+const targets=links.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id));}})},{rootMargin:'-40% 0px -55% 0px'});
+  targets.forEach(t=>io.observe(t));
+}
+</script>
+
+
+<a href="../../" class="mes-artefacts-back" aria-label="Retour à tous mes artefacts">← Mes artefacts</a>
+<style>
+.mes-artefacts-back{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2147483000;
+ font:600 13px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:#fff;background:rgba(24,28,36,.86);
+ -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.mes-artefacts-back:hover{background:rgba(24,28,36,.96)}
+.mes-artefacts-back:focus-visible{outline:2px solid #6aa0ff;outline-offset:2px}
+@media print{.mes-artefacts-back{display:none}}
+</style>
+</body></html>

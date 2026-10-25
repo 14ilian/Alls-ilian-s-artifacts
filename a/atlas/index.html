@@ -1,0 +1,964 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Atlas du métabolisme</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: carte du métabolisme à gauche (SVG cliquable), panneau de cours à droite ; une colonne sur téléphone */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --ink:#17212E; --muted:#5A6677; --line:#D6DDE6; --accent:#28508A; --accent-ink:#FFFFFF;
+  --cyto:#EAF0F6; --mito:#F6EEE9; --mito-line:#D9BFAE; --halo:#F7F9FB;
+  --ok:#2B8A3E; --ok-bg:#E6F4EA; --bad:#C92A2A; --bad-bg:#FBEAEA; --warn-bg:#FFF6DA; --warn-line:#E6C25A;
+  --f-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --f-ui:"IBM Plex Sans Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --f-prose:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --p-glycolyse:#E8590C; --p-neo:#C92A2A; --p-glycogene:#B08800; --p-pentoses:#E64980;
+  --p-krebs:#7048E8; --p-oxphos:#5C6670;
+  --p-lipolyse:#2F9E44; --p-cetogenese:#74B816; --p-lipogenese:#0B7285; --p-cholesterol:#0CA678;
+  --p-aa:#1864AB; --p-uree:#15AABF; --p-nucleotides:#AE3EC9; --p-heme:#8D5A3B;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E131A; --surface:#161D27; --ink:#E6EBF2; --muted:#97A3B4; --line:#2B3543; --accent:#8FB3E8; --accent-ink:#0E131A;
+  --cyto:#121A24; --mito:#1D1A1E; --mito-line:#4A3A33; --halo:#121A24;
+  --ok:#69DB7C; --ok-bg:#15291B; --bad:#FF8787; --bad-bg:#2E1818; --warn-bg:#2A2412; --warn-line:#7A6524;
+  --p-glycolyse:#FF8743; --p-neo:#FF6B6B; --p-glycogene:#F0C430; --p-pentoses:#F783AC;
+  --p-krebs:#9775FA; --p-oxphos:#A9B4BE;
+  --p-lipolyse:#51CF66; --p-cetogenese:#A9E34B; --p-lipogenese:#3BC9DB; --p-cholesterol:#20C997;
+  --p-aa:#74C0FC; --p-uree:#99E9F2; --p-nucleotides:#DA77F2; --p-heme:#C9997A;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E131A; --surface:#161D27; --ink:#E6EBF2; --muted:#97A3B4; --line:#2B3543; --accent:#8FB3E8; --accent-ink:#0E131A;
+  --cyto:#121A24; --mito:#1D1A1E; --mito-line:#4A3A33; --halo:#121A24;
+  --ok:#69DB7C; --ok-bg:#15291B; --bad:#FF8787; --bad-bg:#2E1818; --warn-bg:#2A2412; --warn-line:#7A6524;
+  --p-glycolyse:#FF8743; --p-neo:#FF6B6B; --p-glycogene:#F0C430; --p-pentoses:#F783AC;
+  --p-krebs:#9775FA; --p-oxphos:#A9B4BE;
+  --p-lipolyse:#51CF66; --p-cetogenese:#A9E34B; --p-lipogenese:#3BC9DB; --p-cholesterol:#20C997;
+  --p-aa:#74C0FC; --p-uree:#99E9F2; --p-nucleotides:#DA77F2; --p-heme:#C9997A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.45;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:20px 48px}
+.wrap{max-width:1380px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1.05;margin:4px 0 6px;text-wrap:balance}
+.sub{color:var(--muted);max-width:62ch;margin:0}
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px}
+.tabs button{font:600 14px var(--f-ui);border:0;background:transparent;color:var(--muted);padding:8px 14px;border-radius:7px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+button:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.controls{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.modes{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.modes .lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:500 13px var(--f-ui);border:0;background:transparent;color:var(--ink);padding:6px 12px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px 14px}
+.fam{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fam .famname{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:64px}
+.chip{font:500 13px var(--f-ui);display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);
+  border-radius:999px;padding:4px 10px 4px 8px;cursor:pointer}
+.chip .dot{width:10px;height:10px;border-radius:50%;background:var(--c, var(--muted));flex:none}
+.chip[aria-pressed="true"]{border-color:var(--c, var(--accent));box-shadow:inset 0 0 0 1px var(--c, var(--accent));font-weight:600}
+.chip.plain .dot{display:none}
+
+.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:1000px){.layout{grid-template-columns:minmax(0,1fr)}}
+.mapbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
+.mapscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+svg#map{display:block;width:100%;min-width:780px;height:auto;font-family:var(--f-ui)}
+.maphint{font-size:12.5px;color:var(--muted);padding:6px 4px 2px;display:flex;flex-wrap:wrap;gap:4px 16px}
+.node{cursor:pointer}
+.node rect{fill:var(--surface);stroke:var(--line);stroke-width:1.2;transition:opacity .2s}
+.node text{fill:var(--ink);font-size:15px;font-weight:500;pointer-events:none}
+.node.on rect{stroke:var(--ink);stroke-width:1.6}
+.node.sel rect{stroke:var(--accent);stroke-width:2.6}
+.node.dim{opacity:.32}
+.node:hover rect{stroke:var(--accent)}
+.edge{fill:none;stroke-linecap:round;transition:opacity .2s, stroke-width .2s}
+.elabel{font-size:13.5px;font-weight:600;paint-order:stroke;stroke:var(--halo);stroke-width:5px;stroke-linejoin:round;pointer-events:none}
+.comp-label{font-size:14px;letter-spacing:.14em;font-weight:600;fill:var(--muted)}
+@media (prefers-reduced-motion:reduce){.edge,.node rect{transition:none}}
+
+aside.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;min-width:0;
+  position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
+@media (max-width:1000px){aside.panel{position:static;max-height:none}}
+.panel h2{font-family:var(--f-display);font-size:26px;line-height:1.1;margin:2px 0 8px;text-wrap:balance}
+.panel h3{font-family:var(--f-display);font-size:17px;font-weight:700;margin:22px 0 8px;display:flex;align-items:center;gap:8px}
+.panel h3::before{content:"";width:14px;height:3px;border-radius:2px;background:var(--c, var(--accent))}
+.prose{font-family:var(--f-prose);font-size:16px;line-height:1.62;max-width:66ch}
+.prose p{margin:0 0 .8em}
+.prose b{font-weight:600}
+.tagline{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.tag{font-size:12px;border-radius:6px;padding:3px 8px;background:var(--bg);border:1px solid var(--line);color:var(--muted)}
+.tag.famtag{color:var(--c);border-color:var(--c);font-weight:600}
+
+/* mini-schéma de voie */
+.flow{display:flex;flex-direction:column;align-items:flex-start;gap:0;margin:6px 0 4px;font-family:var(--f-ui)}
+.flow .met{border:1.5px solid var(--c);border-radius:7px;padding:5px 10px;font-weight:600;font-size:14px;background:var(--surface)}
+.flow .step{display:flex;align-items:stretch;gap:10px;padding-left:16px;min-height:34px}
+.flow .bar{width:3px;background:var(--c);opacity:.45;border-radius:2px;position:relative}
+.flow .step.irr .bar{opacity:1;width:5px}
+.flow .bar::after{content:"";position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--c);border-bottom:0;opacity:1}
+.flow .enz{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:13px;padding:6px 0}
+.flow .enz .name{font-weight:600}
+.flow .enz .co{color:var(--muted)}
+.flow .enz .irrtag{font-size:11px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;color:var(--c);border:1px solid var(--c);border-radius:4px;padding:0 5px}
+.legendline{font-size:12.5px;color:var(--muted);margin-top:6px}
+
+.reg{display:flex;flex-direction:column;gap:6px;font-family:var(--f-prose);font-size:15.5px}
+.reg div{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline}
+.reg .sign{font-family:var(--f-ui);font-weight:700;font-size:12px;border-radius:4px;padding:1px 6px;white-space:nowrap}
+.sign.up{background:var(--ok-bg);color:var(--ok)}
+.sign.down{background:var(--bad-bg);color:var(--bad)}
+.sign.eq{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+
+.links{display:flex;flex-direction:column;gap:8px}
+.link{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;text-align:left;border:1px solid var(--line);background:var(--bg);color:var(--ink);
+  border-radius:9px;padding:10px 12px;cursor:pointer;font:inherit}
+.link:hover{border-color:var(--c)}
+.link .to{font-weight:600;font-size:14px;display:flex;align-items:center;gap:6px;grid-column:1/-1}
+.link .to .dot{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.link .via{font-size:12px;color:var(--muted);grid-column:1/-1}
+.link .txt{font-family:var(--f-prose);font-size:15px;line-height:1.5;grid-column:1/-1}
+.piege{border:1px solid var(--warn-line);background:var(--warn-bg);border-radius:9px;padding:10px 14px;font-family:var(--f-prose);font-size:15px;line-height:1.55}
+.piege b.k{font-family:var(--f-ui);font-size:12px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px}
+.bilan{font-family:var(--f-ui);font-size:14.5px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-variant-numeric:tabular-nums}
+.onoff{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.onoff{grid-template-columns:1fr}}
+.onoff > div{border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+.onoff h4{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.onoff .on h4{color:var(--ok)} .onoff .off h4{color:var(--bad)}
+.onoff ul{margin:0;padding-left:18px;font-size:14px}
+.backbtn{font:500 13px var(--f-ui);border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:6px;padding:4px 10px;cursor:pointer}
+
+/* QCM */
+#view-qcm{display:flex;flex-direction:column;gap:16px;max-width:880px}
+.qhead{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.score{font-family:var(--f-display);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.qactions{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:600 14px var(--f-ui);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn[disabled]{opacity:.45;cursor:default}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.q .qn{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.q .qn .res.ok{color:var(--ok);font-weight:700} .q .qn .res.bad{color:var(--bad);font-weight:700}
+.q .stem{font-family:var(--f-prose);font-size:17px;line-height:1.45;margin:0}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;text-align:left;font:15px var(--f-ui);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer}
+.opt .L{font-weight:700;width:26px;height:26px;border-radius:6px;display:grid;place-items:center;border:1.5px solid var(--line)}
+.opt[aria-pressed="true"] .L{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.opt .mark{font-size:12px;font-weight:700;letter-spacing:.04em}
+.opt.rv-true{border-color:var(--ok);background:var(--ok-bg)}
+.opt.rv-false.picked{border-color:var(--bad);background:var(--bad-bg)}
+.opt.rv-true .mark{color:var(--ok)} .opt.rv-false .mark{color:var(--bad)}
+.opt[disabled]{cursor:default}
+.expl{font-family:var(--f-prose);font-size:15.5px;line-height:1.55;border-left:3px solid var(--accent);padding:4px 0 4px 12px}
+.toast{font-size:13px;color:var(--ok)}
+.hidden-copy{width:100%;min-height:120px;font:13px var(--f-ui);border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Biochimie métabolique · UE 3.3</div>
+      <h1>Atlas du métabolisme</h1>
+      <p class="sub">Toutes les voies sur une seule carte, de la glycolyse aux nucléotides. Choisis une voie, une situation ou un carrefour : la carte s'allume et le cours explique comment chaque voie dépend des autres.</p>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-carte" aria-selected="true" data-view="carte">Carte et cours</button>
+      <button role="tab" id="tab-qcm" aria-selected="false" data-view="qcm">QCM des liens</button>
+    </div>
+  </header>
+
+  <section id="view-carte">
+    <div class="controls">
+      <div class="modes">
+        <span class="lbl">Explorer par</span>
+        <div class="seg" role="group" aria-label="Mode d'exploration">
+          <button id="m-voie" aria-pressed="true" data-mode="voie">Voie</button>
+          <button id="m-sit" aria-pressed="false" data-mode="situation">Situation physiologique</button>
+          <button id="m-car" aria-pressed="false" data-mode="carrefour">Carrefour</button>
+        </div>
+        <button class="backbtn" id="reset">Vue d'ensemble</button>
+      </div>
+      <div id="chips" class="chiprow"></div>
+    </div>
+    <div class="layout" style="margin-top:14px">
+      <div class="mapbox">
+        <div class="mapscroll"><svg id="map" viewBox="0 0 1200 1000" role="img" aria-label="Carte des voies métaboliques reliées entre elles"></svg></div>
+        <div class="maphint"><span>Clique sur une molécule pour voir tout ce qui y entre et en sort.</span><span>Trait épais = voie choisie · trait fin = voie reliée</span></div>
+      </div>
+      <aside class="panel" id="panel" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <section id="view-qcm" hidden></section>
+</div>
+
+<script>
+/* ============ DONNÉES ============ */
+const FAM = {
+  glu:{name:"Glucides", items:["glycolyse","neo","glycogene","pentoses"]},
+  ene:{name:"Énergie", items:["krebs","oxphos"]},
+  lip:{name:"Lipides", items:["lipolyse","cetogenese","lipogenese","cholesterol"]},
+  azo:{name:"Azote", items:["aa","uree","nucleotides","heme"]}
+};
+
+/* Molécules : [x, y, nom] */
+const N = {
+  glc:[520,50,"Glucose"], g6p:[520,140,"Glucose-6-P"], glycogene:[330,150,"Glycogène"],
+  g3p:[520,255,"DHAP / G3P"], pep:[520,350,"PEP"], pyr:[520,440,"Pyruvate"], lac:[395,440,"Lactate"],
+  glycerol:[395,255,"Glycérol"], nadph:[720,50,"NADPH"], r5p:[720,140,"Ribose-5-P"], prpp:[890,140,"PRPP"],
+  purines:[1080,90,"Purines (AMP, GMP)"], pyrimidines:[1080,190,"Pyrimidines (UMP…)"], urique:[1080,30,"Acide urique"],
+  sergly:[720,255,"Sérine / Glycine"], gln:[890,255,"Glutamine"], asp:[890,350,"Aspartate"], ala:[720,440,"Alanine"],
+  aa:[1080,280,"Acides aminés"], tg:[110,60,"Triglycérides"], ag:[110,170,"Acides gras"],
+  malonyl:[260,260,"Malonyl-CoA"], accoac:[260,350,"Acétyl-CoA (cyto)"], citc:[260,445,"Citrate (cyto)"], chol:[410,350,"Cholestérol"],
+  acylm:[110,600,"Acyl-CoA"], accoam:[760,600,"Acétyl-CoA"], cetones:[430,555,"Corps cétoniques"],
+  oaa:[620,680,"Oxaloacétate"], cit:[720,738,"Citrate"], akg:[720,852,"α-Cétoglutarate"], sucoa:[620,910,"Succinyl-CoA"],
+  fum:[520,852,"Fumarate"], mal:[520,738,"Malate"],
+  glu:[900,780,"Glutamate"], nh4:[1080,700,"NH₄⁺"], ureec:[1080,820,"Cycle de l'urée"], uree:[1080,940,"Urée"],
+  chaine:[880,960,"Chaîne resp. → ATP"], heme:[380,950,"Hème"]
+};
+const KC = [620,795]; // centre du cycle de Krebs
+
+/* Arêtes : [id, de, vers, voies, étiquette (texte ou {voie:texte}), options] */
+const E = [
+  ["g1","glc","g6p",["glycolyse","neo"],{glycolyse:"Hexokinase / glucokinase",neo:"Glucose-6-phosphatase (foie)",_:"Hexokinase ⇄ G6Pase"},{bi:1}],
+  ["g2","g6p","g3p",["glycolyse","neo"],{glycolyse:"PFK1 (étape d'engagement)",neo:"Fructose-1,6-bisphosphatase",_:"PFK1 ⇄ F1,6-bisPase"},{bi:1}],
+  ["g3","g3p","pep",["glycolyse","neo"],{glycolyse:"G3P-DH (NADH), PGK (ATP)",neo:"réactions réversibles",_:"G3P-DH, PGK, énolase"},{bi:1}],
+  ["g4","pep","pyr",["glycolyse"],"Pyruvate kinase"],
+  ["g5","pyr","lac",["glycolyse","neo"],"LDH",{bi:1}],
+  ["n1","pyr","oaa",["neo","krebs"],"Pyruvate carboxylase"],
+  ["n2","oaa","pep",["neo"],"PEPCK (OAA sort en malate)",{c:[680,470]}],
+  ["n3","glycerol","g3p",["neo","lipolyse"],"Glycérol kinase (foie)",{ly:28}],
+  ["n4","ala","pyr",["neo","aa"],"ALAT",{bi:1}],
+  ["gy1","g6p","glycogene",["glycogene"],"synthase ⇄ phosphorylase",{bi:1}],
+  ["p1","g6p","r5p",["pentoses"],"G6PDH · transcétolase",{bi:1}],
+  ["p2","g6p","nadph",["pentoses"],"NADP⁺ → NADPH",{dash:1}],
+  ["p3","r5p","prpp",["pentoses","nucleotides"],"PRPP synthétase"],
+  ["k0","pyr","accoam",["krebs"],"PDH (irréversible)"],
+  ["k1","accoam","cit",["krebs"],"Citrate synthase"],
+  ["k7","oaa","cit",["krebs"],"",{arc:1}],
+  ["k2","cit","akg",["krebs"],"Isocitrate DH",{arc:1}],
+  ["k3","akg","sucoa",["krebs"],"α-KG DH",{arc:1}],
+  ["k4","sucoa","fum",["krebs"],"SDH (FADH₂)",{arc:1}],
+  ["k5","fum","mal",["krebs"],"Fumarase",{arc:1}],
+  ["k6","mal","oaa",["krebs"],"MDH",{arc:1}],
+  ["o1","akg","chaine",["oxphos","krebs"],"NADH, FADH₂",{dash:1}],
+  ["l1","tg","ag",["lipolyse","lipogenese"],{lipolyse:"ATGL → LHS → MAG lipase",lipogenese:"estérification",_:"lipolyse ⇄ estérification"},{bi:1}],
+  ["l2","tg","glycerol",["lipolyse"],"lipolyse"],
+  ["l3","ag","acylm",["lipolyse"],"activation + CPT1"],
+  ["l4","acylm","accoam",["lipolyse"],"β-oxydation (FADH₂, NADH)"],
+  ["c1","accoam","cetones",["cetogenese"],"HMG-CoA synthase"],
+  ["lg1","cit","citc",["lipogenese"],"navette citrate",{c:[300,760]}],
+  ["lg2","citc","accoac",["lipogenese","cholesterol"],"ATP-citrate lyase"],
+  ["lg3","accoac","malonyl",["lipogenese"],"Acétyl-CoA carboxylase"],
+  ["lg4","malonyl","ag",["lipogenese"],"AG synthase"],
+  ["lg5","nadph","ag",["lipogenese","pentoses"],"NADPH",{dash:1,c:[400,90]}],
+  ["ch1","accoac","chol",["cholesterol"],"HMG-CoA réductase"],
+  ["a1","aa","glu",["aa"],"transamination (PLP)",{c:[980,560]}],
+  ["a2","akg","glu",["aa","uree"],"transamination ⇄ GDH",{bi:1}],
+  ["a3","oaa","asp",["aa","uree"],"ASAT",{bi:1}],
+  ["a6","g3p","sergly",["aa","glycolyse"],"3-PG → sérine"],
+  ["u1","gln","nh4",["uree","aa"],"Glutaminase",{c:[1130,500]}],
+  ["u2","glu","nh4",["uree","aa"],"GDH"],
+  ["u3","nh4","ureec",["uree"],"CPS I (+ NAG)"],
+  ["u4","asp","ureec",["uree"],"2ᵉ azote",{c:[960,640]}],
+  ["u5","ureec","fum",["uree","krebs"],"fumarate → Krebs",{c:[800,990],lt:.22}],
+  ["u6","ureec","uree",["uree"],"Arginase"],
+  ["nu1","prpp","purines",["nucleotides"],"noyau bâti sur le PRPP"],
+  ["nu2","prpp","pyrimidines",["nucleotides"],"+ orotate"],
+  ["nu3","gln","purines",["nucleotides"],"N de Gln",{dash:1}],
+  ["nu4","gln","pyrimidines",["nucleotides"],"CPS II",{dash:1}],
+  ["nu5","asp","pyrimidines",["nucleotides"],"Asp",{dash:1,c:[980,200]}],
+  ["nu6","sergly","purines",["nucleotides","aa"],"Gly + THF (B9)",{dash:1}],
+  ["nu7","purines","urique",["nucleotides"],"Xanthine oxydase"],
+  ["h1","sucoa","heme",["heme","krebs"],"ALA synthase (+ glycine)"]
+];
+
+/* ============ LES VOIES (le cours) ============ */
+const P = {
+glycolyse:{name:"Glycolyse",fam:"glu",lieu:["Cytosol","Tous les tissus","Seule source d'ATP du globule rouge"],
+ intro:`Casser une molécule de glucose (6 C) en <b>deux pyruvates (3 C)</b>, en récupérant un peu d'énergie : <b>2 ATP nets et 2 NADH</b>. C'est la porte d'entrée de presque tout le métabolisme du glucose.`,
+ cours:[
+ `La glycolyse commence par une <b>phase d'investissement</b> : on dépense 2 ATP avant d'en gagner. L'hexokinase phosphoryle le glucose en glucose-6-P. Ce phosphate a deux rôles : il <b>piège</b> le glucose dans la cellule (une molécule chargée ne repasse pas le transporteur GLUT) et il l'active pour la suite.`,
+ `Le G6P n'est pas encore engagé dans la glycolyse : il peut encore partir vers le glycogène ou vers la voie des pentoses. L'engagement se fait à la <b>PFK1</b>, qui transforme le fructose-6-P en fructose-1,6-bisphosphate. C'est pour ça que la PFK1 est le <b>point de contrôle principal</b> : c'est là que la cellule « décide » de brûler le glucose.`,
+ `L'aldolase coupe ensuite le sucre en deux trioses, DHAP et G3P (l'isomérase convertit le DHAP en G3P). Retiens le DHAP : c'est lui qui donne le <b>glycérol-3-P</b>, le squelette des triglycérides. Premier pont entre glucides et lipides.`,
+ `Vient la <b>phase de récupération</b>. La G3P déshydrogénase réduit du NAD⁺ en NADH, puis la phosphoglycérate kinase et la pyruvate kinase fabriquent 4 ATP (2 par triose). Bilan : 4 − 2 = 2 ATP nets.`,
+ `Le NAD⁺ est le facteur limitant caché. Sans NAD⁺, la G3P-DH s'arrête et toute la glycolyse avec. En présence d'O₂, le NADH est réoxydé par la chaîne respiratoire (via les navettes). Sans O₂ (effort intense, globule rouge), la <b>LDH réduit le pyruvate en lactate</b> pour régénérer le NAD⁺. Le lactate n'est donc pas un déchet : il part au foie et redevient du glucose (cycle de Cori).`],
+ steps:[["Glucose"],["Hexokinase (glucokinase au foie)","ATP → ADP",1],["Glucose-6-P"],["Phosphoglucose isomérase",""],["Fructose-6-P"],["PFK1","ATP → ADP",1],["Fructose-1,6-bisP"],["Aldolase + triose-P isomérase",""],["2 × G3P (via DHAP)"],["G3P déshydrogénase","NAD⁺ → NADH"],["1,3-bisphosphoglycérate"],["Phosphoglycérate kinase","ADP → ATP"],["3-phosphoglycérate"],["Mutase, énolase",""],["Phosphoénolpyruvate (PEP)"],["Pyruvate kinase","ADP → ATP",1],["Pyruvate"]],
+ bilan:`Glucose + 2 NAD⁺ + 2 ADP + 2 Pi → 2 pyruvate + 2 NADH + 2 ATP + 2 H₂O`,
+ regul:[["up","PFK1 activée par AMP et fructose-2,6-bisP (signal de l'insuline)"],["down","PFK1 inhibée par ATP et citrate : assez d'énergie, Krebs saturé"],["down","Hexokinase inhibée par son produit, le G6P (pas la glucokinase du foie)"],["up","Pyruvate kinase activée par le F1,6-bisP (on prépare la sortie)"],["down","Pyruvate kinase inhibée par ATP, alanine et phosphorylation par la PKA (glucagon, foie)"]],
+ liens:[["glycogene","Glucose-6-P","Le G6P est partagé : stocké en glycogène quand on a trop de glucose, libéré du glycogène quand on en manque."],
+  ["pentoses","Glucose-6-P, F6P, G3P","Le G6P peut partir vers les pentoses (NADPH, ribose). Les pentoses en trop reviennent dans la glycolyse sous forme de F6P et G3P."],
+  ["neo","7 réactions communes","La néoglucogenèse emprunte les réactions réversibles en sens inverse et contourne les 3 étapes irréversibles (hexokinase, PFK1, pyruvate kinase)."],
+  ["krebs","Pyruvate → acétyl-CoA","En aérobie, le pyruvate entre dans la mitochondrie et la PDH en fait de l'acétyl-CoA, brûlé dans Krebs."],
+  ["lipogenese","Acétyl-CoA, DHAP","Le glucose en excès devient de la graisse : l'acétyl-CoA fait les acides gras et le DHAP fait le glycérol-3-P des triglycérides."],
+  ["aa","3-PG, pyruvate","Le 3-phosphoglycérate donne la sérine puis la glycine. Le pyruvate donne l'alanine par transamination."]],
+ piege:`Beaucoup d'ATP ne veut pas dire « il faut faire tourner la glycolyse ». L'ATP, c'est l'énergie déjà prête : quand il abonde, il <b>freine</b> la PFK1. L'AMP (signal de manque) l'accélère. Le glucose en excès est alors stocké, pas brûlé.`},
+
+neo:{name:"Néoglucogenèse",fam:"glu",lieu:["Foie (≈ 90 %) et cortex rénal","Mitochondrie + cytosol + réticulum","Jeûne, effort prolongé"],
+ intro:`Fabriquer du glucose neuf à partir de molécules qui ne sont pas des glucides : <b>lactate, alanine (et autres AA glucoformateurs), glycérol</b>. Le cerveau et les globules rouges en ont besoin quand le glycogène du foie s'épuise.`,
+ cours:[
+ `On ne peut pas simplement « remonter » la glycolyse : trois de ses étapes sont irréversibles. La néoglucogenèse utilise donc les 7 réactions réversibles en sens inverse et <b>contourne les 3 autres</b> avec 4 enzymes propres.`,
+ `Premier contournement, le plus subtil : la pyruvate kinase. Dans la mitochondrie, la <b>pyruvate carboxylase</b> ajoute un CO₂ au pyruvate (3 C) pour faire de l'oxaloacétate (4 C). L'OAA ne traverse pas la membrane : il sort sous forme de <b>malate</b>, redevient OAA dans le cytosol, puis la <b>PEPCK</b> le décarboxyle et le phosphoryle en PEP (3 C). Le CO₂ ajouté puis retiré sert juste à « payer » la réaction : 3 → 4 → 3 carbones.`,
+ `Deuxième contournement : la <b>fructose-1,6-bisphosphatase</b> à la place de la PFK1. Troisième : la <b>glucose-6-phosphatase</b>, dans le réticulum. Elle n'existe que dans le foie et le rein : c'est pour cela que seuls ces organes peuvent relâcher du glucose dans le sang. Le muscle, lui, garde son glucose pour lui.`,
+ `D'où vient l'énergie de cette voie très coûteuse ? Surtout de la <b>β-oxydation</b> des acides gras. Au jeûne, le foie brûle des graisses : il récupère l'ATP, et l'acétyl-CoA produit <b>active la pyruvate carboxylase</b> et freine la PDH. C'est le lien le plus important à comprendre : la β-oxydation <b>alimente</b> la néoglucogenèse en énergie, mais <b>ne lui fournit jamais de carbone</b>.`,
+ `Pourquoi les acides gras ne font-ils pas de glucose ? Ils donnent de l'acétyl-CoA, et la PDH est irréversible : on ne revient pas au pyruvate. Dans Krebs, les 2 C de l'acétyl-CoA repartent en 2 CO₂, donc pas de gain net d'OAA. Seule exception mineure : le propionyl-CoA des AG à nombre impair de carbones, qui donne du succinyl-CoA.`],
+ steps:[["Pyruvate (3 C)"],["Pyruvate carboxylase (mito, biotine)","ATP + CO₂",1],["Oxaloacétate (4 C)"],["MDH : sort en malate puis redevient OAA","NADH"],["Oxaloacétate (cytosol)"],["PEPCK","GTP, −CO₂",1],["PEP (3 C)"],["Réactions réversibles de la glycolyse","NADH, ATP"],["Fructose-1,6-bisP"],["Fructose-1,6-bisphosphatase","−Pi",1],["Fructose-6-P → Glucose-6-P"],["Glucose-6-phosphatase (RE, foie et rein)","−Pi",1],["Glucose"]],
+ bilan:`2 pyruvate + 4 ATP + 2 GTP + 2 NADH → 1 glucose (6 liaisons riches en énergie dépensées)`,
+ regul:[["up","Pyruvate carboxylase activée par l'acétyl-CoA (venu de la β-oxydation)"],["up","Glucagon et cortisol : induisent la PEPCK, baissent le F2,6-bisP"],["down","F1,6-bisPase inhibée par AMP et F2,6-bisP (miroir de la PFK1)"],["eq","Les deux voies ne tournent jamais ensemble au même endroit : sinon cycle futile qui brûle de l'ATP"]],
+ liens:[["lipolyse","ATP + acétyl-CoA","La β-oxydation fournit l'ATP et l'acétyl-CoA qui active la pyruvate carboxylase. Le glycérol de la lipolyse est aussi un substrat (via DHAP)."],
+  ["aa","Alanine, squelettes","Au jeûne prolongé, le muscle dégrade ses protéines : l'alanine arrive au foie, l'ALAT la retransforme en pyruvate. Les AA glucoformateurs entrent dans Krebs puis sortent en malate/OAA."],
+  ["uree","Fumarate, même AA","Quand un AA donne son squelette à la néoglucogenèse, son azote part dans le cycle de l'urée. Le fumarate du cycle de l'urée devient malate, donc substrat de la néoglucogenèse."],
+  ["glycolyse","Cycle de Cori","Lactate du muscle → glucose au foie → retour au muscle. La néoglucogenèse recycle les produits de la glycolyse anaérobie."],
+  ["cetogenese","Oxaloacétate","La néoglucogenèse consomme l'OAA du foie. Sans OAA, l'acétyl-CoA ne peut plus entrer dans Krebs : il est dérivé en corps cétoniques."]],
+ piege:`Ne confonds pas <b>source d'énergie</b> et <b>substrat</b>. À l'effort prolongé, l'énergie vient des lipides, mais le glucose fabriqué vient des acides aminés (alanine), du lactate et un peu du glycérol. Jamais des acides gras pairs. Et le compte des carbones est 3 → 4 → 3, pas 3 → 4 → 4.`},
+
+glycogene:{name:"Glycogène",fam:"glu",lieu:["Cytosol","Foie : réserve pour la glycémie","Muscle : réserve pour lui-même"],
+ intro:`Stocker le glucose quand il y en a trop (glycogénogenèse) et le libérer quand on en manque (glycogénolyse). Le foie s'en sert pour tenir la glycémie, le muscle pour sa propre contraction.`,
+ cours:[
+ `<b>Synthèse.</b> Le G6P devient G1P (phosphoglucomutase), puis il est activé par l'<b>UTP</b> en UDP-glucose. La <b>glycogène synthase</b> l'ajoute en liaison α1-4 sur une chaîne existante, et l'enzyme branchante crée les liaisons α1-6. Remarque l'UTP : c'est un nucléotide pyrimidique. Le stockage du sucre dépend donc du métabolisme des nucléotides.`,
+ `<b>Dégradation.</b> La <b>glycogène phosphorylase</b> coupe les liaisons α1-4 avec du phosphate (phosphorolyse) et libère directement du G1P, sans dépenser d'ATP. L'enzyme débranchante s'occupe des branches. Le G1P redevient G6P. Ensuite tout dépend de l'organe : le foie a la glucose-6-phosphatase et relâche du glucose dans le sang ; le muscle ne l'a pas et envoie le G6P dans sa glycolyse.`,
+ `<b>Régulation hormonale (foie).</b> À jeun, le glucagon active Gαs → adénylate cyclase → AMPc → <b>PKA</b>. La PKA <b>phosphoryle</b> trois cibles : la phosphorylase kinase (qui active la phosphorylase), la glycogène synthase (qui s'éteint) et l'inhibiteur 1 (qui bloque la PP1). Résultat : dégradation ON, synthèse OFF. Après un repas, l'insuline active la <b>PP1</b> qui déphosphoryle tout : synthase ON, phosphorylase OFF.`,
+ `<b>Muscle à l'effort.</b> Deux signaux séparés s'additionnent : l'adrénaline (via AMPc/PKA) et le <b>Ca²⁺</b> de la contraction, qui active directement la phosphorylase kinase. L'AMP active aussi la phosphorylase de façon allostérique. Le muscle libère son glucose exactement quand il se contracte.`],
+ steps:[["Glucose-6-P"],["Phosphoglucomutase","",0],["Glucose-1-P"],["UDP-glucose pyrophosphorylase","UTP → PPi",1],["UDP-glucose"],["Glycogène synthase (α1-4) + enzyme branchante (α1-6)","",1],["Glycogène (n+1)"],["Glycogène phosphorylase (sens inverse)","+ Pi",1],["Glucose-1-P → G6P → glucose (foie) ou glycolyse (muscle)"]],
+ bilan:`Stocker 1 glucose coûte 1 UTP (≈ 1 ATP). Le libérer par phosphorolyse ne coûte rien.`,
+ regul:[["up","Insuline → PP1 → glycogène synthase déphosphorylée (active)"],["down","Glucagon (foie) / adrénaline → PKA → synthase phosphorylée (inactive)"],["up","PKA → phosphorylase kinase → phosphorylase active"],["up","Muscle : Ca²⁺ active directement la phosphorylase kinase ; AMP active la phosphorylase"]],
+ liens:[["glycolyse","Glucose-6-P","Le glycogène musculaire alimente directement la glycolyse du muscle à l'effort (puis lactate)."],
+  ["neo","Glucose-6-phosphatase","Foie : glycogénolyse et néoglucogenèse finissent par la même enzyme. La glycogénolyse tient les premières heures de jeûne, puis la néoglucogenèse prend le relais."],
+  ["nucleotides","UTP","L'UDP-glucose nécessite de l'UTP, un nucléotide pyrimidique."],
+  ["lipolyse","Même cascade AMPc/PKA","Le glucagon et l'adrénaline qui dégradent le glycogène activent aussi la lipase hormono-sensible. Une seule cascade, deux réserves mobilisées."]],
+ piege:`La PKA <b>phosphoryle</b> (elle ne déphosphoryle jamais). Elle phosphoryle l'inhibiteur 1, qui <b>bloque</b> la PP1. La phosphorylase kinase phosphoryle la <b>phosphorylase</b>, pas le glycogène. Et le Ca²⁺ agit sur la phosphorylase kinase, pas sur la PKA.`},
+
+pentoses:{name:"Voie des pentoses phosphates",fam:"glu",lieu:["Cytosol","Foie, tissu adipeux, glande mammaire, surrénale","Globule rouge, cellules qui se divisent"],
+ intro:`Une dérivation de la glycolyse qui ne produit pas d'ATP. Elle sert à fabriquer deux choses : du <b>NADPH</b> (pouvoir réducteur des synthèses) et du <b>ribose-5-P</b> (sucre des nucléotides).`,
+ cours:[
+ `<b>Phase oxydative (irréversible).</b> La <b>G6P déshydrogénase</b>, étape limitante, oxyde le G6P et produit un premier NADPH. Après une hydrolyse, la 6-phosphogluconate DH produit un second NADPH en relâchant un CO₂. On obtient du ribulose-5-P. Bilan : 1 G6P → 2 NADPH + 1 CO₂ + 1 pentose.`,
+ `<b>Phase non oxydative (réversible).</b> Une isomérase donne le ribose-5-P, une épimérase le xylulose-5-P. Puis la <b>transcétolase</b> (vitamine B1) et la <b>transaldolase</b> échangent des morceaux de 2 et 3 carbones pour recombiner les pentoses en F6P et G3P, deux intermédiaires de la glycolyse.`,
+ `Comme cette phase est réversible, la voie s'adapte aux besoins : si la cellule veut <b>surtout du ribose</b> (division cellulaire), elle prend du F6P et du G3P à la glycolyse et fait tourner la phase non oxydative à l'envers, sans perdre de carbone en CO₂. Si elle veut <b>surtout du NADPH</b> (lipogenèse), les pentoses produits sont recyclés en F6P puis G6P et repassent dans la phase oxydative. Si elle veut <b>les deux</b>, elle s'arrête au ribose-5-P.`,
+ `Le NADPH n'est pas du NADH. Le NADH est oxydé dans la chaîne respiratoire pour faire de l'ATP ; le NADPH sert à <b>réduire</b> pendant les biosynthèses (acides gras, cholestérol, désoxyribonucléotides) et à garder le <b>glutathion réduit</b> dans le globule rouge. Un déficit en G6PD rend les hématies fragiles face au stress oxydant (hémolyse).`],
+ steps:[["Glucose-6-P"],["G6P déshydrogénase (étape limitante)","NADP⁺ → NADPH",1],["6-phosphogluconolactone → 6-phosphogluconate"],["6-phosphogluconate DH","NADP⁺ → NADPH, −CO₂",1],["Ribulose-5-P"],["Isomérase / épimérase",""],["Ribose-5-P (→ PRPP)  ·  Xylulose-5-P"],["Transcétolase (B1) + transaldolase (réversibles)",""],["Fructose-6-P + G3P (retour à la glycolyse)"]],
+ bilan:`Phase oxydative : G6P + 2 NADP⁺ → ribulose-5-P + 2 NADPH + CO₂`,
+ regul:[["up","G6PDH activée par le NADP⁺ : quand on consomme du NADPH, la voie accélère"],["down","G6PDH inhibée par le NADPH"],["up","Insuline : induit la G6PDH (état nourri, lipogenèse)"]],
+ liens:[["lipogenese","NADPH","La synthèse d'un palmitate consomme 14 NADPH. Ils viennent surtout de cette voie et de l'enzyme malique de la navette citrate."],
+  ["cholesterol","NADPH","L'HMG-CoA réductase consomme 2 NADPH par mévalonate."],
+  ["nucleotides","Ribose-5-P → PRPP","Tout nucléotide commence par du PRPP. Le NADPH sert aussi à la ribonucléotide réductase (ADN)."],
+  ["glycolyse","F6P et G3P","Les deux voies échangent leurs intermédiaires dans les deux sens."]],
+ piege:`Le ribose-5-P peut être fabriqué <b>sans</b> la phase oxydative : la glycolyse fournit F6P + G3P, et la transcétolase/transaldolase les assemblent en pentoses. On saute la phase oxydative pour ne pas perdre de carbone en CO₂.`},
+
+krebs:{name:"PDH et cycle de Krebs",fam:"ene",lieu:["Matrice mitochondriale","Tous les tissus sauf le globule rouge"],
+ intro:`Le <b>carrefour central</b>. Il oxyde l'acétyl-CoA en CO₂ pour charger des NADH et FADH₂ (catabolisme), et prête ses intermédiaires aux synthèses (anabolisme). On dit qu'il est <b>amphibolique</b>.`,
+ cours:[
+ `<b>La PDH</b> transforme le pyruvate en acétyl-CoA en relâchant un CO₂ et un NADH. Elle utilise 5 coenzymes : TPP (B1), acide lipoïque, CoA (B5), FAD (B2), NAD⁺ (B3). Elle est <b>irréversible</b> : c'est le point de non-retour du glucose. Après elle, le carbone ne peut plus redevenir du glucose. Elle est freinée par ses produits (acétyl-CoA, NADH) et par l'ATP via une kinase qui la phosphoryle ; l'insuline et le Ca²⁺ du muscle la réactivent.`,
+ `<b>Le cycle.</b> L'acétyl-CoA (2 C) se condense avec l'oxaloacétate (4 C) pour donner le citrate (6 C) : citrate synthase, irréversible. Deux décarboxylations oxydatives suivent, isocitrate DH puis α-cétoglutarate DH, qui relâchent 2 CO₂ et 2 NADH. Le succinyl-CoA donne un GTP. La <b>succinate déshydrogénase</b> produit le FADH₂ : c'est aussi le complexe II de la chaîne respiratoire, le lien physique entre les deux. Fumarase puis malate DH (NADH) régénèrent l'OAA.`,
+ `Par tour : <b>3 NADH, 1 FADH₂, 1 GTP, 2 CO₂</b>, soit environ 10 ATP après la chaîne respiratoire. L'OAA n'est pas consommé : il joue le rôle de catalyseur. Donc la quantité d'OAA règle la vitesse à laquelle on peut brûler l'acétyl-CoA.`,
+ `<b>Amphibolique.</b> Les synthèses puisent dans le cycle (cataplérose) : citrate → acides gras et cholestérol ; α-KG → glutamate → autres AA, purines, pyrimidines ; succinyl-CoA → hème ; OAA → aspartate → urée et nucléotides ; malate/OAA → glucose. Chaque sortie doit être compensée par une entrée (<b>anaplérose</b>) : surtout la pyruvate carboxylase, mais aussi les squelettes des AA glucoformateurs (α-KG, succinyl-CoA, fumarate, OAA).`],
+ steps:[["Pyruvate"],["Pyruvate déshydrogénase","NAD⁺ → NADH, −CO₂",1],["Acétyl-CoA (2 C) + Oxaloacétate (4 C)"],["Citrate synthase","",1],["Citrate (6 C) → isocitrate (aconitase)"],["Isocitrate DH (contrôle principal)","NADH, −CO₂",1],["α-Cétoglutarate (5 C)"],["α-KG déshydrogénase","NADH, −CO₂",1],["Succinyl-CoA (4 C)"],["Succinyl-CoA synthétase","GTP"],["Succinate"],["Succinate DH = complexe II","FADH₂"],["Fumarate → Malate (fumarase)"],["Malate DH","NADH"],["Oxaloacétate (régénéré)"]],
+ bilan:`Acétyl-CoA + 3 NAD⁺ + FAD + GDP + Pi → 2 CO₂ + 3 NADH + FADH₂ + GTP ≈ 10 ATP`,
+ regul:[["down","ATP et NADH inhibent citrate synthase, isocitrate DH et α-KG DH"],["up","ADP et Ca²⁺ activent l'isocitrate DH et l'α-KG DH"],["eq","Disponibilité en OAA : si l'OAA part en néoglucogenèse, le cycle ralentit"]],
+ liens:[["lipogenese","Citrate","Trop de citrate = trop d'énergie : il sort de la mitochondrie et apporte l'acétyl-CoA au cytosol pour faire des acides gras. Dans le cytosol, il inhibe la PFK1 et active l'ACC."],
+  ["aa","α-KG ⇄ glutamate, OAA ⇄ aspartate","Les transaminations relient directement Krebs aux acides aminés."],
+  ["uree","Fumarate, aspartate","Le cycle de l'urée rend du fumarate à Krebs et lui prend de l'aspartate (fait à partir de l'OAA) : c'est la « bicyclette de Krebs »."],
+  ["neo","Oxaloacétate, malate","La pyruvate carboxylase fait l'OAA de la néoglucogenèse dans la mitochondrie."],
+  ["cetogenese","Manque d'OAA","Au jeûne, l'OAA du foie part en néoglucogenèse : l'acétyl-CoA de la β-oxydation déborde et devient corps cétoniques."],
+  ["heme","Succinyl-CoA","Succinyl-CoA + glycine = premier précurseur de l'hème."],
+  ["oxphos","NADH, FADH₂","Krebs ne fait presque pas d'ATP lui-même : il charge des transporteurs que la chaîne respiratoire décharge."]],
+ piege:`L'acétyl-CoA ne donne <b>pas de glucose net</b> : il entre avec 2 C et le cycle en relâche 2 en CO₂. C'est pour ça qu'au jeûne, les acides gras fournissent l'énergie mais pas le glucose.`},
+
+oxphos:{name:"Chaîne respiratoire et ATP synthase",fam:"ene",lieu:["Membrane interne mitochondriale","Besoin d'O₂"],
+ intro:`L'usine à ATP. Elle récupère les électrons du NADH et du FADH₂ produits par toutes les voies oxydatives, les donne à l'O₂, et utilise l'énergie libérée pour fabriquer de l'ATP.`,
+ cours:[
+ `Le NADH cède ses électrons au <b>complexe I</b>, le FADH₂ au <b>complexe II</b> (la succinate DH de Krebs). Ils passent au coenzyme Q, au complexe III, au cytochrome c, puis au <b>complexe IV</b> qui réduit l'O₂ en H₂O.`,
+ `Les complexes I, III et IV sont des pompes : ils envoient des H⁺ dans l'espace intermembranaire (10 H⁺ par NADH, 6 par FADH₂ car le complexe II ne pompe pas). Les H⁺ reviennent par l'<b>ATP synthase</b> (complexe V) qui tourne et phosphoryle l'ADP. On compte environ <b>2,5 ATP par NADH et 1,5 par FADH₂</b>.`,
+ `<b>Couplage.</b> Sans ADP, l'ATP synthase s'arrête, les H⁺ s'accumulent, la chaîne ralentit, le NADH s'accumule et freine Krebs et la PDH. C'est ainsi que la demande en ATP commande toutes les voies oxydatives en amont.`,
+ `<b>NADH du cytosol.</b> Le NADH de la glycolyse ne traverse pas la membrane. Il passe par une navette : malate-aspartate (foie, cœur ; utilise l'ASAT et donne 2,5 ATP) ou glycérol-3-P (muscle, cerveau ; donne 1,5 ATP via le FAD). Encore deux ponts : avec les acides aminés et avec le glycérol.`],
+ steps:[["NADH (Krebs, PDH, β-ox, navettes)"],["Complexe I (pompe 4 H⁺)",""],["Coenzyme Q ← FADH₂ via complexe II"],["Complexe III (pompe 4 H⁺)",""],["Cytochrome c"],["Complexe IV (pompe 2 H⁺)","O₂ → H₂O",1],["Gradient de H⁺"],["ATP synthase (complexe V)","ADP + Pi → ATP"],["ATP"]],
+ bilan:`1 NADH ≈ 2,5 ATP · 1 FADH₂ ≈ 1,5 ATP · 1 acétyl-CoA ≈ 10 ATP · 1 glucose ≈ 30-32 ATP · 1 palmitate = 106 ATP`,
+ regul:[["up","ADP disponible = la chaîne tourne (contrôle respiratoire)"],["down","Sans O₂, le NADH ne peut plus être réoxydé : la cellule bascule vers le lactate"]],
+ liens:[["krebs","Succinate DH = complexe II","Krebs et la chaîne partagent une enzyme. Si l'un ralentit, l'autre aussi."],
+  ["lipolyse","NADH + FADH₂ de la β-oxydation","Chaque tour de β-oxydation livre 1 FADH₂ + 1 NADH directement à la chaîne."],
+  ["glycolyse","Navettes, LDH","Sans O₂, le NADH glycolytique est réoxydé par la LDH (lactate) au lieu de la chaîne."],
+  ["aa","Navette malate-aspartate","Elle utilise l'ASAT et le couple glutamate/α-KG pour faire entrer les équivalents réducteurs."]],
+ piege:`Le complexe II n'est <b>pas une pompe</b> : voilà pourquoi le FADH₂ rapporte moins d'ATP que le NADH.`},
+
+lipolyse:{name:"Lipolyse et β-oxydation",fam:"lip",lieu:["Lipolyse : cytosol de l'adipocyte","β-oxydation : matrice mitochondriale","Foie, muscle, cœur (pas le cerveau, pas le GR)"],
+ intro:`Deux étapes successives à ne pas confondre. La <b>lipolyse</b> détache les acides gras du glycérol dans l'adipocyte. La <b>β-oxydation</b> découpe ensuite ces acides gras en acétyl-CoA dans la mitochondrie des tissus qui les brûlent.`,
+ cours:[
+ `<b>Lipolyse.</b> Trois lipases enlèvent les AG un par un : ATGL (TG → DAG), <b>lipase hormono-sensible</b> (DAG → MAG), MAG lipase (→ glycérol). Le glucagon et l'adrénaline activent la LHS via AMPc/PKA (la même cascade que pour le glycogène) ; l'insuline l'éteint. Les AG partent dans le sang <b>liés à l'albumine</b>. Le glycérol va au foie : seul le foie a la glycérol kinase, qui en fait du glycérol-3-P puis du DHAP (substrat de la néoglucogenèse).`,
+ `<b>Activation et entrée.</b> Dans le cytosol de la cellule qui va le brûler, l'AG est activé en acyl-CoA (acyl-CoA synthétase, ATP → AMP + PPi, donc 2 liaisons riches). La membrane mitochondriale interne ne le laisse pas passer : il est transféré sur la carnitine par la <b>CPT1</b>, traverse, puis la CPT2 le remet sur un CoA. La CPT1 est la porte d'entrée et elle est <b>inhibée par le malonyl-CoA</b>.`,
+ `<b>La spirale.</b> Chaque tour comporte 4 réactions qui oxydent le <b>carbone β</b> : déshydrogénation (FADH₂), hydratation, déshydrogénation (NADH), thiolyse. Chaque tour libère un acétyl-CoA et raccourcit la chaîne de 2 C. Un palmitate (C16) fait <b>7 tours</b> et donne <b>8 acétyl-CoA, 7 FADH₂, 7 NADH</b>.`,
+ `Cas particuliers : un AG mono-insaturé demande une <b>isomérase</b>, un poly-insaturé une réductase en plus. Un AG à nombre impair de C finit par un propionyl-CoA (C3), qui est <b>carboxylé</b> (biotine) puis converti en succinyl-CoA (B12). C'est la seule petite part glucoformatrice des lipides avec le glycérol.`],
+ steps:[["Triglycéride (adipocyte)"],["ATGL → lipase hormono-sensible → MAG lipase","3 H₂O",1],["3 acides gras (sang, albumine) + glycérol (foie)"],["Acyl-CoA synthétase","ATP → AMP + PPi"],["Acyl-CoA (cytosol)"],["CPT1 → translocase → CPT2","inhibée par malonyl-CoA",1],["Acyl-CoA (matrice)"],["Acyl-CoA DH · hydratase · 3-OH-acyl-CoA DH · thiolase","FADH₂ + NADH par tour"],["Acétyl-CoA + acyl-CoA (n − 2)"]],
+ bilan:`Palmitate → 8 acétyl-CoA + 7 FADH₂ + 7 NADH → 80 + 10,5 + 17,5 = 108 − 2 (activation) = 106 ATP`,
+ regul:[["up","Glucagon, adrénaline → PKA → LHS phosphorylée active"],["down","Insuline → LHS inactive, stockage"],["down","Malonyl-CoA (produit de la lipogenèse) inhibe la CPT1"],["up","Jeûne : malonyl-CoA bas → CPT1 libre → β-oxydation maximale"]],
+ liens:[["krebs","Acétyl-CoA","L'acétyl-CoA de la β-oxydation est brûlé dans Krebs dans le muscle et le cœur."],
+  ["cetogenese","Acétyl-CoA en excès (foie)","Au jeûne, le foie fait plus d'acétyl-CoA qu'il ne peut en brûler : il fabrique des corps cétoniques pour les autres organes."],
+  ["neo","ATP, acétyl-CoA, glycérol","La β-oxydation finance la néoglucogenèse et le glycérol en est un substrat."],
+  ["lipogenese","Malonyl-CoA","Le premier produit de la lipogenèse bloque la β-oxydation : on n'oxyde pas des AG qu'on vient de fabriquer (pas de cycle futile)."],
+  ["oxphos","FADH₂, NADH","Livrés directement à la chaîne respiratoire."],
+  ["glycogene","Même cascade AMPc/PKA","Les mêmes hormones mobilisent glycogène et graisses au même moment."]],
+ piege:`La β-oxydation n'est <b>pas</b> l'inverse de la lipolyse. Les couples opposés sont : lipolyse ⇄ estérification, et β-oxydation ⇄ lipogenèse (et même ce couple n'est pas un vrai inverse : mitochondrie vs cytosol, NADH/FADH₂ vs NADPH, acétyl-CoA vs malonyl-CoA). La β-oxydation produit du NADH et du FADH₂, jamais du NADPH.`},
+
+cetogenese:{name:"Cétogenèse et cétolyse",fam:"lip",lieu:["Fabrication : mitochondrie du foie","Utilisation : cerveau (jeûne prolongé), muscle, cœur, cortex rénal"],
+ intro:`Quand le foie a plus d'acétyl-CoA qu'il ne peut en brûler, il l'emballe en <b>corps cétoniques</b> solubles (acétoacétate, 3-hydroxybutyrate) et les exporte. C'est un carburant de secours pour le cerveau quand le glucose manque.`,
+ cours:[
+ `<b>Pourquoi ça arrive.</b> Au jeûne, le foie fait de la β-oxydation en masse, et en même temps il envoie son oxaloacétate à la néoglucogenèse. Sans OAA, l'acétyl-CoA ne peut plus entrer dans Krebs. Il s'accumule : la cétogenèse est la soupape.`,
+ `<b>Synthèse.</b> Deux acétyl-CoA s'assemblent en acétoacétyl-CoA (thiolase). Un troisième s'ajoute : l'<b>HMG-CoA synthase mitochondriale</b> forme l'HMG-CoA. C'est l'étape limitante et la première irréversible. L'HMG-CoA lyase libère l'acétoacétate et un acétyl-CoA. L'acétoacétate est réduit en 3-hydroxybutyrate (NADH) ou se décarboxyle spontanément en acétone (expirée).`,
+ `<b>Utilisation.</b> Les tissus périphériques font le chemin inverse : 3-hydroxybutyrate → acétoacétate, puis une <b>CoA transférase</b> prend le CoA du succinyl-CoA pour faire de l'acétoacétyl-CoA, qui donne 2 acétyl-CoA brûlés dans Krebs. Le foie n'a pas cette transférase : il fabrique des corps cétoniques mais ne peut pas les utiliser.`,
+ `<b>Diabète de type 1.</b> Sans insuline, le corps se comporte comme s'il jeûnait alors que la glycémie est haute : lipolyse et cétogenèse s'emballent. Les corps cétoniques sont des acides : acidose métabolique, haleine « pomme verte » (acétone), coma acidocétosique.`],
+ steps:[["2 × Acétyl-CoA"],["Thiolase",""],["Acétoacétyl-CoA"],["HMG-CoA synthase mitochondriale (+ acétyl-CoA)","étape limitante",1],["HMG-CoA"],["HMG-CoA lyase","− acétyl-CoA"],["Acétoacétate"],["3-hydroxybutyrate DH","NADH ⇄ NAD⁺"],["3-hydroxybutyrate (sang) · acétone (spontané)"]],
+ bilan:`Foie : 2 acétyl-CoA → 1 acétoacétate. Tissu périphérique : 1 acétoacétate → 2 acétyl-CoA (≈ 20 ATP)`,
+ regul:[["up","Glucagon, jeûne, diabète : lipolyse ↑, malonyl-CoA ↓, CPT1 libre"],["down","Insuline : lipolyse ↓, ACC active, malonyl-CoA bloque la β-oxydation"],["up","Manque d'OAA dans le foie (détourné vers la néoglucogenèse)"]],
+ liens:[["lipolyse","Acétyl-CoA de la β-oxydation","Sans β-oxydation hépatique massive, pas de cétogenèse."],
+  ["neo","Oxaloacétate","La néoglucogenèse vide l'OAA du foie, ce qui oblige l'acétyl-CoA à partir en corps cétoniques. Les deux voies tournent ensemble au jeûne."],
+  ["cholesterol","HMG-CoA","Même molécule, deux compartiments : dans la mitochondrie elle donne des corps cétoniques, dans le cytosol elle donne du cholestérol (HMG-CoA réductase)."],
+  ["krebs","Succinyl-CoA, acétyl-CoA","L'utilisation des corps cétoniques emprunte le CoA du succinyl-CoA de Krebs et rend de l'acétyl-CoA au cycle."],
+  ["aa","AA cétogènes","La leucine et la lysine donnent uniquement de l'acétyl-CoA ou de l'acétoacétyl-CoA : elles alimentent la cétogenèse, jamais la néoglucogenèse."]],
+ piege:`L'HMG-CoA synthase <b>mitochondriale</b> est l'enzyme clé de la cétogenèse ; l'HMG-CoA <b>réductase</b> (cytosolique) est celle du cholestérol. Le foie fabrique les corps cétoniques mais ne les utilise pas.`},
+
+lipogenese:{name:"Lipogenèse",fam:"lip",lieu:["Cytosol","Foie, tissu adipeux, glande mammaire","État nourri (insuline)"],
+ intro:`Transformer le surplus de glucose (et d'AA ou d'alcool) en <b>acides gras</b>, puis en triglycérides pour le stockage. Elle part de l'acétyl-CoA, jamais d'un acide gras.`,
+ cours:[
+ `<b>Le problème de départ.</b> L'acétyl-CoA est fabriqué dans la mitochondrie (PDH) mais la synthèse se fait dans le cytosol, et l'acétyl-CoA ne traverse pas la membrane. Solution : la <b>navette citrate</b>. L'acétyl-CoA se condense avec l'OAA en citrate, qui sort. Dans le cytosol, l'<b>ATP-citrate lyase</b> le recoupe en acétyl-CoA + OAA.`,
+ `L'OAA doit retourner dans la mitochondrie. Il est réduit en malate (MDH, consomme un NADH), puis l'<b>enzyme malique</b> le décarboxyle en pyruvate <b>en produisant un NADPH</b>. Le pyruvate rentre et la pyruvate carboxylase refait l'OAA. La navette transporte donc l'acétyl-CoA et fournit en même temps une partie du NADPH.`,
+ `<b>Étape limitante.</b> L'<b>acétyl-CoA carboxylase</b> (ACC, biotine, ATP) fixe un CO₂ sur l'acétyl-CoA : malonyl-CoA (3 C). Ce malonyl-CoA a un double rôle : brique de construction, et frein de la CPT1 (il empêche la β-oxydation).`,
+ `<b>L'acide gras synthase</b> part d'une amorce d'acétyl-CoA. À chaque tour, un malonyl-CoA s'ajoute et perd son CO₂ (donc +2 C nets), puis viennent réduction (NADPH), déshydratation, réduction (NADPH). Après <b>7 tours</b>, la thioestérase libère le <b>palmitate C16:0</b>. Il est ensuite allongé ou désaturé, activé en acyl-CoA, et estérifié sur du glycérol-3-P (venu du DHAP de la glycolyse) pour former des triglycérides. Le foie les exporte dans les VLDL.`],
+ steps:[["Citrate (mitochondrie)"],["Translocase puis ATP-citrate lyase","ATP + CoA",0],["Acétyl-CoA (cytosol) + OAA → malate → pyruvate (enzyme malique : NADPH)"],["Acétyl-CoA carboxylase (biotine)","ATP + CO₂",1],["Malonyl-CoA (3 C)"],["Acide gras synthase × 7 tours","14 NADPH, −7 CO₂",1],["Palmitoyl-ACP"],["Thioestérase",""],["Palmitate C16:0 → acyl-CoA + glycérol-3-P → triglycérides"]],
+ bilan:`8 acétyl-CoA + 7 ATP + 14 NADPH → palmitate + 7 CO₂ + 14 NADP⁺ + 8 CoA`,
+ regul:[["up","Citrate active l'ACC (signal d'abondance)"],["up","Insuline : déphosphoryle et active l'ACC"],["down","Glucagon, adrénaline (PKA) et AMPK (manque d'ATP) phosphorylent et inhibent l'ACC"],["down","Palmitoyl-CoA (acyl-CoA longs) inhibe l'ACC : rétrocontrôle par le produit"]],
+ liens:[["glycolyse","Pyruvate, DHAP","Le glucose donne l'acétyl-CoA (via PDH) et le glycérol-3-P. Pas de lipogenèse sans glycolyse active."],
+  ["krebs","Citrate","Le citrate sort de Krebs quand l'énergie est haute : c'est le transporteur de l'acétyl-CoA."],
+  ["pentoses","NADPH","La voie des pentoses fournit la majorité des 14 NADPH ; l'enzyme malique fournit le reste."],
+  ["lipolyse","Malonyl-CoA → CPT1","La lipogenèse bloque la β-oxydation au même moment : les deux voies sont réciproques."],
+  ["cholesterol","Acétyl-CoA cytosolique","Même pool d'acétyl-CoA du cytosol, même NADPH : les deux synthèses sont activées par l'insuline."]],
+ piege:`On ne « fabrique » pas un AG en activant un AG. La lipogenèse part d'acétyl-CoA issu du glucose. Le malonyl-CoA (C3) perd un CO₂ à chaque tour : +2 C nets, 7 tours depuis l'amorce. Le NADPH vient de l'<b>enzyme malique</b>, pas de la MDH. Bilan à connaître : 7 ATP, 14 NADPH, 7 tours.`},
+
+cholesterol:{name:"Cholestérol et lipoprotéines",fam:"lip",lieu:["Cytosol + réticulum","Surtout le foie (aussi intestin, surrénales, gonades)"],
+ intro:`Fabriquer le cholestérol à partir de l'acétyl-CoA du cytosol, et le transporter dans le sang avec les triglycérides grâce aux lipoprotéines.`,
+ cours:[
+ `Trois acétyl-CoA donnent l'HMG-CoA dans le cytosol (HMG-CoA synthase <b>cytosolique</b>). L'<b>HMG-CoA réductase</b> le réduit en mévalonate avec 2 NADPH : c'est l'étape limitante, cible des statines. Le mévalonate donne des unités isopréniques à 5 C, assemblées en squalène (30 C), cyclisé en lanostérol, puis raccourci en cholestérol (27 C).`,
+ `Le cholestérol sert à construire les membranes, et c'est le précurseur des acides biliaires (foie), des hormones stéroïdes (surrénales, gonades) et de la vitamine D.`,
+ `<b>Régulation par SREBP.</b> Quand le cholestérol de la cellule est bas, le facteur SREBP est clivé, va au noyau et augmente la transcription de deux gènes : l'HMG-CoA réductase (fabriquer) et le récepteur aux LDL (importer). Quand le cholestérol est haut, SREBP reste bloqué et la réductase est davantage dégradée. Côté énergie : l'AMPK, activée par l'AMP, phosphoryle et inhibe la réductase ; l'ATP inhibe l'AMPK, donc l'ATP laisse la réductase travailler (double négation). L'insuline active, le glucagon inhibe.`,
+ `<b>Transport.</b> Les chylomicrons apportent les TG alimentaires (intestin). Les <b>VLDL</b> exportent les TG fabriqués par la lipogenèse hépatique ; la lipoprotéine lipase des capillaires libère leurs AG pour le muscle (β-oxydation) ou l'adipocyte (stockage). Les VLDL deviennent IDL puis LDL, riches en cholestérol, captées par le récepteur LDL. Les HDL ramènent le cholestérol des tissus vers le foie.`],
+ steps:[["3 × Acétyl-CoA (cytosol)"],["Thiolase + HMG-CoA synthase cytosolique",""],["HMG-CoA"],["HMG-CoA réductase (cible des statines)","2 NADPH",1],["Mévalonate"],["Kinases, décarboxylation","3 ATP, −CO₂"],["Isopentényl-PP (C5) → squalène (C30)"],["Cyclisation",""],["Lanostérol → Cholestérol (C27)"]],
+ bilan:`Cholestérol → membranes, acides biliaires, hormones stéroïdes, vitamine D`,
+ regul:[["up","Cholestérol bas → SREBP au noyau → ↑ HMG-CoA réductase et ↑ récepteurs LDL"],["down","Cholestérol haut → SREBP bloqué, dégradation de la réductase ↑"],["down","AMPK (AMP élevé) phosphoryle et inhibe la réductase"],["up","Insuline active, glucagon inhibe"]],
+ liens:[["lipogenese","Acétyl-CoA du cytosol, NADPH","Les deux synthèses partagent la navette citrate et le NADPH, et toutes deux sont activées par l'insuline."],
+  ["cetogenese","HMG-CoA","Dans la mitochondrie l'HMG-CoA donne des corps cétoniques, dans le cytosol du cholestérol."],
+  ["pentoses","NADPH","2 NADPH par mévalonate, fournis surtout par la voie des pentoses."],
+  ["lipolyse","VLDL, lipoprotéine lipase","Les AG transportés par les VLDL sont libérés dans les tissus pour être oxydés ou stockés."]],
+ piege:`SREBP agit dans les deux sens : elle augmente à la fois la synthèse (réductase) et l'import (récepteurs LDL). On ne dit pas « on inhibe les LDL » mais « moins de récepteurs aux LDL ».`},
+
+aa:{name:"Catabolisme des acides aminés",fam:"azo",lieu:["Transamination : tous les tissus","Désamination (GDH) : foie et rein, mitochondrie"],
+ intro:`Il n'existe <b>pas de stock d'acides aminés</b> : ce qui n'est pas utilisé pour les protéines est dégradé. Chaque AA est traité en deux morceaux : l'<b>azote</b> (à éliminer) et le <b>squelette carboné</b> (à recycler en énergie, glucose ou corps cétoniques).`,
+ cours:[
+ `<b>Transamination.</b> Le NH₂ de la grande majorité des AA est transféré sur l'α-cétoglutarate, qui devient du <b>glutamate</b>. L'AA devient un <b>α-cétoacide</b> : son NH₂ est remplacé par une cétone C=O. Il existe une aminotransférase par AA, toutes avec la vitamine B6 (PLP). Les deux plus connues : l'<b>ALAT</b> (alanine ⇄ pyruvate) et l'<b>ASAT</b> (aspartate ⇄ oxaloacétate). Les réactions sont réversibles : on peut aussi fabriquer des AA non essentiels à partir de pyruvate, OAA et α-KG.`,
+ `<b>Désamination.</b> Tout l'azote est maintenant concentré sur le glutamate. Dans la mitochondrie du foie, la <b>glutamate déshydrogénase</b> (GDH) libère le NH₄⁺ et régénère l'α-KG. Les aminoacide oxydases et la sérine déshydratase ne sont que des voies secondaires.`,
+ `<b>Transport.</b> Le NH₃ est toxique, surtout pour le cerveau. Dans le muscle et le cerveau, il est fixé sur le glutamate pour faire de la <b>glutamine</b> (glutamine synthétase, ATP), transporteur non toxique. Au foie et au rein, la glutaminase relibère le NH₃. Le muscle utilise aussi le <b>cycle glucose-alanine</b> : il charge son azote sur le pyruvate (alanine), le foie récupère l'azote et fait du glucose avec le squelette.`,
+ `<b>Les squelettes</b> entrent tous dans le carrefour Krebs. Glucoformateurs : ils donnent pyruvate, OAA, α-KG, succinyl-CoA ou fumarate (néoglucogenèse). Cétogènes stricts : leucine et lysine (acétyl-CoA, acétoacétyl-CoA). Mixtes : phénylalanine, tyrosine, tryptophane, isoleucine. Les AA servent aussi de précurseurs : hème (glycine), nucléotides (glutamine, aspartate, glycine), neurotransmetteurs (décarboxylation), SAM (méthionine).`],
+ steps:[["Acide aminé + α-cétoglutarate"],["Aminotransférase (PLP, B6)","réversible"],["α-cétoacide + Glutamate"],["Glutamate déshydrogénase (mitochondrie, foie)","NAD⁺ → NADH"],["α-cétoglutarate + NH₄⁺"],["→ cycle de l'urée (foie) ou NH₄⁺ urinaire (rein)",""]],
+ bilan:`AA → azote collecté sur le glutamate → NH₄⁺ ; squelette → pyruvate / intermédiaire de Krebs / acétyl-CoA`,
+ regul:[["up","Jeûne prolongé, cortisol : protéolyse musculaire ↑"],["up","Régime riche en protéines : aminotransférases et enzymes du cycle de l'urée induites"],["eq","Pas de stockage : tout excès d'AA est dégradé"]],
+ liens:[["krebs","α-KG ⇄ glutamate, OAA ⇄ aspartate","Le couple α-KG/glutamate est le collecteur d'azote : Krebs est directement branché sur les AA."],
+  ["uree","NH₄⁺, aspartate","L'azote collecté finit en urée au foie (90 %) ou en NH₄⁺ urinaire au rein (10 %)."],
+  ["neo","Alanine, AA glucoformateurs","Principal substrat de la néoglucogenèse au jeûne prolongé."],
+  ["cetogenese","Leucine, lysine","Les AA cétogènes alimentent les corps cétoniques."],
+  ["nucleotides","Glutamine, aspartate, glycine","Ils apportent tous les azotes des bases puriques et pyrimidiques."],
+  ["heme","Glycine","Avec le succinyl-CoA, la glycine est le point de départ de l'hème."]],
+ piege:`La plupart des AA <b>ne sont pas désaminés directement</b> : ils passent d'abord leur NH₂ au glutamate (transamination), puis la GDH libère le NH₄⁺. La désamination fait du NH₄⁺, pas de l'urée. Un α-cétoacide n'est pas « l'AA sans l'amine » : l'amine est <b>remplacée</b> par une cétone.`},
+
+uree:{name:"Cycle de l'urée",fam:"azo",lieu:["Foie uniquement","2 étapes mitochondriales + 3 cytosoliques"],
+ intro:`Transformer l'ammoniac toxique en <b>urée</b>, soluble et non toxique, éliminée par le rein. Une urée évacue <b>2 atomes d'azote</b> : l'un vient du NH₃, l'autre de l'aspartate.`,
+ cours:[
+ `<b>Mitochondrie.</b> La <b>carbamyl-phosphate synthétase I</b> (CPS I) condense NH₃ + HCO₃⁻ en carbamyl-phosphate, en dépensant 2 ATP. Elle ne marche qu'en présence de son activateur obligatoire, le <b>N-acétylglutamate</b> (NAG), fabriqué à partir de glutamate et d'acétyl-CoA. L'ornithine carbamyl transférase (OCT) fixe le carbamyl sur l'ornithine : citrulline, qui sort au cytosol.`,
+ `<b>Cytosol.</b> La citrulline se condense avec l'<b>aspartate</b> (2ᵉ azote, ATP → AMP + PPi) : arginosuccinate. L'arginosuccinate lyase le coupe en <b>arginine + fumarate</b>. L'<b>arginase</b> hydrolyse l'arginine en urée + ornithine, qui retourne dans la mitochondrie.`,
+ `<b>La bicyclette de Krebs.</b> Le fumarate libéré devient malate puis oxaloacétate. Par l'ASAT, l'OAA reprend un NH₂ au glutamate et redevient aspartate, qui rentre dans le cycle de l'urée. Les deux cycles sont donc branchés l'un sur l'autre. Le malate peut aussi partir en néoglucogenèse.`,
+ `<b>Régulation.</b> Par les substrats d'abord : plus il y a de glutamine, plus il y a de NH₃ et de glutamate, donc de NAG, donc la CPS I tourne plus vite. La glutaminase hépatique est <b>induite</b> par le NH₃ (exception au rétrocontrôle habituel : le but est d'éliminer). L'arginine active la NAG synthase. Un régime protéiné ou le jeûne prolongé induisent les enzymes. Le rein, lui, excrète 10 % de l'azote sous forme de NH₄⁺ (ammoniogenèse), utile pour l'équilibre acide-base.`],
+ steps:[["NH₃ + HCO₃⁻ (mitochondrie)"],["Carbamyl-phosphate synthétase I (+ NAG)","2 ATP",1],["Carbamyl-phosphate"],["Ornithine carbamyl transférase (+ ornithine)",""],["Citrulline → cytosol"],["Arginosuccinate synthétase (+ aspartate)","ATP → AMP + PPi",1],["Arginosuccinate"],["Arginosuccinate lyase","→ fumarate (Krebs)"],["Arginine"],["Arginase","+ H₂O"],["Urée + ornithine (retour mitochondrie)"]],
+ bilan:`NH₃ + HCO₃⁻ + aspartate + 3 ATP → urée + fumarate + 2 ADP + AMP + PPi + 2 Pi (4 liaisons riches)`,
+ regul:[["up","N-acétylglutamate : activateur obligatoire de la CPS I"],["up","Arginine active la NAG synthase"],["up","NH₃ induit la glutaminase hépatique (plus de NH₃ → plus d'urée)"],["up","Régime riche en protéines, jeûne prolongé (glucagon, cortisol) : induction des enzymes"]],
+ liens:[["krebs","Fumarate et aspartate","Le cycle de l'urée rend du fumarate et consomme de l'aspartate fait à partir de l'OAA : bicyclette de Krebs."],
+  ["aa","Glutamate, glutamine","Tout l'azote des AA arrive par la glutamine et le glutamate."],
+  ["neo","Fumarate → malate","Au jeûne prolongé, la même molécule d'AA donne son azote à l'urée et son squelette au glucose."],
+  ["lipolyse","ATP","Le cycle coûte 3 ATP par urée : au jeûne, c'est la β-oxydation qui paie."],
+  ["nucleotides","CPS I ≠ CPS II","La CPS II cytosolique (avec la glutamine) fait le carbamyl-phosphate des pyrimidines. Ne pas confondre."]],
+ piege:`L'urée est <b>fabriquée dans le foie</b> et éliminée par le rein. 90 % de l'azote part en urée, 10 % en NH₄⁺ rénal. La glutaminase hépatique est <b>activée</b> par le NH₃, pas rétro-inhibée.`},
+
+nucleotides:{name:"Métabolisme des nucléotides",fam:"azo",lieu:["Cytosol","Néosynthèse : foie, cellules en division","Recyclage : presque tous les tissus"],
+ intro:`Construire les nucléotides de l'ADN, de l'ARN et de l'énergie (ATP, GTP, UTP, CTP), et dégrader les purines en <b>acide urique</b>. C'est la voie qui rassemble presque toutes les autres : sucre, acides aminés, Krebs, folates.`,
+ cours:[
+ `<b>Point de départ commun : le PRPP.</b> Le ribose-5-P de la voie des pentoses est activé par l'ATP (PRPP synthétase) en phosphoribosyl-pyrophosphate. Sans voie des pentoses, pas de nucléotides.`,
+ `<b>Purines (A, G).</b> Le noyau est construit <b>directement sur le ribose</b>, atome par atome. Les azotes viennent de la <b>glutamine</b> (2 N), de la <b>glycine</b> (qui apporte aussi 2 C) et de l'<b>aspartate</b> ; deux carbones viennent des dérivés du <b>folate</b> (THF, vitamine B9) et un du CO₂. On obtient l'IMP, qui donne l'AMP (grâce à l'aspartate, qui repart en <b>fumarate</b> comme dans le cycle de l'urée) et le GMP (grâce à la glutamine). La dépendance aux folates explique les médicaments anti-folates (méthotrexate) contre les cellules qui se divisent.`,
+ `<b>Pyrimidines (U, C, T).</b> Ici le noyau est construit <b>d'abord</b>, puis attaché au PRPP. La <b>CPS II</b> cytosolique fait du carbamyl-phosphate à partir de glutamine et de HCO₃⁻ ; l'<b>aspartate</b> apporte 3 C et 1 N. On obtient l'orotate, qui se fixe sur le PRPP : OMP puis UMP. L'UTP donne le CTP (azote de la glutamine). Pour l'ADN, la ribonucléotide réductase enlève l'oxygène du ribose (NADPH), et la thymidylate synthase méthyle le dUMP en dTMP avec un dérivé du folate.`,
+ `<b>Recyclage et dégradation.</b> Les bases libres sont recyclées sur le PRPP (HGPRT pour l'hypoxanthine et la guanine) : c'est économique et largement utilisé. Les purines dégradées convergent toutes vers la <b>xanthine</b> : AMP → IMP ou adénosine → inosine → hypoxanthine (PNP) → xanthine ; GMP → guanosine → guanine → xanthine. La <b>xanthine oxydase</b> transforme ensuite xanthine en <b>acide urique</b>. Son accumulation cristallise : c'est la <b>goutte</b> (l'allopurinol inhibe la xanthine oxydase). Les pyrimidines, elles, sont dégradées en petites molécules solubles, sans acide urique.`],
+ steps:[["Ribose-5-P (voie des pentoses)"],["PRPP synthétase","ATP → AMP",1],["PRPP"],["Purines : noyau bâti sur le PRPP","Gln, Gly, Asp, THF, CO₂"],["IMP → AMP (Asp, GTP) · GMP (Gln, ATP)"],["Dégradation : nucléotidases, PNP",""],["Hypoxanthine → Xanthine"],["Xanthine oxydase","O₂",1],["Acide urique (goutte si accumulation)"]],
+ bilan:`Purines : noyau sur le PRPP · Pyrimidines : noyau (carbamyl-P + Asp) puis PRPP · Fin des purines : acide urique`,
+ regul:[["down","AMP et GMP rétro-inhibent la première étape de la synthèse des purines"],["eq","Équilibre croisé : l'AMP a besoin de GTP, le GMP a besoin d'ATP"],["down","UTP inhibe la CPS II (pyrimidines) ; le PRPP l'active"]],
+ liens:[["pentoses","Ribose-5-P, NADPH","Le PRPP vient du ribose-5-P ; la ribonucléotide réductase a besoin de NADPH."],
+  ["aa","Glutamine, aspartate, glycine, sérine","Tous les azotes des bases viennent des AA ; la sérine/glycine fournit aussi les carbones du THF."],
+  ["krebs","OAA → aspartate, α-KG → glutamate → glutamine","Krebs fournit les squelettes des AA donneurs ; la synthèse d'AMP lui rend du fumarate."],
+  ["uree","CPS I vs CPS II, aspartate → fumarate","Même logique que le cycle de l'urée, mais dans un autre compartiment et avec une autre source d'azote."],
+  ["glycogene","UTP","Les nucléotides servent aussi d'activateurs : UTP pour le glycogène, CTP pour les phospholipides, ATP partout."]],
+ piege:`Ne confonds pas <b>CPS I</b> (mitochondriale, NH₃, urée, activée par le NAG) et <b>CPS II</b> (cytosolique, glutamine, pyrimidines). Et retiens : purines = noyau construit sur le PRPP ; pyrimidines = noyau construit avant, puis greffé sur le PRPP.`},
+
+heme:{name:"Hème (lien)",fam:"azo",lieu:["Mitochondrie puis cytosol","Moelle osseuse, foie"],
+ intro:`Un petit pont, mais classique à l'examen : l'hème de l'hémoglobine et des cytochromes est fabriqué à partir d'un intermédiaire de Krebs et d'un acide aminé.`,
+ cours:[
+ `Dans la mitochondrie, l'<b>ALA synthase</b> (vitamine B6) condense le <b>succinyl-CoA</b> (Krebs) et la <b>glycine</b> en acide δ-aminolévulinique. C'est l'étape limitante, rétro-inhibée par l'hème.`,
+ `Deux ALA donnent le porphobilinogène, quatre porphobilinogènes donnent un anneau de porphyrine, et le fer est inséré à la fin, de nouveau dans la mitochondrie.`,
+ `L'hème est ensuite indispensable à la chaîne respiratoire elle-même (cytochromes) : Krebs fournit le succinyl-CoA qui sert à construire les cytochromes qui réoxydent les NADH de Krebs.`],
+ steps:[["Succinyl-CoA + Glycine"],["ALA synthase (B6, mitochondrie)","− CO₂, − CoA",1],["Acide δ-aminolévulinique"],["ALA déshydratase",""],["Porphobilinogène → porphyrines"],["Ferrochélatase","+ Fe²⁺"],["Hème"]],
+ bilan:`8 succinyl-CoA + 8 glycine → 1 hème`,
+ regul:[["down","Hème rétro-inhibe l'ALA synthase"]],
+ liens:[["krebs","Succinyl-CoA","Sortie anabolique de Krebs (cataplérose)."],["aa","Glycine","Un AA comme précurseur direct."],["oxphos","Cytochromes","L'hème est le cœur des cytochromes de la chaîne respiratoire."]],
+ piege:`Le succinyl-CoA a trois destins à connaître : Krebs, hème, et activation des corps cétoniques (CoA transférase).`}
+};
+
+/* ============ CARREFOURS (clic sur une molécule) ============ */
+const CARREF = {
+ g6p:`Le G6P a quatre destins : glycolyse (brûler), glycogène (stocker), voie des pentoses (NADPH + ribose) et, dans le foie et le rein seulement, libération de glucose par la glucose-6-phosphatase. L'insuline pousse vers stockage et glycolyse ; le glucagon vers la libération.`,
+ pyr:`Le pyruvate est le grand aiguillage. Bas niveau d'énergie : PDH → acétyl-CoA → Krebs. Énergie haute ou jeûne au foie : pyruvate carboxylase → OAA (néoglucogenèse, anaplérose). Sans O₂ : LDH → lactate. Transamination : ALAT → alanine. L'acétyl-CoA est un signal clé : il freine la PDH et active la pyruvate carboxylase.`,
+ accoam:`L'acétyl-CoA mitochondrial arrive du glucose (PDH), des acides gras (β-oxydation), des AA cétogènes et de l'alcool. Il peut être brûlé dans Krebs (s'il y a de l'OAA), partir en corps cétoniques (foie au jeûne), ou sortir en citrate vers le cytosol pour faire des acides gras et du cholestérol (état nourri). Il ne redonne jamais de glucose net.`,
+ accoac:`L'acétyl-CoA du cytosol vient du citrate (ATP-citrate lyase). Il sert à deux synthèses activées par l'insuline : acides gras (via l'ACC) et cholestérol (via l'HMG-CoA réductase). Les deux consomment du NADPH.`,
+ oaa:`L'oxaloacétate est le partenaire indispensable de l'acétyl-CoA dans Krebs. Il est aussi : précurseur du glucose (PEPCK), précurseur de l'aspartate (ASAT) donc de l'urée et des nucléotides. Au jeûne, le foie l'envoie en néoglucogenèse, ce qui déclenche la cétogenèse.`,
+ cit:`Le citrate est le signal d'abondance. Quand il s'accumule, il sort de la mitochondrie : il transporte l'acétyl-CoA pour la lipogenèse, active l'acétyl-CoA carboxylase et inhibe la PFK1. Un seul métabolite coordonne glycolyse, Krebs et synthèse des graisses.`,
+ citc:`Le citrate du cytosol est découpé par l'ATP-citrate lyase en acétyl-CoA + OAA. Il active l'ACC et freine la PFK1.`,
+ akg:`L'α-cétoglutarate est le collecteur d'azote : il reçoit le NH₂ de la plupart des AA et devient glutamate. Il est aussi produit par les squelettes de glutamate, glutamine, proline, arginine et histidine (anaplérose).`,
+ glu:`Le glutamate concentre l'azote de tous les AA. Trois sorties : la GDH libère le NH₄⁺ (foie), la glutamine synthétase fixe un 2ᵉ NH₃ pour le transport, et l'acétylation donne le N-acétylglutamate qui active le cycle de l'urée.`,
+ gln:`La glutamine transporte l'azote dans le sang sans toxicité. Elle le donne au foie (urée), au rein (NH₄⁺ urinaire) et aux synthèses : purines, pyrimidines (via la CPS II), CTP, GMP. C'est l'AA le plus abondant du plasma.`,
+ asp:`L'aspartate est fait à partir de l'OAA (ASAT). Il donne le 2ᵉ azote de l'urée, un azote des purines, et 3 C + 1 N des pyrimidines. Dans l'urée et dans la synthèse d'AMP, il ressort sous forme de fumarate.`,
+ fum:`Le fumarate est un intermédiaire de Krebs, produit par la SDH (complexe II). Il est aussi rendu par le cycle de l'urée et par la synthèse d'AMP, et par le catabolisme de phénylalanine et tyrosine. Il devient malate, donc OAA ou glucose.`,
+ mal:`Le malate est la forme sous laquelle l'OAA traverse la membrane mitochondriale, pour la néoglucogenèse comme pour la navette malate-aspartate. Dans le cytosol, l'enzyme malique le transforme en pyruvate en produisant du NADPH (lipogenèse).`,
+ sucoa:`Le succinyl-CoA a trois destins : continuer Krebs (GTP), fabriquer l'hème avec la glycine, et prêter son CoA pour activer l'acétoacétate dans les tissus qui utilisent les corps cétoniques. Il est aussi alimenté par le propionyl-CoA des AG impairs et par Val, Ile, Met, Thr.`,
+ g3p:`Les trioses-P relient glucides et lipides. Le DHAP devient glycérol-3-P, squelette des triglycérides. À l'inverse, le glycérol de la lipolyse redevient DHAP dans le foie. Le 3-phosphoglycérate, un peu plus loin, donne la sérine puis la glycine.`,
+ glycerol:`Le glycérol libéré par la lipolyse ne peut être utilisé que par le foie (glycérol kinase). Il y devient DHAP : substrat de la néoglucogenèse ou de la glycolyse. C'est la seule partie des triglycérides qui donne du glucose en quantité.`,
+ lac:`Le lactate n'est pas un déchet : la LDH le forme pour régénérer le NAD⁺ quand l'O₂ manque. Le foie le reconvertit en pyruvate puis en glucose (cycle de Cori). C'est le premier substrat de la néoglucogenèse après un effort intense.`,
+ ala:`L'alanine est la forme sous laquelle le muscle envoie à la fois de l'azote et du carbone au foie (cycle glucose-alanine). L'ALAT la retransforme en pyruvate, substrat de la néoglucogenèse ; l'azote part en urée.`,
+ nadph:`Le NADPH est le pouvoir réducteur des biosynthèses. Il vient surtout de la voie des pentoses (G6PDH) et de l'enzyme malique. Il est consommé par la lipogenèse (14 par palmitate), l'HMG-CoA réductase (2), la ribonucléotide réductase et la glutathion réductase.`,
+ r5p:`Le ribose-5-P vient de la voie des pentoses, soit par la phase oxydative (avec NADPH), soit par la phase non oxydative à partir de F6P et G3P. Activé en PRPP, il est le socle de tous les nucléotides.`,
+ prpp:`Le PRPP est le ribose activé. Purines : le noyau est construit dessus. Pyrimidines : l'orotate déjà construit s'y greffe. Recyclage : les bases libres s'y fixent (HGPRT, APRT).`,
+ malonyl:`Le malonyl-CoA a deux rôles : brique de la lipogenèse (+2 C par tour après perte du CO₂) et frein de la CPT1, donc de la β-oxydation. Son taux est haut après un repas et bas au jeûne.`,
+ cetones:`Les corps cétoniques sont fabriqués dans la mitochondrie du foie quand l'acétyl-CoA déborde (jeûne, diabète). Ils sont utilisés par le cerveau, le muscle et le cœur, mais jamais par le foie.`,
+ nh4:`Le NH₄⁺ vient surtout de la GDH (glutamate) et de la glutaminase (glutamine), et aussi du microbiote intestinal (veine porte). Au foie il entre dans le cycle de l'urée via la CPS I ; au rein il est excrété dans l'urine.`
+};
+
+/* ============ SITUATIONS ============ */
+const SIT = {
+ repas:{name:"Après un repas riche en glucides",hormone:"Insuline ↑ · glucagon ↓",
+  edges:["g1","gy1","g2","g3","g4","k0","k1","k7","k2","k3","k4","k5","k6","o1","p1","p2","p3","lg1","lg2","lg3","lg4","lg5","ch1","l1"],
+  txt:[`L'insuline signale l'abondance. Le glucose entre dans les cellules et le foie le piège avec la glucokinase. Il le <b>stocke</b> d'abord en glycogène (PP1 active la glycogène synthase), puis le <b>brûle</b> par la glycolyse (F2,6-bisP active la PFK1).`,
+  `Quand l'énergie est suffisante, le citrate s'accumule et sort de la mitochondrie : l'acétyl-CoA part en <b>lipogenèse</b>. L'ACC est active (insuline, citrate), et son produit, le malonyl-CoA, bloque la CPT1 : on ne brûle pas les graisses qu'on fabrique.`,
+  `La voie des pentoses tourne pour fournir le NADPH. Le DHAP de la glycolyse donne le glycérol-3-P qui estérifie les AG en triglycérides, exportés par les VLDL vers l'adipocyte.`],
+  on:["Glycolyse","Glycogénogenèse","Lipogenèse + estérification","Voie des pentoses","Synthèse du cholestérol","PDH + Krebs"],off:["Néoglucogenèse","Glycogénolyse","Lipolyse, β-oxydation","Cétogenèse"]},
+ jeun:{name:"Jeûne court (une nuit)",hormone:"Glucagon ↑ · insuline ↓",
+  edges:["gy1","g1","l1","l2","l3","l4","n3","n1","n2","g2","g3","o1","k1","k7","k2","k3","k4","k5","k6"],
+  txt:[`La glycémie baisse, le glucagon monte. Via AMPc/PKA, le foie <b>dégrade son glycogène</b> et relâche du glucose grâce à la glucose-6-phosphatase. C'est la première ligne de défense, pour quelques heures.`,
+  `La même cascade PKA active la lipase hormono-sensible : les <b>acides gras</b> partent dans le sang. Le muscle et le foie passent à la β-oxydation, ce qui épargne le glucose pour le cerveau et les globules rouges.`,
+  `La néoglucogenèse démarre (lactate, glycérol), financée par l'ATP de la β-oxydation hépatique, et l'acétyl-CoA active la pyruvate carboxylase.`],
+  on:["Glycogénolyse hépatique","Lipolyse, β-oxydation","Néoglucogenèse (démarrage)"],off:["Glycogénogenèse","Lipogenèse (ACC phosphorylée)","Glycolyse hépatique"]},
+ jeunp:{name:"Jeûne prolongé (plusieurs jours)",hormone:"Glucagon ↑↑ · cortisol ↑ · insuline très basse",
+  edges:["g1","g2","g3","n1","n2","n3","n4","a1","a2","a3","u1","u2","u3","u4","u5","u6","l1","l2","l3","l4","c1","o1"],
+  txt:[`Le glycogène du foie est épuisé. Toute la glycémie dépend de la <b>néoglucogenèse</b> : glycérol, et surtout acides aminés du muscle (alanine, glutamine) libérés par la protéolyse (cortisol).`,
+  `L'azote de ces AA doit être éliminé : le <b>cycle de l'urée</b> tourne fort. Il rend du fumarate qui, via le malate, nourrit aussi la néoglucogenèse.`,
+  `Le foie envoie son OAA vers le glucose, donc l'acétyl-CoA de sa β-oxydation ne peut plus entrer dans Krebs : il devient <b>corps cétoniques</b>. Après quelques jours, le cerveau en tire une grande partie de son énergie, ce qui réduit le besoin de glucose et protège les protéines musculaires.`],
+  on:["Néoglucogenèse (AA, glycérol)","Protéolyse, transamination","Cycle de l'urée","β-oxydation","Cétogenèse"],off:["Glycogène (épuisé)","Lipogenèse","Synthèse du cholestérol"]},
+ effort:{name:"Effort intense (sprint)",hormone:"Adrénaline ↑ · Ca²⁺ musculaire ↑ · AMP ↑",
+  edges:["gy1","g2","g3","g4","g5","k0","k1","k7","k2","k3","k4","k5","k6","o1","n1","n2","g1"],
+  txt:[`Le muscle a besoin d'ATP très vite. Le Ca²⁺ de la contraction et l'adrénaline activent la phosphorylase kinase : le <b>glycogène musculaire</b> est dégradé en G6P, qui part directement en glycolyse (pas de glucose-6-phosphatase dans le muscle).`,
+  `La glycolyse va plus vite que la chaîne respiratoire. Le NADH s'accumule, donc la <b>LDH</b> fait du lactate pour régénérer le NAD⁺. L'AMP active la PFK1 et la phosphorylase.`,
+  `Le lactate part au foie qui le retransforme en glucose (<b>cycle de Cori</b>) : la néoglucogenèse du foie finance l'effort du muscle.`],
+  on:["Glycogénolyse musculaire","Glycolyse anaérobie → lactate","Néoglucogenèse hépatique (Cori)"],off:["Glycogénogenèse","Lipogenèse"]},
+ diabete:{name:"Diabète de type 1 non traité",hormone:"Insuline absente · glucagon ↑",
+  edges:["l1","l2","l3","l4","c1","n1","n2","n3","n4","g1","g2","g3","gy1","a1","a2","u1","u2","u3","u6"],
+  txt:[`Sans insuline, les cellules se comportent comme au jeûne alors que le sang est plein de glucose. Le glucose n'entre pas dans le muscle et l'adipocyte (GLUT4 dépend de l'insuline).`,
+  `Le foie fait de la néoglucogenèse et de la glycogénolyse : l'hyperglycémie s'aggrave. La lipolyse est massive, la β-oxydation hépatique déborde, l'OAA est détourné vers le glucose.`,
+  `Résultat : <b>cétogenèse emballée</b>, accumulation d'acides (acétoacétate, 3-hydroxybutyrate), acidose métabolique, acétone dans l'haleine, risque de coma acidocétosique.`],
+  on:["Lipolyse","β-oxydation","Cétogenèse ++","Néoglucogenèse","Glycogénolyse"],off:["Lipogenèse","Glycogénogenèse","Entrée du glucose dans le muscle"]},
+ prolif:{name:"Cellule qui se divise",hormone:"Facteurs de croissance",
+  edges:["g1","p1","p2","p3","nu1","nu2","nu3","nu4","nu5","nu6","a6","a3","n1","g2","g3"],
+  txt:[`Pour se diviser, une cellule doit doubler son ADN : elle a besoin de ribose, de bases azotées et de NADPH. La voie des pentoses fournit le <b>ribose-5-P</b> (souvent par la phase non oxydative à partir de F6P et G3P) et le <b>NADPH</b>.`,
+  `La <b>glutamine</b> apporte les azotes, l'<b>aspartate</b> (fait à partir de l'OAA) le squelette des pyrimidines, la <b>sérine/glycine</b> (issue du 3-phosphoglycérate de la glycolyse) les carbones des purines via le THF.`,
+  `C'est exactement ce que ciblent les anticancéreux anti-folates (méthotrexate) et anti-pyrimidines (5-FU) : couper l'approvisionnement en nucléotides.`],
+  on:["Glycolyse","Voie des pentoses","Synthèse des nucléotides","Glutaminolyse, transamination"],off:["Néoglucogenèse","Cétogenèse"]}
+};
+
+/* ============ QCM ============ */
+const QCM = [
+ {s:`À propos de l'acétyl-CoA, quelles affirmations sont exactes ?`,o:[
+  [`Il peut donner du glucose net par la néoglucogenèse`,0],[`Dans le cytosol, il est le substrat de l'acétyl-CoA carboxylase`,1],[`Il sort de la mitochondrie sous forme de citrate`,1],[`Il active la pyruvate carboxylase`,1],[`Il sert à fabriquer le N-acétylglutamate, activateur de la CPS I`,1]],
+  e:`La PDH est irréversible et les 2 C de l'acétyl-CoA repartent en CO₂ dans Krebs : pas de glucose net. Tout le reste est vrai : l'acétyl-CoA est à la fois substrat (lipogenèse, NAG) et signal (il active la pyruvate carboxylase au jeûne).`},
+ {s:`Le malonyl-CoA :`,o:[
+  [`est produit par l'acétyl-CoA carboxylase`,1],[`active la CPT1`,0],[`empêche l'oxydation des acides gras que l'on vient de synthétiser`,1],[`est un intermédiaire de la β-oxydation`,0],[`voit son taux baisser au jeûne`,1]],
+  e:`Le malonyl-CoA <b>inhibe</b> la CPT1. Au jeûne, le glucagon (PKA) et l'AMPK phosphorylent l'ACC, le malonyl-CoA chute et la β-oxydation peut démarrer.`},
+ {s:`Au jeûne prolongé, quels sont des substrats de la néoglucogenèse ?`,o:[
+  [`Alanine`,1],[`Glycérol`,1],[`Acides gras à nombre pair de carbones`,0],[`Lactate`,1],[`Leucine`,0]],
+  e:`Les AG pairs ne donnent que de l'acétyl-CoA. La leucine est cétogène stricte (avec la lysine). Les AG fournissent l'<b>énergie</b> de la néoglucogenèse, pas son carbone.`},
+ {s:`Le NADPH :`,o:[
+  [`est produit par la phase oxydative de la voie des pentoses`,1],[`est produit par l'enzyme malique`,1],[`est consommé par l'HMG-CoA réductase`,1],[`est produit par la β-oxydation`,0],[`est nécessaire à la ribonucléotide réductase`,1]],
+  e:`La β-oxydation produit du NADH et du FADH₂, pas du NADPH. Le NADPH relie la voie des pentoses à la lipogenèse, au cholestérol et à la synthèse de l'ADN.`},
+ {s:`Pourquoi le foie fabrique-t-il des corps cétoniques au jeûne ?`,o:[
+  [`Son oxaloacétate est détourné vers la néoglucogenèse`,1],[`Sa β-oxydation est très active`,1],[`Il les utilise pour couvrir ses propres besoins`,0],[`Parce que l'insuline est élevée`,0],[`Parce que le cerveau peut les utiliser en jeûne prolongé`,1]],
+  e:`Sans OAA, l'acétyl-CoA de la β-oxydation ne peut plus entrer dans Krebs. Le foie n'a pas la CoA transférase : il fabrique les corps cétoniques mais ne les utilise pas. L'insuline est basse.`},
+ {s:`Le fumarate :`,o:[
+  [`est produit par l'arginosuccinate lyase du cycle de l'urée`,1],[`est un intermédiaire du cycle de Krebs`,1],[`peut redevenir de l'aspartate via malate et oxaloacétate`,1],[`est formé par la succinate déshydrogénase (complexe II)`,1],[`est produit par la xanthine oxydase`,0]],
+  e:`C'est la « bicyclette de Krebs » : fumarate → malate → OAA → aspartate (ASAT) → retour dans le cycle de l'urée. La xanthine oxydase produit de l'acide urique.`},
+ {s:`Le couple α-cétoglutarate / glutamate :`,o:[
+  [`récupère par transamination l'azote de la majorité des AA`,1],[`libère le NH₄⁺ grâce à la glutamate déshydrogénase`,1],[`peut fixer un 2ᵉ NH₃ (glutamine) pour le transport sanguin`,1],[`l'aminoacide oxydase est la voie principale de désamination des AA`,0],[`relie directement le cycle de Krebs au métabolisme de l'azote`,1]],
+  e:`L'aminoacide oxydase n'est qu'une voie secondaire. Le schéma général : transamination vers le glutamate, puis GDH.`},
+ {s:`Comparaison CPS I / CPS II :`,o:[
+  [`La CPS I est mitochondriale et sert au cycle de l'urée`,1],[`La CPS II est cytosolique et sert à la synthèse des pyrimidines`,1],[`La CPS I utilise le NH₃ comme source d'azote`,1],[`La CPS II utilise la glutamine comme source d'azote`,1],[`Les deux sont activées par le N-acétylglutamate`,0]],
+  e:`Seule la CPS I a besoin du N-acétylglutamate. Même réaction (carbamyl-phosphate), deux compartiments, deux destins.`},
+ {s:`Le ribose-5-phosphate :`,o:[
+  [`peut être fabriqué sans produire de NADPH, à partir de F6P et G3P`,1],[`est le précurseur du PRPP`,1],[`est fabriqué par la transcétolase uniquement pendant la phase oxydative`,0],[`sa formation par la phase oxydative libère un CO₂`,1],[`est utilisé pour construire le noyau purique directement dessus (via le PRPP)`,1]],
+  e:`La transcétolase et la transaldolase appartiennent à la phase <b>non oxydative</b>, réversible. C'est elle qui permet de faire du ribose sans perdre de carbone.`},
+ {s:`Néoglucogenèse :`,o:[
+  [`Pyruvate → OAA → PEP : 3 → 4 → 3 carbones`,1],[`La pyruvate carboxylase est mitochondriale et activée par l'acétyl-CoA`,1],[`La PEPCK consomme du GTP`,1],[`L'OAA sort de la mitochondrie tel quel`,0],[`Le muscle possède la glucose-6-phosphatase`,0]],
+  e:`L'OAA sort sous forme de malate. Le muscle n'a pas de glucose-6-phosphatase : il ne libère pas de glucose dans le sang.`},
+ {s:`Lipides : quelles affirmations sont exactes ?`,o:[
+  [`La lipogenèse est l'inverse exact de la lipolyse`,0],[`La β-oxydation est mitochondriale, la lipogenèse cytosolique`,1],[`La β-oxydation produit NADH + FADH₂, la lipogenèse consomme du NADPH`,1],[`Synthèse d'un palmitate : 7 tours, 7 ATP, 14 NADPH`,1],[`La lipolyse coupe les acides gras en acétyl-CoA`,0]],
+  e:`Lipolyse ⇄ estérification ; β-oxydation ⇄ lipogenèse. La lipolyse détache les AG du glycérol, c'est la β-oxydation qui les coupe en acétyl-CoA.`},
+ {s:`Après un repas riche en glucides (insuline élevée) :`,o:[
+  [`La glycogène synthase est déphosphorylée et active`,1],[`L'acétyl-CoA carboxylase est active`,1],[`La CPT1 est inhibée par le malonyl-CoA`,1],[`La lipase hormono-sensible est activée`,0],[`La voie des pentoses fournit du NADPH`,1]],
+  e:`L'insuline éteint la LHS. Tout le reste coopère : stocker le glucose, le transformer en graisse, et bloquer la β-oxydation.`},
+ {s:`Acide urique :`,o:[
+  [`Produit final de la dégradation des purines chez l'homme`,1],[`La xanthine oxydase catalyse ses deux dernières étapes`,1],[`Il provient de la dégradation des pyrimidines`,0],[`Son accumulation provoque la goutte`,1],[`L'hypoxanthine peut être recyclée sur le PRPP par l'HGPRT`,1]],
+  e:`Les pyrimidines donnent des produits solubles, sans acide urique. Toutes les purines convergent vers la xanthine.`},
+ {s:`Le succinyl-CoA :`,o:[
+  [`est un précurseur de l'hème avec la glycine`,1],[`est formé à partir du propionyl-CoA des AG à nombre impair de C`,1],[`cède son CoA pour activer l'acétoacétate dans les tissus périphériques`,1],[`est formé par l'α-cétoglutarate déshydrogénase`,1],[`est un substrat de la synthèse du cholestérol`,0]],
+  e:`Le cholestérol part de l'acétyl-CoA cytosolique. Le succinyl-CoA relie Krebs à l'hème, aux corps cétoniques et aux AG impairs.`},
+ {s:`Effort intense et cycle de Cori :`,o:[
+  [`Le lactate musculaire est reconverti en glucose par le foie`,1],[`La LDH régénère le NAD⁺ nécessaire à la glycolyse`,1],[`Le Ca²⁺ active directement la phosphorylase kinase`,1],[`Le Ca²⁺ active la PKA`,0],[`Le muscle libère directement dans le sang le glucose de son glycogène`,0]],
+  e:`Le Ca²⁺ et la PKA sont deux voies séparées qui convergent sur la phosphorylase kinase. Le muscle n'a pas de glucose-6-phosphatase.`},
+ {s:`Diabète de type 1 non traité :`,o:[
+  [`Lipolyse augmentée`,1],[`Cétogenèse augmentée, risque d'acidose`,1],[`Néoglucogenèse augmentée`,1],[`Lipogenèse augmentée`,0],[`Odeur d'acétone dans l'haleine`,1]],
+  e:`Sans insuline, l'organisme est en « faux jeûne » : toutes les voies de mobilisation sont activées, la lipogenèse est éteinte.`},
+ {s:`Régulation du cycle de l'urée :`,o:[
+  [`Le N-acétylglutamate est l'activateur allostérique de la CPS I`,1],[`L'arginine active la NAG synthase`,1],[`La glutaminase hépatique est rétro-inhibée par le NH₃`,0],[`Un régime riche en protéines induit les enzymes du cycle`,1],[`L'urée est synthétisée par le rein`,0]],
+  e:`La glutaminase hépatique est <b>induite</b> par le NH₃ (le but est d'éliminer). L'urée est fabriquée dans le foie et seulement excrétée par le rein.`}
+];
+
+/* ============ OUTILS ============ */
+const $ = s => document.querySelector(s);
+const svgNS = "http://www.w3.org/2000/svg";
+const H = 34;
+const nodeW = id => Math.max(70, N[id][2].length * 8.2 + 22);
+const col = p => `var(--p-${p})`;
+const famOf = p => P[p].fam;
+function el(tag, attrs={}, parent){ const e=document.createElementNS(svgNS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+function clip(id, tx, ty){ const [x,y]=N[id]; const hw=nodeW(id)/2+5, hh=H/2+5; const dx=tx-x, dy=ty-y; const sx=dx===0?Infinity:hw/Math.abs(dx), sy=dy===0?Infinity:hh/Math.abs(dy); const s=Math.min(sx,sy); return [x+dx*s, y+dy*s]; }
+function qpt(a,c,b,t){ return [(1-t)**2*a[0]+2*t*(1-t)*c[0]+t*t*b[0], (1-t)**2*a[1]+2*t*(1-t)*c[1]+t*t*b[1]]; }
+function labelOf(e, key){ const l=e[4]; if(typeof l==="string") return l; return l[key] || l._ || ""; }
+
+/* ============ CARTE ============ */
+const svg = $("#map");
+const edgeEls = {}, nodeEls = {};
+function buildMap(){
+  const defs = el("defs",{},svg);
+  Object.keys(P).forEach(p=>{
+    const m = el("marker",{id:"m-"+p,viewBox:"0 0 10 10",refX:"8",refY:"5",markerWidth:"5",markerHeight:"5",orient:"auto-start-reverse"},defs);
+    el("path",{d:"M0,0 L10,5 L0,10 z",style:`fill:${col(p)}`},m);
+  });
+  // compartiments
+  el("rect",{x:8,y:8,width:1184,height:490,rx:16,style:"fill:var(--cyto)"},svg);
+  el("rect",{x:8,y:512,width:1184,height:480,rx:16,style:"fill:var(--mito);stroke:var(--mito-line);stroke-width:1.5;stroke-dasharray:6 5"},svg);
+  const t1=el("text",{x:22,y:488,class:"comp-label"},svg); t1.textContent="CYTOSOL";
+  const t2=el("text",{x:22,y:534,class:"comp-label"},svg); t2.textContent="MITOCHONDRIE";
+    const gE = el("g",{},svg), gL = el("g",{},svg), gN = el("g",{},svg);
+  E.forEach(e=>{
+    const [id,a,b,paths,,o={}] = e;
+    let c = o.c;
+    if(o.arc){ const mx=(N[a][0]+N[b][0])/2, my=(N[a][1]+N[b][1])/2; c=[KC[0]+(mx-KC[0])*1.35, KC[1]+(my-KC[1])*1.35]; }
+    const s = clip(a, ...(c||N[b])), t = clip(b, ...(c||N[a]));
+    const d = c ? `M${s[0]},${s[1]} Q${c[0]},${c[1]} ${t[0]},${t[1]}` : `M${s[0]},${s[1]} L${t[0]},${t[1]}`;
+    const lt = o.lt||.5; const mid = c ? qpt(s,c,t,lt) : [s[0]+(t[0]-s[0])*lt, s[1]+(t[1]-s[1])*lt];
+    const path = el("path",{d,class:"edge"},gE);
+    if(o.dash) path.setAttribute("stroke-dasharray","5 5");
+    const lab = el("text",{x:mid[0],y:mid[1]+(o.ly||-6),class:"elabel","text-anchor":"middle"},gL);
+    edgeEls[id] = {path,lab,e,o};
+  });
+  Object.keys(N).forEach(id=>{
+    const [x,y,name]=N[id], w=nodeW(id);
+    const g = el("g",{class:"node",tabindex:"0",role:"button","aria-label":name},gN);
+    el("rect",{x:x-w/2,y:y-H/2,width:w,height:H,rx:7},g);
+    const tx=el("text",{x,y:y+5,"text-anchor":"middle"},g); tx.textContent=name;
+    g.addEventListener("click",()=>selectNode(id));
+    g.addEventListener("keydown",ev=>{ if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();selectNode(id);} });
+    nodeEls[id]=g;
+  });
+}
+
+const state = {mode:"voie", sel:null, node:null, sit:null};
+
+function paint(){
+  const activeE = new Set(), linkE = new Set(), activeN = new Set();
+  let colorKey = {};
+  if(state.node){
+    E.forEach(e=>{ if(e[1]===state.node||e[2]===state.node){ activeE.add(e[0]); activeN.add(e[1]); activeN.add(e[2]); } });
+  } else if(state.mode==="voie" && state.sel){
+    E.forEach(e=>{ if(e[3].includes(state.sel)){ activeE.add(e[0]); activeN.add(e[1]); activeN.add(e[2]); colorKey[e[0]]=state.sel; } });
+    E.forEach(e=>{ if(!activeE.has(e[0]) && (activeN.has(e[1])||activeN.has(e[2]))) linkE.add(e[0]); });
+  } else if(state.mode==="situation" && state.sit){
+    SIT[state.sit].edges.forEach(id=>activeE.add(id));
+    E.forEach(e=>{ if(activeE.has(e[0])){activeN.add(e[1]);activeN.add(e[2]);} });
+  }
+  const none = activeE.size===0;
+  E.forEach(e=>{
+    const {path,lab,o} = edgeEls[e[0]];
+    const key = colorKey[e[0]] || e[3][0];
+    path.setAttribute("style",`stroke:${col(key)}`);
+    path.setAttribute("marker-end",`url(#m-${key})`);
+    if(o.bi) path.setAttribute("marker-start",`url(#m-${key})`); else path.removeAttribute("marker-start");
+    let op, w, showLab=false;
+    if(none){ op=.6; w=2; }
+    else if(activeE.has(e[0])){ op=1; w=3.4; showLab=true; }
+    else if(linkE.has(e[0])){ op=.55; w=1.6; showLab=false; }
+    else { op=.08; w=1.5; }
+    path.style.opacity=op; path.style.strokeWidth=w;
+    lab.textContent = showLab ? labelOf(e, state.mode==="voie"&&state.sel ? state.sel : "_") : "";
+    lab.setAttribute("style",`fill:${col(key)}`);
+  });
+  Object.keys(nodeEls).forEach(id=>{
+    const g=nodeEls[id];
+    g.classList.toggle("dim", !none && !activeN.has(id) && !(linkE.size && [...linkE].some(x=>{const e=edgeEls[x].e;return e[1]===id||e[2]===id;})));
+    g.classList.toggle("on", !none && activeN.has(id));
+    g.classList.toggle("sel", state.node===id);
+  });
+}
+
+/* ============ CHIPS ============ */
+function renderChips(){
+  const box=$("#chips"); box.innerHTML="";
+  if(state.mode==="voie"){
+    Object.values(FAM).forEach(f=>{
+      const d=document.createElement("div"); d.className="fam";
+      d.innerHTML=`<span class="famname">${f.name}</span>`;
+      f.items.forEach(p=>{
+        const b=document.createElement("button"); b.className="chip"; b.style.setProperty("--c",col(p));
+        b.setAttribute("aria-pressed", state.sel===p && !state.node ? "true":"false");
+        b.innerHTML=`<span class="dot"></span>${P[p].name}`;
+        b.onclick=()=>selectPath(p);
+        d.appendChild(b);
+      });
+      box.appendChild(d);
+    });
+  } else if(state.mode==="situation"){
+    const d=document.createElement("div"); d.className="fam";
+    Object.keys(SIT).forEach(k=>{
+      const b=document.createElement("button"); b.className="chip plain";
+      b.setAttribute("aria-pressed", state.sit===k?"true":"false");
+      b.textContent=SIT[k].name; b.onclick=()=>selectSit(k); d.appendChild(b);
+    });
+    box.appendChild(d);
+  } else {
+    const d=document.createElement("div"); d.className="fam";
+    ["pyr","accoam","g6p","oaa","cit","akg","glu","gln","asp","fum","mal","sucoa","g3p","nadph","prpp","malonyl"].forEach(k=>{
+      const b=document.createElement("button"); b.className="chip plain";
+      b.setAttribute("aria-pressed", state.node===k?"true":"false");
+      b.textContent=N[k][2]; b.onclick=()=>selectNode(k); d.appendChild(b);
+    });
+    box.appendChild(d);
+  }
+}
+
+/* ============ PANNEAU ============ */
+const panel = $("#panel");
+function regHTML(r){ return `<div class="reg">${r.map(([s,t])=>`<div><span class="sign ${s}">${s==="up"?"active":s==="down"?"freine":"note"}</span><span>${t}</span></div>`).join("")}</div>`; }
+function flowHTML(steps,c){
+  return `<div class="flow" style="--c:${c}">`+steps.map(st=>{
+    if(st.length===1) return `<div class="met">${st[0]}</div>`;
+    const [n,co,irr]=st;
+    return `<div class="step ${irr?"irr":""}"><div class="bar"></div><div class="enz"><span class="name">${n}</span>${co?`<span class="co">${co}</span>`:""}${irr?`<span class="irrtag">irréversible</span>`:""}</div></div>`;
+  }).join("")+`</div><div class="legendline">Trait épais = étape irréversible, point de contrôle ou de contournement.</div>`;
+}
+function renderPath(p){
+  const v=P[p], c=col(p);
+  panel.style.setProperty("--c",c);
+  panel.innerHTML=`
+   <div class="tagline"><span class="tag famtag" style="--c:${c}">${FAM[v.fam].name}</span>${v.lieu.map(l=>`<span class="tag">${l}</span>`).join("")}</div>
+   <h2>${v.name}</h2>
+   <div class="prose"><p>${v.intro}</p></div>
+   <h3>Le cours, étape par étape</h3>
+   <div class="prose">${v.cours.map(t=>`<p>${t}</p>`).join("")}</div>
+   <h3>Schéma de la voie</h3>
+   ${flowHTML(v.steps,c)}
+   <h3>Bilan</h3><div class="bilan">${v.bilan}</div>
+   <h3>Régulation</h3>${regHTML(v.regul)}
+   <h3>Liens avec les autres voies</h3>
+   <div class="links">${v.liens.map(([to,via,t])=>`<button class="link" data-to="${to}" style="--c:${col(to)}"><span class="to"><span class="dot"></span>${P[to].name} →</span><span class="via">via ${via}</span><span class="txt">${t}</span></button>`).join("")}</div>
+   <h3>Piège d'examen</h3><div class="piege"><b class="k">À ne pas confondre</b>${v.piege}</div>`;
+  panel.querySelectorAll(".link").forEach(b=>b.onclick=()=>{ selectPath(b.dataset.to); panel.scrollTop=0; });
+}
+function renderNode(id){
+  panel.style.setProperty("--c","var(--accent)");
+  const ins=[], outs=[];
+  E.forEach(e=>{ if(e[2]===id) ins.push(e); if(e[1]===id) outs.push(e); });
+  const row = (e,other)=>{ const p=e[3][0]; return `<button class="link" data-to="${p}" style="--c:${col(p)}"><span class="to"><span class="dot"></span>${N[other][2]}</span><span class="via">${labelOf(e,"_")||P[p].name} · ${e[3].map(x=>P[x].name).join(", ")}</span></button>`; };
+  panel.innerHTML=`
+   <div class="tagline"><span class="tag">Carrefour</span><span class="tag">${N[id][1]>505?"Mitochondrie":"Cytosol"}</span></div>
+   <h2>${N[id][2]}</h2>
+   ${CARREF[id]?`<div class="prose"><p>${CARREF[id]}</p></div>`:""}
+   <h3>Ce qui y arrive</h3><div class="links">${ins.length?ins.map(e=>row(e,e[1])).join(""):`<span class="legendline">Point de départ sur la carte.</span>`}</div>
+   <h3>Ce qui en part</h3><div class="links">${outs.length?outs.map(e=>row(e,e[2])).join(""):`<span class="legendline">Produit final sur la carte.</span>`}</div>
+   <p class="legendline">Les flèches doubles sur la carte sont réversibles. Clique sur une ligne pour ouvrir la voie correspondante.</p>`;
+  panel.querySelectorAll(".link").forEach(b=>b.onclick=()=>{ state.mode="voie"; setModeButtons(); selectPath(b.dataset.to); });
+}
+function renderSit(k){
+  const s=SIT[k];
+  panel.style.setProperty("--c","var(--accent)");
+  panel.innerHTML=`
+   <div class="tagline"><span class="tag">Situation</span><span class="tag">${s.hormone}</span></div>
+   <h2>${s.name}</h2>
+   <div class="prose">${s.txt.map(t=>`<p>${t}</p>`).join("")}</div>
+   <h3>Voies allumées et éteintes</h3>
+   <div class="onoff"><div class="on"><h4>Actives</h4><ul>${s.on.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="off"><h4>Éteintes</h4><ul>${s.off.map(x=>`<li>${x}</li>`).join("")}</ul></div></div>
+   <p class="legendline">Sur la carte, seules les réactions actives dans cette situation restent allumées. Les flèches doubles indiquent la réaction ; le sens dépend de la situation (glycogène : dégradation au jeûne, stockage après le repas).</p>`;
+}
+function renderHome(){
+  panel.style.setProperty("--c","var(--accent)");
+  panel.innerHTML=`
+   <div class="tagline"><span class="tag">Vue d'ensemble</span></div>
+   <h2>Comment tout s'emboîte</h2>
+   <div class="prose">
+   <p>Le métabolisme n'est pas une liste de voies indépendantes. C'est un réseau construit autour de <b>quelques molécules carrefours</b>, et chaque voie se définit par ce qu'elle prend aux autres et ce qu'elle leur donne. À l'examen, c'est ce réseau qu'on te demande de raconter.</p>
+   <p><b>1. Le glucose-6-P</b> distribue le glucose entre quatre destins : brûler (glycolyse), stocker (glycogène), construire (pentoses : NADPH et ribose) ou libérer (foie).</p>
+   <p><b>2. Le pyruvate</b> est l'aiguillage entre énergie (PDH → acétyl-CoA), fabrication de glucose (pyruvate carboxylase → OAA), anaérobie (lactate) et azote (alanine).</p>
+   <p><b>3. L'acétyl-CoA</b> est le point de convergence du glucose, des acides gras, des AA cétogènes et de l'alcool. Il est brûlé dans Krebs, transformé en corps cétoniques, ou exporté en citrate pour faire des graisses et du cholestérol. Il ne redonne jamais de glucose.</p>
+   <p><b>4. Le cycle de Krebs</b> est la plaque tournante : il oxyde l'acétyl-CoA mais prête aussi ses intermédiaires. Citrate → lipides, α-KG → glutamate et azote, succinyl-CoA → hème, OAA → glucose et aspartate, fumarate ← urée.</p>
+   <p><b>5. L'azote</b> circule par le couple glutamate/glutamine et l'aspartate. Il finit dans l'urée, ou bien il est réutilisé pour les nucléotides, qui rassemblent tout : ribose (pentoses), azote (AA), squelettes (Krebs), carbones (folates).</p>
+   <p>Ce qui décide quelle voie tourne : les <b>hormones</b> (insuline = stocker et construire ; glucagon/adrénaline = mobiliser), l'<b>état énergétique</b> (ATP/AMP, NADH/NAD⁺) et quelques <b>molécules-signaux</b> qui passent d'une voie à l'autre : citrate, acétyl-CoA, malonyl-CoA, F2,6-bisP.</p>
+   </div>
+   <h3>Par où commencer</h3>
+   <div class="links">
+    <button class="link" data-act="voie:glycolyse" style="--c:${col("glycolyse")}"><span class="to"><span class="dot"></span>Ouvrir une voie</span><span class="txt">Chaque voie a son cours, son schéma, sa régulation et ses liens cliquables vers les autres.</span></button>
+    <button class="link" data-act="sit:jeunp" style="--c:${col("neo")}"><span class="to"><span class="dot"></span>Voir une situation</span><span class="txt">Le jeûne prolongé allume néoglucogenèse, urée et cétogenèse en même temps. C'est la meilleure façon de comprendre les liens.</span></button>
+    <button class="link" data-act="node:accoam" style="--c:${col("krebs")}"><span class="to"><span class="dot"></span>Explorer un carrefour</span><span class="txt">Clique sur l'acétyl-CoA, le pyruvate ou l'OAA sur la carte.</span></button>
+   </div>`;
+  panel.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>{
+    const [k,v]=b.dataset.act.split(":");
+    if(k==="voie"){state.mode="voie";setModeButtons();selectPath(v);}
+    if(k==="sit"){state.mode="situation";setModeButtons();selectSit(v);}
+    if(k==="node"){state.mode="carrefour";setModeButtons();selectNode(v);}
+  });
+}
+
+function selectPath(p){ state.sel=p; state.node=null; state.sit=null; if(state.mode!=="voie"){state.mode="voie";setModeButtons();} renderPath(p); renderChips(); paint(); remember(); }
+function selectSit(k){ state.sit=k; state.node=null; state.sel=null; renderSit(k); renderChips(); paint(); remember(); }
+function selectNode(id){ state.node=id; renderNode(id); renderChips(); paint(); remember(); }
+function home(){ state.sel=null; state.node=null; state.sit=null; renderHome(); renderChips(); paint(); remember(); }
+function setModeButtons(){ document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===state.mode?"true":"false")); }
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{
+  state.mode=b.dataset.mode; setModeButtons();
+  state.node=null;
+  if(state.mode==="voie") { state.sit=null; state.sel ? selectPath(state.sel) : home(); }
+  else if(state.mode==="situation") { state.sel=null; selectSit(state.sit||"repas"); }
+  else { state.sel=null; state.sit=null; selectNode("pyr"); }
+});
+$("#reset").onclick=()=>{ state.mode="voie"; setModeButtons(); home(); };
+
+function remember(){ try{ localStorage.setItem("atlas-state", JSON.stringify(state)); }catch(e){} }
+
+/* ============ QCM ============ */
+let qState = {};
+try{ qState = JSON.parse(localStorage.getItem("atlas-qcm")||"{}"); }catch(e){ qState={}; }
+function saveQ(){ try{ localStorage.setItem("atlas-qcm", JSON.stringify(qState)); }catch(e){} }
+function renderQCM(){
+  const v=$("#view-qcm");
+  const done = QCM.filter((q,i)=>qState[i]&&qState[i].v).length;
+  const good = QCM.filter((q,i)=>qState[i]&&qState[i].v&&qState[i].ok).length;
+  v.innerHTML=`
+   <div class="qhead">
+    <div><div class="eyebrow">QCM à réponses multiples · ${QCM.length} questions sur les liens entre voies</div><div class="score">${good} / ${done} juste${good>1?"s":""} <span style="font-size:14px;color:var(--muted);font-weight:500">· ${QCM.length-done} restante${QCM.length-done>1?"s":""}</span></div></div>
+    <div class="qactions"><button class="btn" id="q-copy">Copier mes erreurs</button><button class="btn" id="q-reset">Recommencer</button></div>
+   </div>
+   <div id="copybox" hidden></div>
+   <p class="legendline" style="margin:0">Une question est juste seulement si tu coches <b>toutes</b> les bonnes réponses et aucune fausse, comme au partiel. Pense à cocher aussi les items vrais évidents.</p>
+   ${QCM.map((q,i)=>qHTML(q,i)).join("")}`;
+  v.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.q, j=+b.dataset.o; const st=qState[i]||(qState[i]={p:[],v:false});
+    if(st.v) return;
+    st.p = st.p.includes(j) ? st.p.filter(x=>x!==j) : [...st.p,j];
+    saveQ(); renderQCM();
+  });
+  v.querySelectorAll(".validate").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.q; const st=qState[i]||(qState[i]={p:[],v:false});
+    const q=QCM[i]; st.v=true;
+    st.ok = q.o.every((o,j)=> (o[1]===1) === st.p.includes(j));
+    saveQ(); renderQCM();
+    const card=document.getElementById("q"+i); if(card) card.scrollIntoView({block:"nearest"});
+  });
+  $("#q-reset").onclick=()=>{ qState={}; saveQ(); renderQCM(); };
+  $("#q-copy").onclick=copyErrors;
+}
+function qHTML(q,i){
+  const st=qState[i]||{p:[],v:false};
+  const res = st.v ? `<span class="res ${st.ok?"ok":"bad"}">${st.ok?"Juste":"Erreur"}</span>` : "";
+  return `<article class="q" id="q${i}">
+   <div class="qn"><span>Question ${i+1}</span>${res}</div>
+   <p class="stem">${q.s}</p>
+   <div class="opts">${q.o.map((o,j)=>{
+     const picked=st.p.includes(j);
+     let cls="opt", mark="";
+     if(st.v){ cls+= o[1]?" rv-true":" rv-false"; if(picked) cls+=" picked"; mark = o[1] ? (picked?"VRAI ✓":"VRAI · oublié") : (picked?"FAUX ✗":""); }
+     return `<button class="${cls}" data-q="${i}" data-o="${j}" aria-pressed="${picked}" ${st.v?"disabled":""}><span class="L">${"ABCDE"[j]}</span><span>${o[0]}</span><span class="mark">${mark}</span></button>`;
+   }).join("")}</div>
+   ${st.v?`<div class="expl">${q.e}</div>`:`<div><button class="btn primary validate" data-q="${i}">Valider</button></div>`}
+  </article>`;
+}
+function errorsText(){
+  const lines=[];
+  QCM.forEach((q,i)=>{ const st=qState[i]; if(!st||!st.v||st.ok) return;
+    const forgot=q.o.map((o,j)=>o[1]&&!st.p.includes(j)?"ABCDE"[j]:null).filter(Boolean);
+    const wrong=q.o.map((o,j)=>!o[1]&&st.p.includes(j)?"ABCDE"[j]:null).filter(Boolean);
+    lines.push(`Q${i+1} (${q.s.replace(/<[^>]+>/g,"")}) : ${wrong.length?"coché faux "+wrong.join(", "):""}${wrong.length&&forgot.length?" ; ":""}${forgot.length?"oublié vrai "+forgot.join(", "):""}`);
+  });
+  return lines.length ? "QCM des liens (Atlas du métabolisme) – mes erreurs :\n"+lines.join("\n") : "";
+}
+function copyErrors(){
+  const txt=errorsText(); const box=$("#copybox");
+  if(!txt){ box.hidden=false; box.innerHTML=`<p class="toast">Aucune erreur enregistrée pour l'instant.</p>`; return; }
+  const show=()=>{ box.hidden=false; box.innerHTML=`<p class="legendline">Sélectionne et copie ce texte, puis colle-le dans la conversation pour que je l'ajoute à ton carnet d'erreurs.</p><textarea class="hidden-copy" id="copyarea" readonly>${txt}</textarea>`; const a=$("#copyarea"); a.focus(); a.select(); };
+  try{
+    navigator.clipboard.writeText(txt).then(()=>{ box.hidden=false; box.innerHTML=`<p class="toast">Copié. Colle-le dans la conversation pour que je l'ajoute à ton carnet d'erreurs.</p>`; }).catch(show);
+  }catch(e){ show(); }
+}
+
+/* ============ ONGLETS ============ */
+function showView(v){
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.view===v?"true":"false"));
+  $("#view-carte").hidden = v!=="carte";
+  $("#view-qcm").hidden = v!=="qcm";
+  if(v==="qcm") renderQCM();
+  try{ history.replaceState(null,"","#"+v); }catch(e){}
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+
+/* ============ DÉMARRAGE ============ */
+buildMap();
+let saved=null; try{ saved=JSON.parse(localStorage.getItem("atlas-state")||"null"); }catch(e){}
+if(saved && (saved.sel||saved.sit||saved.node)){
+  state.mode=saved.mode||"voie"; setModeButtons();
+  if(saved.node && N[saved.node]) selectNode(saved.node);
+  else if(saved.sit && SIT[saved.sit]) selectSit(saved.sit);
+  else if(saved.sel && P[saved.sel]) selectPath(saved.sel);
+  else home();
+} else { state.mode="voie"; setModeButtons(); home(); }
+showView(location.hash==="#qcm"?"qcm":"carte");
+</script>
+
+
+<a href="../../" class="mes-artefacts-back" aria-label="Retour à tous mes artefacts">← Mes artefacts</a>
+<style>
+.mes-artefacts-back{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2147483000;
+ font:600 13px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:#fff;background:rgba(24,28,36,.86);
+ -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.mes-artefacts-back:hover{background:rgba(24,28,36,.96)}
+.mes-artefacts-back:focus-visible{outline:2px solid #6aa0ff;outline-offset:2px}
+@media print{.mes-artefacts-back{display:none}}
+</style>
+</body></html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mes artefacts</title>
+<meta name="description" content="Mes cours, cartes, fiches et outils de pharmacie, rangés par matière.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f6f4ee; --paper:#fffdf8; --ink:#1b1d22; --muted:#666c75; --faint:#8f949b; --line:#e2ddd1; --line-strong:#cfc8b8;
+  --focus:#2f5fd0;
+  --f-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-ui:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121417; --paper:#191c20; --ink:#e8e9eb; --muted:#a1a7b0; --faint:#7d838c; --line:#2a2e34; --line-strong:#3a3f47; --focus:#86a8ff; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121417; --paper:#191c20; --ink:#e8e9eb; --muted:#a1a7b0; --faint:#7d838c; --line:#2a2e34; --line-strong:#3a3f47; --focus:#86a8ff; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-ui);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:6px}
+
+/* En-tête */
+header.hero{padding-top:48px;padding-bottom:28px;display:grid;gap:14px}
+.eyebrow{font:600 12px/1 var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font:650 clamp(38px,7vw,64px)/1 var(--f-display);letter-spacing:-.02em;margin:0}
+.lede{font-size:17px;color:var(--muted);max-width:56ch;margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13.5px;color:var(--muted)}
+.stats b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* Barre de recherche et filtres (collante) */
+.bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:12px 0}
+.bar .wrap{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.search{flex:1 1 260px;position:relative;min-width:0}
+.search input{width:100%;font:500 15px/1 var(--f-ui);color:var(--ink);background:var(--paper);border:1px solid var(--line-strong);border-radius:10px;padding:11px 12px 11px 38px}
+.search input::placeholder{color:var(--faint)}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--faint)}
+.types{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:100%}
+.types::-webkit-scrollbar{display:none}
+.chip{font:600 13px/1 var(--f-ui);white-space:nowrap;color:var(--muted);background:transparent;border:1px solid var(--line-strong);border-radius:999px;padding:8px 12px;cursor:pointer}
+.chip:hover{color:var(--ink)}
+.chip[aria-pressed="true"]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+
+/* Sommaire des matières */
+.toc{display:flex;flex-wrap:wrap;gap:8px;padding:22px 0 6px}
+.toc a{display:inline-flex;align-items:center;gap:8px;font:600 13.5px/1 var(--f-ui);text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:8px 12px 8px 10px}
+.toc a:hover{border-color:var(--c)}
+.toc i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.toc span{color:var(--faint);font-weight:500;font-variant-numeric:tabular-nums}
+.toc a.off{opacity:.4}
+
+/* Sections */
+main{padding-bottom:40px}
+section.mat{padding-top:34px}
+.mat-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--c)}
+.mat-head h2{font:650 26px/1.15 var(--f-display);margin:0;letter-spacing:-.01em}
+.mat-head .ue{font:600 12px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.mat-head .n{margin-left:auto;font-size:13px;color:var(--faint);font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+
+/* Cartes */
+.card{position:relative;display:flex;flex-direction:column;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px 18px;min-width:0;
+  transition:border-color .15s, transform .15s, box-shadow .15s}
+.card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--c)}
+.card:hover{border-color:var(--line-strong);transform:translateY(-2px);box-shadow:0 6px 18px rgba(20,20,30,.07)}
+.card .type{font:600 11.5px/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.card h3{font:650 19px/1.22 var(--f-display);margin:0;text-wrap:balance}
+.card h3 a{text-decoration:none}
+.card h3 a::after{content:"";position:absolute;inset:0;border-radius:14px}
+.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+.card .meta{margin-top:auto;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--faint)}
+.card .meta .orig{position:relative;z-index:1;margin-left:auto;color:var(--faint);text-decoration:none;white-space:nowrap}
+.card .meta .orig:hover{color:var(--ink);text-decoration:underline}
+.card .live{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-weight:600}
+.card .live::before{content:"";width:7px;height:7px;border-radius:50%;background:#2e9b63}
+.card mark{background:color-mix(in srgb,var(--c) 22%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+
+/* Récents */
+.recent{padding-top:18px}
+.recent h2{font:600 12px/1 var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.recent .row{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.mini{position:relative;display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:12px;background:var(--paper);border:1px solid var(--line);text-decoration:none}
+.mini:hover{border-color:var(--c)}
+.mini .k{font:600 11px/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.mini .t{font:600 15px/1.25 var(--f-ui)}
+
+.empty{padding:60px 0;text-align:center;color:var(--muted)}
+.empty b{display:block;font:650 22px/1.2 var(--f-display);color:var(--ink);margin-bottom:6px}
+footer{border-top:1px solid var(--line);margin-top:24px;padding-top:22px;padding-bottom:48px;color:var(--faint);font-size:13px}
+footer p{margin:0 0 6px;max-width:72ch}
+@media (max-width:560px){header.hero{padding-top:32px} .grid{grid-template-columns:minmax(0,1fr)} .mat-head h2{font-size:23px}}
+</style>
+</head>
+<body>
+
+<header class="hero wrap">
+  <div class="eyebrow">Pharmacie · 2ᵉ année</div>
+  <h1>Mes artefacts</h1>
+  <p class="lede">Mes cours expliqués, cartes, fiches et outils de révision, rangés par matière.</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <label class="search">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6"/><path d="m13 13 5 5" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Chercher un cours, une notion…" autocomplete="off" aria-label="Chercher un artefact">
+    </label>
+    <div class="types" id="types" role="group" aria-label="Filtrer par type"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <nav class="toc" id="toc" aria-label="Matières"></nav>
+  <div class="recent" id="recent"></div>
+  <div id="list"></div>
+  <div class="empty" id="empty" hidden><b>Rien trouvé</b>Essaie un autre mot, ou enlève le filtre de type.</div>
+</main>
+
+<footer class="wrap">
+  <p>Chaque page est une copie de l'artefact au moment de sa dernière mise à jour. Le lien « Original » ouvre la version sur claude.ai, visible seulement avec mon compte.</p>
+  <p>Les outils marqués « En direct » gardent leurs données sur claude.ai : ils s'ouvrent là-bas.</p>
+</footer>
+
+<script>
+const ITEMS=[{"slug": "atlas", "kind": "html", "mat": "bioch", "type": "Carte", "date": "2026-10-25", "title": "Atlas du métabolisme", "desc": "Toutes les voies sur une seule carte cliquable, le cours de chaque voie et un QCM des liens.", "orig": "https://claude.ai/artifact/RWd84TJMosq4S4sfkyMvnK"}, {"slug": "glucides", "kind": "md", "mat": "bioch", "type": "Cours", "date": "2026-10-04", "title": "Métabolisme des glucides", "desc": "Poly pages 92 à 101 : comment l'organisme garde une glycémie stable.", "orig": "https://claude.ai/artifact/KPYj2rm6vKWyBZK42tMYc9"}, {"slug": "catabolisme-aa", "kind": "html", "mat": "bioch", "type": "Cours", "date": "2026-10-16", "title": "Catabolisme des acides aminés", "desc": "Azote, carboxyle et squelette carboné, avec les diapos, une carte des squelettes et un QCM.", "orig": "https://claude.ai/artifact/WRBzsp8zGx8znTnHi5iXqq"}, {"slug": "azote-nucleotides", "kind": "html", "mat": "bioch", "type": "Cours", "date": "2026-10-20", "title": "Azote et nucléotides", "desc": "Glutamine, uréogenèse, ammoniogenèse et métabolisme des nucléotides, diapos à l'appui.", "orig": "https://claude.ai/artifact/1xiM85KjwiTqouqGucodCR"}, {"slug": "carnet-bioch", "kind": "md", "mat": "bioch", "type": "Carnet d'erreurs", "date": "2026-10-01", "title": "Carnet d'erreurs – Biochimie", "desc": "Chaque erreur de QCM avec sa correction et le piège à retenir.", "orig": "https://claude.ai/artifact/Gye3TiZhqN48h4BnxdKaug"}, {"slug": "genome-compile", "kind": "md", "mat": "genome", "type": "Cours", "date": "2026-10-25", "title": "Génome UE 3.7 — Cours compilé", "desc": "Toutes les ronéos de l'UE, nettoyées et remises dans l'ordre du plan 2026.", "orig": "https://claude.ai/artifact/8h63FvF3W9sriF5mtXYo8e"}, {"slug": "labo-genome", "kind": "html", "mat": "genome", "type": "Labo", "date": "2026-10-25", "title": "Labo Génome", "desc": "Transcription, traduction, analyse des acides nucléiques et microvariants, chaque module avec son QCM.", "orig": "https://claude.ai/artifact/B6W1sL3KeDXc79ac5ihD9p"}, {"slug": "transcription", "kind": "md", "mat": "genome", "type": "Cours", "date": "2026-10-25", "title": "Transcription : promoteur et régulation", "desc": "Promoteurs, facteurs de transcription et séquences régulatrices.", "orig": "https://claude.ai/artifact/WevqdLn8rt4toGvfCcCJpP"}, {"slug": "gamete-proteine", "kind": "html", "mat": "genome", "type": "Schéma", "date": "2026-10-25", "title": "Du gamète à la protéine", "desc": "Le parcours de l'information génétique, schéma par schéma.", "orig": "https://claude.ai/artifact/9wjuJ5XiNaEr6FTRwoMR88"}, {"slug": "synthese-proteines", "kind": "md", "mat": "physiocell", "type": "Cours", "date": "2026-10-04", "title": "Synthèse, maturation et adressage des protéines", "desc": "Du ribosome libre au RE, au Golgi et aux autres destinations.", "orig": "https://claude.ai/artifact/KJY9i6tDmqr39JGz1Udzcx"}, {"slug": "neurophysio", "kind": "html", "mat": "physio", "type": "Cours", "date": "2026-10-24", "title": "Neurophysiologie", "desc": "Tout le cours : de la synapse aux organes des sens, avec un QCM final.", "orig": "https://claude.ai/artifact/UK6mXEopMLtt1jKtzXMkFn"}, {"slug": "neuro-reflexe", "kind": "html", "mat": "physio", "type": "Cours", "date": "2026-10-06", "title": "Neuro : du neurone au réflexe", "desc": "Cours du 03/10 : système nerveux, réflexe rotulien, tact, proprioception.", "orig": "https://claude.ai/artifact/8HT2anMv3RPBBaFAeXun2E"}, {"slug": "carte-orga", "kind": "html", "mat": "chimie", "type": "Carte", "date": "2026-10-17", "title": "Carte des réactions orga", "desc": "Programme du CC jusqu'aux époxydes et TD 1 et 2, réaction par réaction.", "orig": "https://claude.ai/artifact/FSTSYFp27zTRoAKEhHpSgX"}, {"slug": "thermo", "kind": "md", "mat": "chimie", "type": "Cours", "date": "2026-10-08", "title": "Thermo partie 2 : cours et exos", "desc": "Des énergies de liaison aux équilibres, chaque partie suivie de ses exos.", "orig": "https://claude.ai/artifact/KcSzkax9nXyqqBNLeUpWjv"}, {"slug": "carnet-chimie", "kind": "md", "mat": "chimie", "type": "Carnet d'erreurs", "date": "2026-10-08", "title": "Carnet d'erreurs chimie", "desc": "Chaque erreur d'exo avec la règle qui l'évite.", "orig": "https://claude.ai/artifact/JEbnNWRKbDLmwAs7dnvc3G"}, {"slug": "chromato", "kind": "md", "mat": "analytique", "type": "Fiche", "date": "2026-10-12", "title": "Fiche formules — Chromatographie", "desc": "Toutes les formules avec un exemple chiffré pour chacune, et les pièges.", "orig": "https://claude.ai/artifact/UfCoSECbnHbD1BJvrnxemF"}, {"slug": "myco", "kind": "html", "mat": "myco", "type": "Fiche", "date": "2026-10-09", "title": "Champignons du TP Myco", "desc": "Les espèces du TP classées comme les planches, plus toutes les mortelles.", "orig": "https://claude.ai/artifact/CSsEGtNEDJZXcPD7mnhZvq"}, {"slug": "droit", "kind": "html", "mat": "droit", "type": "Carte", "date": "2026-10-11", "title": "Introduction au droit", "desc": "L'arbre du cours à déplier, avec les pièges qui tombent en QCM.", "orig": "https://claude.ai/artifact/1jm9NvgXn8SJ8Bw7ktqqwd"}, {"slug": "focus", "kind": "html", "mat": "outils", "type": "Outil", "date": "2026-10-25", "title": "Focus révisions", "desc": "Minuteur de sessions de travail avec le journal du jour.", "orig": "https://claude.ai/artifact/6PGRFPVsNtdkeepTBsgLPZ"}, {"slug": "suivi-cours", "kind": "link", "mat": "outils", "type": "Outil", "date": "2026-10-12", "title": "Suivi des cours P2", "desc": "Chapitres vus, scores de QCM et lacunes, matière par matière.", "orig": "https://claude.ai/artifact/5DURzkmjDDYQ2RtUEKgDoa"}, {"slug": "entrainement", "kind": "link", "mat": "outils", "type": "Outil", "date": "2026-10-15", "title": "Carnet d'entraînement", "desc": "Séances de sport et suivi.", "orig": "https://claude.ai/artifact/3wtsrwTLwii3FTVH5HRhuD"}];
+const MATS=[{"id": "bioch", "name": "Biochimie", "ue": "UE 3.3", "color": "#b4532a", "dark": "#ef9a6b"}, {"id": "genome", "name": "Génome", "ue": "UE 3.7", "color": "#6a3fb5", "dark": "#b79cf0"}, {"id": "physiocell", "name": "Physiologie cellulaire", "ue": "UE 3.6", "color": "#a23a73", "dark": "#e597c4"}, {"id": "physio", "name": "Physiologie", "ue": "UE 3.5", "color": "#1f6fae", "dark": "#86bdf0"}, {"id": "chimie", "name": "Chimie", "ue": "Orga et générale", "color": "#2d7a4b", "dark": "#7fd3a0"}, {"id": "analytique", "name": "Sciences analytiques", "ue": "", "color": "#0f7c86", "dark": "#6fd0d8"}, {"id": "myco", "name": "Mycologie", "ue": "TP", "color": "#8a6a12", "dark": "#e2c05a"}, {"id": "droit", "name": "Environnement juridique", "ue": "UE 3.8", "color": "#3a4f9a", "dark": "#a3b4f0"}, {"id": "outils", "name": "Outils", "ue": "Organisation", "color": "#55606e", "dark": "#aab4c0"}];
+(function(){
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  const MOIS=["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+  const fdate=d=>{const [y,m,j]=d.split("-");return `${+j} ${MOIS[+m-1]}`;};
+  const dark=matchMedia("(prefers-color-scheme: dark)");
+  const color=m=>dark.matches?m.dark:m.color;
+  const M=Object.fromEntries(MATS.map(m=>[m.id,m]));
+  const href=it=>it.kind==="link"?it.orig:`a/${it.slug}/`;
+  const ext=it=>it.kind==="link"?' target="_blank" rel="noopener"':"";
+
+  const TYPES=["Tout",...new Set(ITEMS.map(i=>i.type))];
+  let type="Tout", q="";
+  try{ const t=sessionStorage.getItem("type"); if(t&&TYPES.includes(t)) type=t; }catch(e){}
+
+  const nMat=new Set(ITEMS.map(i=>i.mat)).size;
+  $("stats").innerHTML=`<span><b>${ITEMS.length}</b> artefacts</span><span><b>${nMat}</b> matières</span><span>Dernier ajout le <b>${fdate(ITEMS.map(i=>i.date).sort().pop())}</b></span>`;
+
+  function hl(text){
+    if(!q) return esc(text);
+    const t=norm(text), n=norm(q); const i=t.indexOf(n);
+    if(i<0) return esc(text);
+    return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length));
+  }
+  function card(it){
+    const m=M[it.mat];
+    const meta=it.kind==="link"
+      ? `<span class="live">En direct sur claude.ai</span>`
+      : `<span>${fdate(it.date)}</span><a class="orig" href="${esc(it.orig)}" target="_blank" rel="noopener">Original ↗</a>`;
+    return `<article class="card" style="--c:${color(m)}">
+      <span class="type">${esc(it.type)}</span>
+      <h3><a href="${esc(href(it))}"${ext(it)}>${hl(it.title)}</a></h3>
+      <p>${hl(it.desc)}</p>
+      <div class="meta">${meta}</div></article>`;
+  }
+  function render(){
+    $("types").innerHTML=TYPES.map(t=>`<button class="chip" data-t="${esc(t)}" aria-pressed="${t===type}">${esc(t)}</button>`).join("");
+    const n=norm(q.trim());
+    const shown=ITEMS.filter(i=>(type==="Tout"||i.type===type)&&(!n||norm(i.title+" "+i.desc+" "+M[i.mat].name+" "+M[i.mat].ue+" "+i.type).includes(n)));
+    const by={}; shown.forEach(i=>(by[i.mat]=by[i.mat]||[]).push(i));
+    $("toc").innerHTML=MATS.map(m=>{const c=(by[m.id]||[]).length;return `<a href="#${m.id}" class="${c?"":"off"}" style="--c:${color(m)}"><i></i>${esc(m.name)} <span>${c}</span></a>`;}).join("");
+    const filtering=n||type!=="Tout";
+    $("recent").innerHTML=filtering?"":`<h2>Mis à jour récemment</h2><div class="row">`+
+      [...ITEMS].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,4).map(it=>{const m=M[it.mat];
+        return `<a class="mini" href="${esc(href(it))}"${ext(it)} style="--c:${color(m)}"><span class="k">${esc(m.name)} · ${fdate(it.date)}</span><span class="t">${esc(it.title)}</span></a>`;}).join("")+`</div>`;
+    $("list").innerHTML=MATS.filter(m=>by[m.id]).map(m=>{
+      const arr=by[m.id].sort((a,b)=>b.date.localeCompare(a.date));
+      return `<section class="mat" id="${m.id}" style="--c:${color(m)}">
+        <div class="mat-head"><h2>${esc(m.name)}</h2>${m.ue?`<span class="ue">${esc(m.ue)}</span>`:""}<span class="n">${arr.length} artefact${arr.length>1?"s":""}</span></div>
+        <div class="grid">${arr.map(card).join("")}</div></section>`;}).join("");
+    $("empty").hidden=shown.length>0;
+  }
+  $("types").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(!b) return; type=b.dataset.t; try{sessionStorage.setItem("type",type)}catch(_){} render();});
+  $("q").addEventListener("input",e=>{q=e.target.value; render();});
+  document.addEventListener("keydown",e=>{ if(e.key==="/"&&document.activeElement!==$("q")){e.preventDefault();$("q").focus();} });
+  dark.addEventListener?.("change",render);
+  render();
+})();
+</script>
+</body>
+</html>

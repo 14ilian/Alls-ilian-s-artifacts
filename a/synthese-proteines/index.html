@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthèse, maturation et adressage des protéines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Public+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+:root{--bg:#f7f5f0;--paper:#fffdf9;--ink:#1d1f24;--muted:#646a73;--line:#e3ded3;--accent:#a23a73;--code:#f1ede4}
+@media (prefers-color-scheme:dark){:root{--bg:#131518;--paper:#1a1d21;--ink:#e7e8ea;--muted:#9aa1ab;--line:#2c3036;--accent:#e597c4;--code:#22262b;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 "Source Serif 4",Georgia,serif;-webkit-font-smoothing:antialiased}
+.top{max-width:780px;margin:0 auto;padding:28px 20px 0;font:500 13px/1.4 "Public Sans",system-ui,sans-serif;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.top a{color:var(--muted);text-decoration:none} .top a:hover{color:var(--ink)}
+.top .mat{color:var(--accent);font-weight:600}
+article{max-width:780px;margin:12px auto 0;padding:8px 20px 96px}
+h1,h2,h3,h4{font-family:"Fraunces",Georgia,serif;font-weight:600;line-height:1.2;text-wrap:balance}
+h1{font-size:clamp(30px,5vw,42px);margin:.2em 0 .3em}
+h1+p{font:500 14px/1.5 "Public Sans",system-ui,sans-serif;color:var(--muted);margin-bottom:2.2em}
+h2{font-size:26px;margin:2em 0 .6em;padding-top:.6em;border-top:1px solid var(--line)}
+h3{font-size:20px;margin:1.6em 0 .5em}
+h4{font-size:17px;margin:1.4em 0 .4em}
+p,ul,ol{margin:0 0 1em}
+li{margin:.25em 0} li>p{margin:0}
+a{color:var(--accent)}
+strong{font-weight:600}
+blockquote{margin:1.2em 0;padding:.6em 1.1em;border-left:3px solid var(--accent);background:var(--paper);border-radius:0 8px 8px 0}
+blockquote p:last-child{margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+.tbl{overflow-x:auto;margin:1.2em 0;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;font:14.5px/1.5 "Public Sans",system-ui,sans-serif}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-weight:600;font-size:12.5px;letter-spacing:.03em;color:var(--muted);background:var(--bg)}
+code{font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:.1em .35em;border-radius:4px}
+pre{background:var(--code);padding:14px 16px;border-radius:10px;overflow-x:auto}
+pre code{background:none;padding:0}
+.math{margin:1.1em 0;padding:14px 12px;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow-x:auto;text-align:center}
+.orig{font:500 13px/1.5 "Public Sans",system-ui,sans-serif;color:var(--muted);margin-top:4em;padding-top:1.2em;border-top:1px solid var(--line)}
+@media print{.top,.orig{display:none} body{background:#fff}}
+</style>
+</head>
+<body>
+<nav class="top"><a href="../../">← Mes artefacts</a><span aria-hidden="true">/</span><span class="mat">Physiologie cellulaire</span></nav>
+<article>
+<h1>Synthèse, maturation et adressage des protéines</h1>
+<p>Physio cell UE 3.6 · 4 oct. 2026</p>
+<h2>Principe général</h2>
+<p>Toute protéine commence sa synthèse dans le cytosol, sur un ribosome libre. C'est le signal porté par la protéine qui décide ensuite de sa route.</p>
+<ul>
+<li><strong>Signal pour le RE</strong> : la SRP détourne le ribosome vers le REG. La protéine suit la route du système endomembranaire (REG → Golgi → destination). Le transfert est <strong>co-traductionnel</strong>.</li>
+<li><strong>Pas de signal pour le RE</strong> : la synthèse se termine dans le cytosol. La protéine reste dans le cytosol, ou elle est importée <strong>après sa synthèse</strong> (post-traductionnel) dans le noyau, la mitochondrie ou le peroxysome.</li>
+</ul>
+<p>Ces trois organites ne font pas partie du système endomembranaire : ils ont leurs propres portes d'entrée (pores, TOM/TIM, PEX) au lieu de recevoir des vésicules du Golgi.</p>
+<p>&#91;embedded content: les deux routes des protéines · 1 décision, 5 destinations]</p>
+<p>À gauche, la route co-traductionnelle par le REG et le Golgi ; à droite, les protéines finies dans le cytosol, qui y restent ou sont importées après leur synthèse.</p>
+<h2>Route 1 : système endomembranaire (cytosol → REG → Golgi)</h2>
+<p>Concerne les protéines membranaires, sécrétées, lysosomales et celles du RE ou du Golgi.</p>
+<p><strong>Entrée dans le REG (mécanisme SRP)</strong></p>
+<ol>
+<li>La traduction débute dans le cytosol.</li>
+<li>La SRP reconnaît la séquence signal et arrête la traduction.</li>
+<li>La SRP amène le complexe (ribosome + ARNm + peptide) au translocon du REG.</li>
+<li>La SRP se fixe à son récepteur, se dissocie et retourne dans le cytosol.</li>
+<li>La traduction reprend : la protéine passe dans la lumière du RE ou s'insère dans sa membrane.</li>
+<li>La peptidase signal clive le peptide signal.</li>
+</ol>
+<p><strong>Maturations selon le compartiment</strong></p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Compartiment</th>
+<th>Maturations et contrôles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REG</td>
+<td>N-glycosylation ; ponts disulfure ; ajout d'une ancre GPI (accroche la protéine à la membrane plasmique)</td>
+</tr>
+<tr>
+<td>REG, contrôle qualité</td>
+<td>chaperonnes calnexine et calréticuline (bonne structure 3D) ; si accumulation de protéines mal repliées : stress du RE → réponse UPR (baisse de la synthèse sauf chaperonnes → survie, ou apoptose si le stress persiste)</td>
+</tr>
+<tr>
+<td>Golgi (cis → trans)</td>
+<td>O-glycosylation ; clivage par des protéases ; ajout du mannose-6-phosphate sur les enzymes lysosomales (cis-Golgi)</td>
+</tr>
+<tr>
+<td>Golgi, tri</td>
+<td>envoi vers la membrane plasmique (transmembranaire ou sécrétée) ou vers les compartiments lysosomaux</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Destinations finales</strong> : membrane plasmique, sécrétion (exocytose constitutive ou contrôlée), lysosomes, RE, Golgi.</p>
+<h2>Route 2 : protéines synthétisées entièrement dans le cytosol</h2>
+<p>Ces protéines sont traduites jusqu'au bout sur des ribosomes libres. Elles ne passent jamais par le REG ni par le Golgi.</p>
+<p><strong>La maturation se fait grâce aux chaperonnes cytosoliques.</strong> Les chaperonnes interagissent avec les protéines nouvellement synthétisées pour qu'elles adoptent la bonne conformation et puissent interagir avec leurs partenaires. Elles servent aussi à orienter certaines protéines : ce sont des chaperonnes qui reconnaissent la séquence KERQ et guident la protéine vers le lysosome (autophagie médiée par chaperonne, en cas de carence).</p>
+<p><strong>Deux devenirs possibles :</strong></p>
+<ul>
+<li><strong>Pas de signal d'adressage</strong> : la protéine reste dans le cytosol (ex. enzymes de la glycolyse, Rho).</li>
+<li><strong>Un signal d'adressage</strong> : la protéine est reconnue par un récepteur cytosolique, puis importée après sa synthèse dans le noyau, la mitochondrie ou le peroxysome (tableau ci-dessous).</li>
+</ul>
+<p>Les réserves sans membrane du cytosol (glycogène, lipides, fer) et ses édifices macromoléculaires (ribosomes, protéasomes, chaperonnes) restent eux aussi dans le cytosol.</p>
+<h2>Signaux d'adressage et protéines qui les reconnaissent</h2>
+<p>Chaque signal est une courte séquence d'acides aminés, une « étiquette postale » lue par un récepteur précis.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Destination</th>
+<th>Signal</th>
+<th>Reconnu par</th>
+<th>Ce qui se passe ensuite</th>
+<th>Moment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>REG (puis Golgi et système endomembranaire)</td>
+<td>séquence signal (peptide signal)</td>
+<td>SRP, puis récepteur de la SRP et translocon</td>
+<td>arrêt de la traduction, passage dans le RE, clivage par la peptidase signal</td>
+<td>co-traductionnel</td>
+</tr>
+<tr>
+<td>Noyau (import)</td>
+<td>NLS</td>
+<td>importines</td>
+<td>Ran-GTP libère la protéine dans le noyau ; Ran-GAP libère l'importine dans le cytosol</td>
+<td>post-traductionnel</td>
+</tr>
+<tr>
+<td>Cytosol (export depuis le noyau)</td>
+<td>NES</td>
+<td>exportines (+ Ran-GTP)</td>
+<td>Ran-GAP hydrolyse le GTP dans le cytosol et libère la protéine ; NTF2 ramène Ran-GDP</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Mitochondrie, membrane externe</td>
+<td>séquence d'adressage mitochondriale</td>
+<td>TOM</td>
+<td>puis SAM (bonne conformation)</td>
+<td>post-traductionnel</td>
+</tr>
+<tr>
+<td>Mitochondrie, espace intermembranaire</td>
+<td>séquence d'adressage mitochondriale</td>
+<td>TOM</td>
+<td>la protéine reste soluble dans l'espace intermembranaire</td>
+<td>post-traductionnel</td>
+</tr>
+<tr>
+<td>Mitochondrie, matrice</td>
+<td>séquence d'adressage mitochondriale</td>
+<td>TOM</td>
+<td>accumulation dans l'espace intermembranaire, puis TIM vers la matrice</td>
+<td>post-traductionnel</td>
+</tr>
+<tr>
+<td>Mitochondrie, membrane interne</td>
+<td>séquence d'adressage mitochondriale</td>
+<td>TOM</td>
+<td>puis TIM, qui insère la protéine</td>
+<td>post-traductionnel</td>
+</tr>
+<tr>
+<td>Mitochondrie, protéines traduites sur place</td>
+<td>—</td>
+<td>OXA</td>
+<td>insertion dans la membrane interne</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Peroxysome</td>
+<td>PTS1 (C-terminal) ou PTS2 (N-terminal, environ 10 acides aminés)</td>
+<td>PEX5, PEX7 (cytosoliques, fixation ATP-dépendante)</td>
+<td>amarrage aux PEX membranaires, puis translocation</td>
+<td>post-traductionnel</td>
+</tr>
+<tr>
+<td>Lysosome, depuis le Golgi</td>
+<td>mannose-6-phosphate (ajouté dans le cis-Golgi)</td>
+<td>récepteur au M6P (trans-Golgi)</td>
+<td>vésicule à clathrine, dissociation au pH acide de l'endosome, recyclage du récepteur</td>
+<td>après le REG</td>
+</tr>
+<tr>
+<td>Lysosome, depuis le cytosol</td>
+<td>KERQ</td>
+<td>chaperonnes</td>
+<td>autophagie médiée par chaperonne (carence)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Protéasome</td>
+<td>chaînes de polyubiquitine (liaison covalente)</td>
+<td>protéasome</td>
+<td>dégradation des protéines à courte durée de vie</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<p>Les deux dernières lignes ne sont pas des adressages vers un organite fonctionnel mais des étiquettes de dégradation.</p>
+<h2>Pièges QCM</h2>
+<ul>
+<li>Toute traduction débute dans le cytosol, même celle des protéines sécrétées.</li>
+<li>REG = co-traductionnel ; noyau, mitochondrie, peroxysome = post-traductionnel.</li>
+<li>N-glycosylation dans le REG ; O-glycosylation dans le Golgi.</li>
+<li>La SRP ne clive pas le peptide signal : c'est la peptidase signal.</li>
+<li>Ran-GTP dans le noyau, Ran-GDP dans le cytosol.</li>
+<li>TOM est mitochondrial ; le peroxysome utilise PEX5/PEX7.</li>
+<li>PTS1 en C-terminal, PTS2 en N-terminal.</li>
+<li>Calnexine et calréticuline = chaperonnes du REG ; les protéines cytosoliques sont repliées par les chaperonnes du cytosol.</li>
+<li>Le phosphate du M6P est ajouté dans le cis-Golgi ; le récepteur au M6P est dans le trans-Golgi.</li>
+</ul>
+<p>Source : Poly UE 3.6 Physiologie cellulaire et hématologie (ronéos 2025-2026), chapitres II à V.</p>
+<p class="orig">Copie du document du 4 oct. 2026. L'original, modifiable, est sur <a href="https://claude.ai/artifact/KJY9i6tDmqr39JGz1Udzcx">claude.ai</a> (accessible seulement avec ton compte).</p>
+</article>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script>
+document.querySelectorAll('pre > code.language-latex').forEach(function(c){
+  var box=document.createElement('div');box.className='math';
+  try{katex.render(c.textContent,box,{displayMode:true,throwOnError:false});c.parentNode.replaceWith(box);}catch(e){}
+});
+</script>
+</body>
+</html>

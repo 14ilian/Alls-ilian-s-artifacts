@@ -1,0 +1,679 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Labo Génome UE 3.7</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column with a sticky module bar; each module = cours (accordéons) → outil labo → QCM. Couleurs des bases = convention des chromatogrammes Sanger (A vert, C bleu, G noir, T rouge). */
+:root{
+  --bg:#f5f7f4; --surface:#ffffff; --sunk:#eef2ee; --ink:#16201b; --muted:#5a6660; --line:#dbe1dc;
+  --accent:#0d6b5c; --accent-soft:#dcefe9; --warn-soft:#fdf1dc; --warn:#8a5a00;
+  --ok:#24804f; --ok-soft:#e1f3e8; --bad:#bf3a2f; --bad-soft:#fbe5e2;
+  --nA:#27904a; --nC:#2a66cc; --nG:var(--ink); --nT:#cc3b30;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101513; --surface:#18201c; --sunk:#141b18; --ink:#e4ebe7; --muted:#9aa7a0; --line:#2b3531;
+  --accent:#4cc4a6; --accent-soft:#183a32; --warn-soft:#3a2d12; --warn:#f0c46a;
+  --ok:#5fd08f; --ok-soft:#173526; --bad:#ff7d70; --bad-soft:#3d1c19;
+  --nA:#4fcf74; --nC:#6ea2ff; --nT:#ff6b5e; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#101513; --surface:#18201c; --sunk:#141b18; --ink:#e4ebe7; --muted:#9aa7a0; --line:#2b3531;
+  --accent:#4cc4a6; --accent-soft:#183a32; --warn-soft:#3a2d12; --warn:#f0c46a;
+  --ok:#5fd08f; --ok-soft:#173526; --bad:#ff7d70; --bad-soft:#3d1c19;
+  --nA:#4fcf74; --nC:#6ea2ff; --nT:#ff6b5e; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{padding-block:28px 12px}
+.eyebrow{font:600 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,6vw,42px);line-height:1.05;margin:10px 0 8px;text-wrap:balance;letter-spacing:-.01em}
+.strand{font:600 15px/1.4 var(--f-mono);letter-spacing:.12em;overflow-x:auto;white-space:nowrap;padding:2px 0}
+.lede{color:var(--muted);max-width:62ch;margin:6px 0 0}
+.b-A{color:var(--nA)}.b-C{color:var(--nC)}.b-G{color:var(--nG)}.b-T,.b-U{color:var(--nT)}
+
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.tabrow{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabrow::-webkit-scrollbar{display:none}
+.tab{appearance:none;border:0;background:none;color:var(--muted);font:600 14px/1 var(--f-body);padding:14px 12px 12px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.tab .num{font:600 11px/1 var(--f-mono);color:var(--muted)}
+.pill{font:600 10px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 6px;border-radius:999px;background:var(--warn-soft);color:var(--warn)}
+.pill.score{background:var(--accent-soft);color:var(--accent)}
+.count{font:600 11px/1 var(--f-mono);background:var(--bad-soft);color:var(--bad);padding:3px 6px;border-radius:999px}
+
+main{padding-block:24px 64px}
+section.mod{display:flex;flex-direction:column;gap:20px}
+h2{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,4.5vw,28px);line-height:1.15;margin:0;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:700;font-size:19px;margin:0 0 6px}
+.intro{color:var(--muted);margin:0;max-width:65ch}
+.part-label{font:600 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-top:12px}
+
+details.c{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+details.c+details.c{margin-top:-10px}
+details.c summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;gap:12px;align-items:baseline;font-weight:600}
+details.c summary::-webkit-details-marker{display:none}
+details.c summary::before{content:"+";font:600 16px/1 var(--f-mono);color:var(--accent);width:12px;flex:none}
+details.c[open] summary::before{content:"−"}
+details.c summary .tag{margin-left:auto;font:500 12px/1 var(--f-mono);color:var(--muted);white-space:nowrap}
+.cb{padding:0 16px 16px 40px;min-width:0}
+.cb p{margin:0 0 10px;max-width:68ch}
+.cb ul,.cb ol{margin:0 0 10px;padding-left:20px}
+.cb li{margin:3px 0}
+.cb li::marker{color:var(--muted)}
+.trap,.key{border-radius:8px;padding:10px 12px;margin:10px 0;font-size:15px}
+.trap{background:var(--warn-soft)}
+.trap b:first-child{color:var(--warn)}
+.key{background:var(--accent-soft)}
+.key b:first-child{color:var(--accent)}
+.tw{overflow-x:auto;margin:8px 0 12px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px/1.3 var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:var(--sunk)}
+tr:last-child td{border-bottom:0}
+code,.mono{font-family:var(--f-mono);font-size:.92em}
+.fig{overflow-x:auto;margin:6px 0 12px}
+.fig svg{display:block;min-width:600px;width:100%;height:auto}
+.fig text{font-family:var(--f-mono)}
+
+.lab{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.lab .head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input[type=text],select{font:500 15px/1.3 var(--f-mono);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;min-width:0}
+input[type=text]{flex:1 1 260px;letter-spacing:.06em;text-transform:uppercase}
+select{font-family:var(--f-body)}
+input[type=range]{flex:1 1 200px;accent-color:var(--accent)}
+button.btn{font:600 14px/1 var(--f-body);border-radius:8px;padding:10px 14px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);cursor:pointer}
+button.btn.ghost{background:transparent;color:var(--accent)}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+.seqbox{background:var(--sunk);border-radius:8px;padding:12px;overflow-x:auto}
+.seqrow{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center;white-space:nowrap}
+.seqrow .lbl{font:500 12px/1.3 var(--f-body);color:var(--muted)}
+.seqrow .s{font:600 15px/2 var(--f-mono);letter-spacing:.1em}
+.cod{display:inline-block;border-radius:4px;padding:0 1px;margin-right:4px}
+.cod.orf{background:var(--accent-soft)}
+.cod.stop{background:var(--bad-soft)}
+.prot{display:flex;flex-wrap:wrap;gap:6px}
+.aa{font:600 13px/1 var(--f-mono);padding:6px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.aa.stop{background:var(--bad-soft);color:var(--bad)}
+.note{font-size:14px;color:var(--muted);margin:0}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.step{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg)}
+.step.on{border-color:var(--accent);background:var(--accent-soft)}
+.step .t{font:700 20px/1 var(--f-display)}
+.step .n{font:600 12px/1.3 var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.step p{margin:6px 0 0;font-size:13.5px}
+.big{font:800 clamp(26px,6vw,36px)/1 var(--f-display);font-variant-numeric:tabular-nums}
+.gel{display:flex;gap:18px;align-items:flex-end}
+.lane{display:flex;flex-direction:column;align-items:center;gap:6px}
+.lane .col{position:relative;width:56px;height:180px;background:var(--sunk);border-radius:6px}
+.band{position:absolute;left:8px;right:8px;height:5px;border-radius:2px;background:var(--ink)}
+.lane .l{font:600 12px/1.2 var(--f-mono);color:var(--muted);text-align:center}
+.ladder{position:relative;height:180px;width:46px}
+.ladder span{position:absolute;right:0;font:500 11px/1 var(--f-mono);color:var(--muted);transform:translateY(-50%)}
+
+.quiz{display:flex;flex-direction:column;gap:14px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.q.right{border-color:var(--ok)}
+.q.wrong{border-color:var(--bad)}
+.q .qh{display:flex;gap:10px;align-items:baseline;margin-bottom:10px}
+.q .qn{font:600 12px/1 var(--f-mono);color:var(--muted);flex:none}
+.q .qt{font-weight:600;margin:0}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:8px;border:1px solid var(--line);cursor:pointer;background:var(--bg)}
+.opt input{margin-top:5px;accent-color:var(--accent);flex:none}
+.opt .L{font:600 13px/1.7 var(--f-mono);color:var(--muted);flex:none}
+.opt.good{border-color:var(--ok);background:var(--ok-soft)}
+.opt.miss{border-color:var(--ok);border-style:dashed}
+.opt.badpick{border-color:var(--bad);background:var(--bad-soft)}
+.fb{margin-top:10px;font-size:14.5px;padding:10px 12px;border-radius:8px;background:var(--sunk)}
+.fb b{font-weight:700}
+.q.right .fb b{color:var(--ok)}.q.wrong .fb b{color:var(--bad)}
+.qbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.res{font:700 18px/1.2 var(--f-display)}
+.err-item{background:var(--surface);border:1px solid var(--line);border-left:0;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.err-item .m{font:600 11px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.err-item .y{color:var(--bad)}.err-item .c{color:var(--ok)}
+textarea.copy{width:100%;min-height:120px;font:13px/1.5 var(--f-mono);background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px}
+@media (max-width:560px){
+  .cb{padding-left:16px}
+  .seqrow{grid-template-columns:1fr;gap:0}
+  .steps{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:no-preference){.q,.opt{transition:border-color .15s,background-color .15s}}
+</style>
+
+<header class="top wrap">
+  <div class="eyebrow">UE 3.7 · Génome · Mmes Couderc &amp; Monferran</div>
+  <h1>Labo Génome</h1>
+  <div class="strand" aria-hidden="true" id="deco"></div>
+  <p class="lede">Quatre modules : transcription, traduction, analyse des acides nucléiques, et le cours sur les microvariants que tu n'as pas encore vu. Chaque module finit par un QCM ; tes erreurs s'accumulent dans l'onglet « Mes erreurs ».</p>
+</header>
+
+<nav class="tabs" aria-label="Modules"><div class="wrap tabrow" role="tablist" id="tabs"></div></nav>
+
+<main class="wrap" id="main"></main>
+
+<script>
+/* ---------- utilitaires ---------- */
+const $ = (s, r=document) => r.querySelector(s);
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+const colorSeq = s => s.split('').map(c => /[ACGTU]/.test(c) ? `<span class="b-${c}">${c}</span>` : c).join('');
+$('#deco').innerHTML = "5'-" + colorSeq("ATGGCTAAGTTCGATTGA") + "-3'";
+
+/* ---------- code génétique ---------- */
+const B = "UCAG", AAS = "FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG";
+const N3 = {F:"Phe",L:"Leu",S:"Ser",Y:"Tyr","*":"STOP",C:"Cys",W:"Trp",P:"Pro",H:"His",Q:"Gln",R:"Arg",I:"Ile",M:"Met",T:"Thr",N:"Asn",K:"Lys",V:"Val",A:"Ala",D:"Asp",E:"Glu",G:"Gly"};
+const tr = c => AAS[B.indexOf(c[0])*16 + B.indexOf(c[1])*4 + B.indexOf(c[2])];
+const comp = {A:"T",T:"A",G:"C",C:"G"};
+
+/* ---------- contenu ---------- */
+const MODS = [
+{ id:"transcription", n:"01", name:"Transcription", sub:"ADN → ARN, maturation, régulation",
+  intro:"Un gène s'exprime correctement s'il est transcrit au bon moment, au bon endroit et en bonne quantité. Chaque étape est un point de régulation, donc un point où une maladie peut naître.",
+  cours:[
+  ["Le principe : qui lit quoi, dans quel sens","base",`
+  <p>L'<b>ARN polymérase</b> lit le <b>brin matrice</b> (orienté 3'→5') et synthétise un ARN <b>complémentaire et antiparallèle</b>, allongé de 5' vers 3' (A→U, T→A, C→G, G→C).</p>
+  <p>Résultat : l'ARN a <b>la même séquence que le brin codant</b> (5'→3'), avec U à la place de T. C'est pour ça qu'on appelle ce brin « sens » ou « codant ».</p>
+  <div class="tw"><table><tr><th>Brin</th><th>Autres noms</th><th>Orientation</th><th>Rapport à l'ARN</th></tr>
+  <tr><td>Codant</td><td>sens, non-matrice</td><td>5'→3'</td><td>Même séquence (T→U)</td></tr>
+  <tr><td>Matrice</td><td>antisens, transcrit</td><td>3'→5'</td><td>Complémentaire, lu par l'enzyme</td></tr></table></div>
+  <ul><li><b>Pas d'amorce</b> : deux ribonucléotides s'apparient au brin matrice et sont liés par une liaison phosphodiester.</li>
+  <li>Mais l'enzyme ne démarre pas n'importe où : il lui faut un <b>promoteur</b>.</li>
+  <li>La transcription est la même pour tous les ARN (ARNm, ARNt, ARNr, miARN…). Seules les modifications post-transcriptionnelles diffèrent, et seuls les ARNm sont traduits.</li>
+  <li>~10 000 ARNm par cellule à un instant donné (≠ 10 000 protéines).</li></ul>
+  <div class="key"><b>Astuce partiel.</b> Si on te donne un seul brin, écris tout de suite le complémentaire au brouillon et note : brin sens = 5'→3', brin matrice = 3'→5'. Teste-toi avec l'outil du labo en bas de ce module.</div>`],
+  ["Le gène, du promoteur au terminateur","schéma",`
+  <div class="fig"><svg viewBox="0 0 640 150" role="img" aria-label="Structure d'un gène eucaryote">
+   <line x1="10" y1="70" x2="630" y2="70" stroke="var(--muted)" stroke-width="2"/>
+   <rect x="20" y="56" width="62" height="28" rx="4" fill="var(--sunk)" stroke="var(--muted)"/><text x="51" y="74" text-anchor="middle" font-size="11" fill="var(--ink)">CAAT</text>
+   <rect x="96" y="56" width="62" height="28" rx="4" fill="var(--sunk)" stroke="var(--muted)"/><text x="127" y="74" text-anchor="middle" font-size="11" fill="var(--ink)">TATA</text>
+   <text x="89" y="40" text-anchor="middle" font-size="11" fill="var(--muted)">promoteur</text>
+   <path d="M158 100 L 196 100" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#ar)"/><text x="177" y="118" text-anchor="middle" font-size="10" fill="var(--accent)">~35 nt</text>
+   <line x1="200" y1="46" x2="200" y2="94" stroke="var(--accent)" stroke-width="2"/><text x="200" y="38" text-anchor="middle" font-size="11" fill="var(--accent)">+1</text>
+   <rect x="210" y="54" width="70" height="32" rx="4" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="245" y="74" text-anchor="middle" font-size="11" fill="var(--ink)">exon 1</text>
+   <path d="M280 70 Q 310 40 340 70" fill="none" stroke="var(--muted)" stroke-dasharray="3 3"/><text x="310" y="38" text-anchor="middle" font-size="10" fill="var(--muted)">intron</text>
+   <rect x="340" y="54" width="70" height="32" rx="4" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="375" y="74" text-anchor="middle" font-size="11" fill="var(--ink)">exon 2</text>
+   <path d="M410 70 Q 440 40 470 70" fill="none" stroke="var(--muted)" stroke-dasharray="3 3"/><text x="440" y="38" text-anchor="middle" font-size="10" fill="var(--muted)">intron</text>
+   <rect x="470" y="54" width="70" height="32" rx="4" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="505" y="74" text-anchor="middle" font-size="11" fill="var(--ink)">exon 3</text>
+   <rect x="556" y="56" width="70" height="28" rx="4" fill="var(--sunk)" stroke="var(--muted)"/><text x="591" y="74" text-anchor="middle" font-size="11" fill="var(--ink)">terminateur</text>
+   <path d="M210 128 L 540 128" stroke="var(--ink)" stroke-width="1.5" marker-end="url(#ar2)"/><text x="375" y="145" text-anchor="middle" font-size="11" fill="var(--ink)">partie transcrite (pré-ARNm, 5'→3')</text>
+   <defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--accent)"/></marker>
+   <marker id="ar2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--ink)"/></marker></defs>
+  </svg></div>
+  <ul><li><b>CAAT box</b> : site où se place l'ARN polymérase (affinité de la protéine pour la séquence).</li>
+  <li><b>TATA box</b> : riche en A-T, peu de liaisons H → double hélice facile à ouvrir (activité hélicase).</li>
+  <li>L'enzyme est grosse : son site catalytique est ~<b>35 nucléotides plus loin</b>. La transcription démarre là, sans aucun « codon d'initiation de la transcription ».</li>
+  <li>Il y a des promoteurs sur les deux brins : le brin lu dépend du promoteur choisi (économie de place).</li>
+  <li><b>Terminateur</b> : séquence riche en G-C qui forme une épingle à cheveux (parfois signal AAUAAA) → l'ARN polymérase se décroche.</li></ul>
+  <div class="trap"><b>Piège QCM.</b> Le promoteur est <b>nécessaire mais pas suffisant</b>. Seul, il donne une transcription très faible : le gène d'un neurotransmetteur est présent dans les cellules du pied, mais quasi pas transcrit. Pas de promoteur = pas de transcription, et ce n'est pas un problème d'amorce.</div>
+  <p>L'ARN polymérase a besoin de : ribonucléotides + ADN matrice + promoteur.</p>`],
+  ["Les facteurs de transcription (cis / trans)","régulation",`
+  <p>Ce sont en général des <b>protéines</b> (éléments <b>trans</b>-régulateurs) qui se fixent sur des séquences courtes de l'ADN, &lt; 20 nt (éléments <b>cis</b>-régulateurs).</p>
+  <ul><li>Ils replient l'ADN pour créer une « niche » qui retient l'ARN polymérase (<b>régulation positive</b>) ou l'empêchent de se fixer (<b>régulation négative</b>).</li>
+  <li>Ils peuvent se fixer à l'ADN, à l'ARN polymérase ou à d'autres protéines.</li>
+  <li><b>Ubiquitaires</b> : présents partout, gènes domestiques (housekeeping : histones, actine, tubuline). Activateurs modestes.</li>
+  <li><b>Spécifiques</b> : d'un tissu, d'un moment, d'une température, d'une molécule. Un gène exprimé dans le cerveau a ses activateurs seulement dans le cerveau.</li>
+  <li>Les éléments cis peuvent être <b>n'importe où</b> : avant le promoteur, dans la séquence transcrite, après le terminateur, et ils occupent plus de nucléotides que la séquence transcrite.</li>
+  <li>Familles (hélice-tour-hélice, doigt de zinc, hélice-boucle-hélice) : pas à retenir.</li></ul>`],
+  ["Maturation de l'ARNm (eucaryotes)","3 étapes",`
+  <ol><li><b>Coiffe en 5'</b> (7-méthylguanosine triphosphate) : protège des RNases, aide la sortie du noyau, et surtout elle est reconnue par la petite sous-unité du ribosome. <b>Pas de coiffe = pas de traduction.</b></li>
+  <li><b>Queue polyA en 3'</b> (50 à 200 A ajoutés par la polyA polymérase) : allonge la <b>demi-vie</b>. Plus elle est longue, plus les RNases mettent de temps à atteindre la vraie séquence.</li>
+  <li><b>Épissage</b> : les petites ribonucléoprotéines (snRNP) reconnaissent le début de l'intron, le coupent (activité endonucléase), reconnaissent la fin, puis religuent les exons.</li></ol>
+  <ul><li>Mutation sur un <b>site donneur ou accepteur</b> d'épissage = grave. Mutation au <b>milieu</b> d'un intron = en général sans conséquence.</li>
+  <li><b>Épissage alternatif</b> : selon l'organe ou l'âge, des exons différents sont gardés → ~20 000 gènes codants, ~100 000 protéines.</li>
+  <li>Ordre : la coiffe arrive très vite (le 5' est libre dès le début) ; épissage et polyA quand la synthèse est finie ; le tout est concomitant.</li></ul>
+  <div class="trap"><b>Piège QCM.</b> L'épissage alternatif ne mélange <b>jamais</b> l'ordre des exons (jamais 1-5-2-3).</div>`],
+  ["Régulation par la structure de l'ADN (épigénétique)","épigénétique",`
+  <div class="tw"><table><tr><th>Mécanisme</th><th>Effet</th><th>Exemple</th></tr>
+  <tr><td>ARN qui condense un chromosome</td><td>Extinction totale</td><td>Gène <i>XIST</i> → ARN de 19 kb qui recouvre l'X (lyonisation). Chat roux et noir = femelle</td></tr>
+  <tr><td>Méthylation de l'ADN (cytosines des îlots CG)</td><td>Éteint le plus souvent</td><td>Empreinte parentale (> 200 gènes)</td></tr>
+  <tr><td>Acétylation des histones</td><td><b>Favorise</b> l'expression</td><td>Chromatine ouverte</td></tr>
+  <tr><td>Méthylation des histones</td><td><b>Réprime</b></td><td>Chromatine fermée</td></tr>
+  <tr><td>Phosphorylation des histones</td><td>Fonction inconnue</td><td>—</td></tr></table></div>
+  <p><b>Empreinte parentale</b> = répression stable d'un allèle selon son origine (mulet ≠ bardot).</p>
+  <div class="tw"><table><tr><th>Syndrome</th><th>Région</th><th>Mécanisme</th></tr>
+  <tr><td>Prader-Willi (hypotonie, obésité, hypogonadisme, retard léger)</td><td>15q11–q13</td><td>Délétion transmise par le <b>père</b></td></tr>
+  <tr><td>Angelman (retard sévère, convulsions, rires immotivés)</td><td>15q11–q13</td><td>Délétion transmise par la <b>mère</b></td></tr>
+  <tr><td>Beckwith-Wiedemann (surcroissance, cancers)</td><td>11p15</td><td><i>IGF2</i> exprimé sur les 2 allèles (normalement paternel seul)</td></tr></table></div>
+  <p><b>Épigénétique</b> = variation de l'expression due à la structure de l'ADN, pas à sa séquence ; héritable en mitose ou méiose, en général réversible. Famine aux Pays-Bas : méthylation d'<i>IGF2</i> réduite 60 ans après.</p>`],
+  ["ARN interférence (miARN)","post-transcriptionnel",`
+  <ul><li>Découverte par hasard (Jorgensen et ses pétunias) ; existe chez tous les eucaryotes.</li>
+  <li>Des gènes (promoteur – séquence transcrite – terminateur) codent des précurseurs en épingle à cheveux → <b>miARN double brin de ~22 nt</b>.</li>
+  <li>Un brin, complémentaire et antiparallèle de l'ARNm cible, le <b>dégrade</b> ou <b>bloque sa traduction</b>.</li>
+  <li>Une unité peut coder plusieurs miARN ; très conservés ; expression tissu- ou temps-spécifique, souvent liée au développement.</li></ul>`],
+  ["Grille d'examen : pourquoi il manque l'ARN ?","méthode",`
+  <div class="tw"><table><tr><th>Observation</th><th>Pistes à citer</th></tr>
+  <tr><td>Absence d'ARN</td><td>ADN condensé (ARN type XIST, méthylation, histones) ; promoteur délété ; pas de facteur de transcription ; site de fixation délété ; pas d'inducteur ; ARN interférent apparu par mutation</td></tr>
+  <tr><td>ARN de taille anormale</td><td>Délétion dans la séquence transcrite ; site +1 altéré ; terminateur muté ; épissage différentiel</td></tr>
+  <tr><td>ARN en quantité anormale</td><td>Condensation, modifications des histones ; ARN interférent modifié (quantité ou complémentarité)</td></tr></table></div>`]
+  ],
+  lab:"transcripteur",
+  qcm:[
+   {q:"Concernant la transcription chez les eucaryotes :",o:["L'ARN polymérase a besoin d'une amorce pour démarrer","L'ARN est synthétisé dans le sens 5'→3'","Le brin matrice est lu dans le sens 3'→5'","La séquence de l'ARN est identique à celle du brin matrice","La transcription commence au niveau d'un codon AUG"],c:[1,2],e:"Pas d'amorce pour l'ARN polymérase. L'ARN a la séquence du brin CODANT, pas du brin matrice. AUG est le codon d'initiation de la traduction ; la transcription démarre ~35 nt après la TATA box."},
+   {q:"Concernant le promoteur eucaryote :",o:["La TATA box est riche en A-T, donc facile à ouvrir","La CAAT box est le site de fixation de l'ARN polymérase","Le promoteur suffit à lui seul pour une transcription efficace","Sans promoteur, il n'y a pas de transcription","Le site +1 se situe environ 35 nucléotides après la TATA box"],c:[0,1,3,4],e:"Le promoteur est nécessaire mais pas suffisant : sans facteurs de transcription, la transcription reste très faible."},
+   {q:"Concernant les facteurs de transcription :",o:["Ce sont des éléments trans-régulateurs","Ils se fixent sur des éléments cis-régulateurs de l'ADN","Les éléments cis-régulateurs sont toujours en amont du promoteur","Les facteurs ubiquitaires régulent les gènes domestiques","Ils exercent toujours une régulation positive"],c:[0,1,3],e:"Les éléments cis peuvent être n'importe où (avant, dedans, après). Les facteurs peuvent activer ou réprimer."},
+   {q:"Concernant la maturation des ARNm :",o:["La coiffe 5' est une 7-méthylguanosine","Un ARNm sans coiffe n'est pas traduit","La queue polyA diminue la demi-vie de l'ARNm","L'épissage alternatif peut changer l'ordre des exons","Une mutation au centre d'un intron a en général peu de conséquences"],c:[0,1,4],e:"La polyA AUGMENTE la demi-vie. L'ordre des exons est toujours conservé."},
+   {q:"Concernant la régulation épigénétique :",o:["L'acétylation des histones favorise l'expression des gènes","La méthylation des cytosines des îlots CG éteint en général le gène","XIST code un ARN qui condense un chromosome X","Une délétion 15q11-q13 transmise par la mère donne un syndrome de Prader-Willi","L'épigénétique modifie la séquence de l'ADN"],c:[0,1,2],e:"Délétion maternelle → Angelman ; paternelle → Prader-Willi. L'épigénétique ne touche jamais la séquence."},
+   {q:"Concernant les miARN :",o:["Ils mesurent environ 22 nucléotides","Ils sont codés par des gènes avec promoteur et terminateur","Ils peuvent dégrader leur ARNm cible ou bloquer sa traduction","Ils n'existent que chez les plantes","Ils sont complémentaires et parallèles à leur cible"],c:[0,1,2],e:"Présents chez tous les eucaryotes ; l'appariement est complémentaire et ANTIparallèle."}
+  ]},
+
+{ id:"traduction", n:"02", name:"Traduction", sub:"ARNm → protéine, code génétique, régulation",
+  intro:"On passe d'un alphabet de 4 nucléotides à 20 acides aminés, lus 3 par 3. La coiffe, l'AUG et les UTR décident si, et combien, l'ARNm est traduit.",
+  cours:[
+  ["Ce qu'il faut pour traduire","matériel",`
+  <ul><li>ARNm mature, <b>ARNt</b> (adaptateurs), ribosomes (protéines + ARNr), acides aminés.</li>
+  <li>Facteurs d'initiation, d'élongation et de terminaison.</li>
+  <li>Enzymes : aminoacyl-ARNt transférases (chargent l'ARNt), <b>peptidyl-transférase</b>, <b>translocase</b>.</li>
+  <li>Énergie : GTP, ATP. Lieu : <b>cytoplasme</b> (la transcription est dans le noyau).</li></ul>
+  <p>Chaque <b>codon</b> (3 nt) est reconnu par l'<b>anticodon</b> complémentaire et antiparallèle d'un ARNt, qui porte l'acide aminé correspondant.</p>`],
+  ["Le code génétique","64 codons",`
+  <ul><li>64 codons pour 20 acides aminés → code <b>dégénéré</b> (UUU et UUC = Phe).</li>
+  <li><b>Universel</b> (bactéries → homme), à quelques exceptions près (mitochondrie).</li>
+  <li><b>AUG = méthionine</b> = codon d'initiation.</li>
+  <li>3 codons <b>STOP</b> : <span class="mono">UAA, UAG, UGA</span>. Aucun ARNt ne les reconnaît → arrêt.</li></ul>
+  <div class="key"><b>Moyen mnémo.</b> STOP : « U Are Away, U Are Gone, U Go Away ».</div>`],
+  ["Initiation, élongation, terminaison","3 phases",`
+  <ol><li><b>Initiation</b> : la petite sous-unité <b>40S</b> + ARNt initiateur chargé de Met + facteurs (eIF1, eIF2…) = complexe d'initiation. Il reconnaît la <b>coiffe</b>, puis <b>scanne</b> l'ARNm de 5' vers 3' jusqu'au premier AUG en bon contexte. La grande sous-unité <b>60S</b> est recrutée → ribosome <b>80S</b>.</li>
+  <li><b>Élongation</b> : la <b>peptidyl-transférase</b> crée la liaison peptidique (covalente) entre le COOH de l'acide aminé du <b>site P</b> et le NH₂ de celui du <b>site A</b>. La <b>translocase</b> avance le ribosome d'un codon.</li>
+  <li><b>Terminaison</b> : au codon STOP, pas d'ARNt ; des facteurs de relargage libèrent le polypeptide, le ribosome se dissocie.</li></ol>
+  <ul><li><b>Séquence Kozak</b> : nucléotides (C, G) autour de l'AUG qui améliorent sa reconnaissance chez les eucaryotes.</li>
+  <li>Procaryotes : pas de coiffe, <b>boîte de Shine-Dalgarno</b> (pas au programme cette année).</li></ul>`],
+  ["ORF et régions non traduites (UTR)","UTR",`
+  <ul><li><b>ORF</b> (cadre ouvert de lecture) = de l'AUG au STOP, la partie traduite.</li>
+  <li><b>5'UTR</b> riche en G-C → structure en <b>tige-boucle</b> qui bloque le scanning de la 40S → ARN présent, protéine absente.</li>
+  <li><b>3'UTR</b> en tige-boucle → les RNases passent mal → demi-vie ↑.</li></ul>
+  <div class="trap"><b>Piège QCM.</b> Un exon n'est <b>pas forcément codant</b> : les UTR sont dans des exons, mais ne sont pas traduites.</div>`],
+  ["Régulation de la traduction","4 niveaux",`
+  <div class="tw"><table><tr><th>Niveau</th><th>Exemple</th></tr>
+  <tr><td>Disponibilité des facteurs d'initiation</td><td><b>Picornavirus</b> (rhume) : son ARN n'a pas de coiffe et il apporte une protéase qui détruit les facteurs d'initiation de la cellule → seuls les ARN viraux sont traduits</td></tr>
+  <tr><td>Phosphorylation d'un facteur</td><td><b>eIF2</b> inactif lié au GDP, actif lié au GTP</td></tr>
+  <tr><td>Protéines fixées aux UTR</td><td><b>Ferritine</b> : sans fer, l'aconitase maintient une tige-boucle qui bloque la traduction. Excès de fer → le fer se fixe sur l'aconitase, la boucle s'ouvre → ferritine traduite → stockage du fer</td></tr>
+  <tr><td>Choix du codon d'initiation</td><td>Un CUG en amont, en bon contexte, piège des ribosomes → protéine de taille, fonction ou localisation différente</td></tr></table></div>
+  <p>Ensuite : <b>modifications post-traductionnelles</b> (phosphorylation, palmitoylation, isoprénylation, glycosylation) → protéine mature et active. La diapo 66 (facteurs eIF) n'a pas de QCM précis : retiens que la traduction est très régulée.</p>`],
+  ["Mutations : effet sur la protéine","conséquences",`
+  <div class="tw"><table><tr><th>Mutation</th><th>Ce qui change</th><th>Conséquence</th></tr>
+  <tr><td>Faux sens</td><td>Un codon → un autre acide aminé</td><td>Variable : dépend de la structure</td></tr>
+  <tr><td>Non-sens</td><td>Un codon → STOP (ex. UGC → UGA)</td><td>Protéine tronquée, non fonctionnelle</td></tr>
+  <tr><td>Synonyme</td><td>Même acide aminé (code dégénéré)</td><td>Souvent aucune</td></tr>
+  <tr><td>Frameshift</td><td>Insertion ou délétion d'1 nt</td><td>Cadre décalé, protéine sans fonction</td></tr>
+  <tr><td>Promoteur</td><td>Pas de transcription</td><td>Pas d'ARNm, pas de protéine</td></tr></table></div>
+  <p>Teste ces mutations dans l'outil ci-dessous : change une seule lettre et regarde la protéine.</p>`]
+  ],
+  lab:"traducteur",
+  qcm:[
+   {q:"Concernant le code génétique :",o:["Il comporte 64 codons","Il est dit dégénéré","UAA, UAG et UGA sont des codons STOP","AUG code la méthionine et sert d'initiation","Il est universel sans aucune exception"],c:[0,1,2,3],e:"Universel à quelques exceptions près (code mitochondrial légèrement différent)."},
+   {q:"Concernant l'initiation de la traduction :",o:["La sous-unité 40S reconnaît la coiffe","Le ribosome scanne l'ARNm de 3' vers 5'","La séquence Kozak entoure l'AUG","Le ribosome 80S se forme après la reconnaissance de l'AUG","La boîte de Shine-Dalgarno est utilisée chez les eucaryotes"],c:[0,2,3],e:"Le scanning se fait de 5' vers 3'. Shine-Dalgarno = procaryotes."},
+   {q:"Concernant l'élongation :",o:["La peptidyl-transférase lie le COOH du site P au NH₂ du site A","La translocase fait avancer le ribosome d'un codon","La liaison peptidique est non covalente","L'ARNt porte l'anticodon","Un ARNt reconnaît le codon STOP"],c:[0,1,3],e:"La liaison peptidique est covalente. Aucun ARNt ne reconnaît les STOP : ce sont des facteurs de relargage."},
+   {q:"Concernant les régions non traduites :",o:["Un exon est toujours codant","Une tige-boucle en 5'UTR peut bloquer le scanning","Une tige-boucle en 3'UTR peut augmenter la demi-vie","L'ORF correspond à la partie traduite","La 5'UTR est traduite"],c:[1,2,3],e:"Les UTR sont dans des exons mais ne sont pas traduites."},
+   {q:"Concernant la régulation de la traduction :",o:["eIF2 est actif lié au GTP","Le picornavirus détruit les facteurs d'initiation de la cellule","Un excès de fer permet la traduction de la ferritine","L'aconitase favorise la traduction de la ferritine en l'absence de fer","Les modifications post-traductionnelles rendent la protéine mature"],c:[0,1,2,4],e:"Sans fer, l'aconitase BLOQUE la traduction en maintenant la tige-boucle."},
+   {q:"Un codon UGC (Cys) devient UGA. Il s'agit d'une mutation :",o:["Faux sens","Non-sens","Synonyme","Frameshift","Du promoteur"],c:[1],e:"UGA est un codon STOP : mutation non-sens, protéine tronquée."}
+  ]},
+
+{ id:"analyse", n:"03", name:"Analyse des acides nucléiques", sub:"Extraction, hybridation, FISH, Sanger, NGS, puces",
+  intro:"Avant toute analyse : isoler les cellules, extraire, doser, puis détecter par hybridation. La question d'examen classique : « quelle technique, et pourquoi ? ».",
+  cours:[
+  ["Isoler les cellules","prélèvement",`
+  <div class="tw"><table><tr><th>Analyse</th><th>On cherche</th><th>Prélèvement</th></tr>
+  <tr><td><b>Somatique</b> (tumeur)</td><td>Souvent l'ARN</td><td>Biopsie + broyage</td></tr>
+  <tr><td><b>Constitutionnelle</b> (héréditaire)</td><td>Souvent l'ADN</td><td>Prise de sang → lymphocytes sur <b>gradient de Ficoll</b></td></tr></table></div>
+  <p>Ficoll : 1re centrifugation → de haut en bas plasma / lymphocytes / hématies (culot). On récupère les lymphocytes, on ajoute du NaCl, 2e centrifugation → lymphocytes dans le culot. Les chiffres de la diapo ne sont pas à connaître.</p>`],
+  ["Extraire et conserver l'ADN","extraction",`
+  <ol><li><b>Lyse alcaline</b> : détergent <b>SDS</b> + <b>protéinase K</b> → contenu cellulaire libéré.</li>
+  <li><b>Précipitation des membranes</b> par <b>AcK 3 M</b> : membranes au culot, ADN dans le surnageant.</li>
+  <li>Puis <b>précipitation de l'ADN</b> (alcool + NaCl) <i>ou</i> <b>chromatographie d'affinité sur silice</b> (liaisons H), éluée à l'eau ou au Tris-EDTA.</li></ol>
+  <div class="key"><b>Conservation.</b> ADN : −20 °C, ou température ambiante sur papier Whatman (pour voyager). ARN : <b>−80 °C uniquement</b> (OH en 2', très fragile).</div>`],
+  ["ARNm et reverse transcription","RT",`
+  <p>ARNr &gt; ARNt &gt; ARNm : les ARNm sont minoritaires → extraction par <b>colonne d'oligo-dT</b> (la queue polyA s'y hybride).</p>
+  <ol><li>Amorce <b>oligo-dT</b> hybridée sur la polyA (il faut <b>toujours une amorce</b> pour polymériser de l'ADN).</li>
+  <li><b>Reverse transcriptase</b> + dNTP → ADNc complémentaire et antiparallèle.</li>
+  <li>Digestion de l'ARNm par une <b>RNase</b>.</li>
+  <li>ADN polymérase + dNTP + <b>amorces aléatoires</b> → ADNc double brin.</li></ol>
+  <p><b>Dosage</b> : densité optique à <b>260 nm</b> (seul chiffre à retenir), loi de Beer-Lambert <span class="mono">DO = ε · C · l</span>.</p>`],
+  ["Hybridation, sondes, amorces","hybridation",`
+  <ul><li>Appariement de deux simples brins <b>complémentaires et antiparallèles</b> par liaisons H : ADN-ADN, ARN-ARN, ADN-ARN.</li>
+  <li><b>Sonde</b> = détection simple. <b>Amorce</b> = détection avec amplification (le plus fréquent).</li>
+  <li>D'abord <b>dénaturer</b> : 90–100 °C ou pH élevé. Plus il y a de liaisons H (longueur, G-C), plus c'est dur.</li>
+  <li>Spécifique à haute température (≥ 60 °C pour une hybridation complète). Niveau de spécificité = <b>stringence</b>.</li></ul>
+  <div class="tw"><table><tr><th>Sonde</th><th>Marquage</th><th>Révélation</th></tr>
+  <tr><td>Chaude</td><td>Isotope radioactif</td><td>Autoradiographie (de moins en moins : protection des opérateurs)</td></tr>
+  <tr><td>Froide</td><td>Fluorophore (fluorescéine, Cy3, Cy5, rhodamine, Texas red), biotine, digoxigénine</td><td>Fluorescence</td></tr></table></div>`],
+  ["Macrolésions : quoi chercher","indications",`
+  <ul><li><b>Aneuploïdies</b> → fausses couches à répétition.</li>
+  <li><b>Translocations</b> → diagnostic des hémopathies, cibles, pronostic : t(9;22) <b>LMC</b> ; t(8;14), t(2;8), t(8;22) <b>Burkitt</b> ; t(11;22) <b>Ewing</b>.</li>
+  <li><b>Amplification</b> : <b>HER2</b> dans certains cancers du sein → Herceptine.</li></ul>
+  <div class="tw"><table><tr><th>Situation</th><th>Techniques</th></tr>
+  <tr><td><b>Avec a priori</b> (région connue)</td><td>FISH ciblée, PCR, PCR quantitative</td></tr>
+  <tr><td><b>Sans a priori</b> (génome entier)</td><td>NGS, puce à ADN / CGH array, peinture chromosomique</td></tr></table></div>
+  <div class="trap"><b>Diapo à connaître par cœur.</b> On te demandera la technique la plus adaptée. La PCR ne marche pas sans a priori : il faut connaître la séquence pour dessiner l'amorce.</div>`],
+  ["La FISH","fluorescence",`
+  <ul><li>Sur <b>chromatine</b> (noyau interphasique) : rapide, à tout moment du cycle.</li>
+  <li>Sur <b>chromosomes</b> : seulement en mitose ; culture bloquée en <b>métaphase par la colchicine</b>.</li>
+  <li>Sondes complémentaires et antiparallèles + fluorophore ; plusieurs sondes sur un chromosome le « peignent ». Lecture au microscope à fluorescence.</li>
+  <li>Lecture : 2 signaux = normal ; 1 = monosomie ou délétion ; 3 = <b>trisomie</b> ; beaucoup = <b>amplification</b> ; chromosome bicolore = translocation.</li></ul>
+  <div class="trap"><b>Piège.</b> 1 seul signal ne dit pas si c'est le chromosome entier qui manque ou une délétion : on confirme par PCR avec une amorce de chaque côté de la zone suspecte (pas de produit ou produit court = délétion).</div>`],
+  ["Séquençage de Sanger","avec a priori",`
+  <ol><li>ADN + <b>amorce connue</b> + ADN polymérase + les 4 dNTP.</li>
+  <li>+ des <b>ddNTP</b> (~400 fois moins), chacun d'une couleur. Un ddNTP n'a <b>pas de OH en 3'</b> → la synthèse s'arrête là, au hasard.</li>
+  <li>Fragments de toutes tailles → <b>électrophorèse capillaire</b> : les petits migrent plus vite ; un laser lit la couleur → séquence.</li></ol>
+  <div class="trap"><b>Piège QCM.</b> Un pic à <b>deux couleurs</b> à la même position = mutation à l'état hétérozygote.</div>`],
+  ["NGS et puces à ADN","sans a priori",`
+  <p><b>Séquençage haut débit (NGS)</b></p>
+  <ol><li><b>Fragmentation</b> (ultrasons ou enzyme de restriction).</li>
+  <li><b>Adaptateurs</b> de séquence connue sur tous les fragments → une seule paire d'amorces. Exons : amorces sur les sites d'épissage. ARNm : oligo-dT.</li>
+  <li>Fixation sur billes ou plaque (~1 million de fragments).</li>
+  <li>Cycles : nucléotide fluorescent bloqué en 3' → lavage → photo → retrait du fluorophore → suivant.</li>
+  <li>Ordinateur : <b>reads</b> → alignés en <b>contigs</b> ; fragment jamais lu = <b>gap</b>.</li></ol>
+  <ul><li>Génome entier en ~3 jours, <b>moins cher</b> que pour une seule séquence. Éthique : on ne rend que le gène demandé.</li>
+  <li>Usages : oncologie, diagnostic préimplantatoire, prénatal, <b>DPNI</b> (ADN libre dans le sang maternel).</li></ul>
+  <p><b>Puces à ADN</b> (pangénomiques, ~100 000 puits)</p>
+  <ul><li>Puits vide → <b>délétion</b> ; puits surchargé → <b>amplification</b>. Qualitatif et quantitatif.</li>
+  <li><b>CGH array</b> : ADN sain d'une couleur + ADN tumoral d'une autre sur la même puce → une couleur prédomine = gain ou perte → instabilité et agressivité du cancer.</li></ul>`]
+  ],
+  lab:"fish",
+  qcm:[
+   {q:"Concernant l'extraction des acides nucléiques :",o:["Pour une analyse constitutionnelle, on isole les lymphocytes sur gradient de Ficoll","La lyse utilise du SDS et de la protéinase K","L'ARN se conserve à −20 °C","L'ADN peut être conservé sur papier Whatman","Les membranes sont précipitées par l'acétate de potassium"],c:[0,1,3,4],e:"L'ARN se conserve uniquement à −80 °C."},
+   {q:"Concernant les ARNm et la RT :",o:["On les isole sur colonne d'oligo-dT","La reverse transcriptase n'a pas besoin d'amorce","Une RNase digère l'ARNm après la RT","On dose les acides nucléiques à 280 nm","L'ADNc est plus stable que l'ARNm"],c:[0,2,4],e:"Toute synthèse d'ADN demande une amorce (oligo-dT ici). Dosage à 260 nm."},
+   {q:"Concernant l'hybridation moléculaire :",o:["Elle apparie des brins complémentaires et antiparallèles","On dénature à 90–100 °C ou à pH élevé","La stringence correspond au niveau de spécificité","Une sonde sert à une détection avec amplification","Une sonde froide peut être couplée à la biotine"],c:[0,1,2,4],e:"Détection avec amplification = amorce ; la sonde, c'est la détection simple."},
+   {q:"Un patient a un seul signal en FISH avec une sonde du chromosome 9. On peut conclure :",o:["Qu'il a une monosomie 9 certaine","Qu'il a soit une perte du chromosome, soit une délétion de la région","Qu'une PCR encadrant la région peut aider à trancher","Qu'il a une trisomie 9","Qu'il a une amplification"],c:[1,2],e:"La FISH seule ne distingue pas absence et délétion ; la PCR avec amorces de part et d'autre tranche."},
+   {q:"Concernant le séquençage :",o:["Les ddNTP n'ont pas de OH en 3'","Un pic à deux couleurs signe une mutation hétérozygote","Les adaptateurs du NGS permettent d'utiliser une amorce commune","Le NGS coûte plus cher pour un génome entier que pour un gène","On rend au patient l'intégralité de son génome"],c:[0,1,2],e:"Le génome entier coûte moins cher qu'une séquence isolée ; on ne rend que le gène demandé (éthique)."},
+   {q:"Techniques SANS a priori :",o:["Peinture chromosomique","PCR classique","Puce à ADN pangénomique","NGS","FISH avec une sonde ciblée"],c:[0,2,3],e:"PCR et FISH ciblée demandent de savoir où chercher."},
+   {q:"Sur une CGH array, un puits où la couleur de l'ADN tumoral domine nettement indique :",o:["Une région amplifiée dans la tumeur","Une région délétée dans la tumeur","Un génome stable","Une mutation ponctuelle","Une erreur de la technique"],c:[0],e:"Plus de fragments tumoraux = gain de la région. À l'inverse, la couleur du tissu sain qui domine = perte dans la tumeur."}
+  ]},
+
+{ id:"micro", n:"04", name:"Microvariants de l'ADN", sub:"RFLP, PCR et ses dérivés, PCR digitale, ARN", isNew:true,
+  intro:"Les microvariants font ≤ 50 pb. Pour les détecter, presque tout repose sur la PCR : il faut connaître la mutation et savoir lire un gel.",
+  cours:[
+  ["Variants : les mots à ne pas confondre","définitions",`
+  <div class="tw"><table><tr><th>Terme</th><th>Taille</th><th>Exemples</th></tr>
+  <tr><td>Variants structuraux</td><td>&gt; 50 pb</td><td>Insertions, délétions, duplications, translocations, inversions</td></tr>
+  <tr><td>Microvariants</td><td>≤ 50 pb</td><td><b>SNV</b> (1 nucléotide, rare, associé à un phénotype) ; <b>INDEL</b> (~1 % des mutations)</td></tr></table></div>
+  <div class="trap"><b>Piège QCM.</b> Variant présent chez <b>plus de 1 %</b> de la population = <b>SNP</b> (polymorphisme). En dessous : SNV, mutation.</div>
+  <ul><li><b>Mutation actionnable</b> : liée à une maladie pour laquelle il existe une prévention ou un traitement.</li>
+  <li>Plateformes <b>somatiques</b> (cellules malades seulement, ex. tumeur) vs <b>constitutionnelles</b> / oncogénétique (mutation héréditaire, présente partout ; suivi renforcé des apparentés porteurs).</li></ul>
+  <p><b>Pourquoi analyser l'ADN plutôt que l'ARN ?</b> Une mutation du promoteur est invisible sur l'ARN ; l'ADN s'extrait de toute cellule nucléée, résiste à la congélation et à la fixation, et il est stable (H en 2' au lieu du OH de l'ARN).</p>`],
+  ["RFLP","site de restriction",`
+  <p>Détecte un SNP ou un petit INDEL qui <b>crée ou fait disparaître un site de restriction</b>. Étapes : extraction (sang) → <b>PCR</b> de la région → <b>digestion</b> par l'enzyme → <b>électrophorèse</b>.</p>
+  <ul><li>EcoRI, PstI → bouts <b>cohésifs</b> ; SmaI (coupe au milieu) → bouts <b>francs</b>.</li>
+  <li>Site perdu → un fragment plus long reste entier → bande plus haute sur le gel.</li></ul>
+  <p>Cas mucoviscidose : fragment entier 438 pb ; coupé = 130 + 318 pb. Entraîne-toi sur le gel du labo plus bas.</p>`],
+  ["PCR : le cycle","25 à 40 cycles",`
+  <div class="tw"><table><tr><th>Étape</th><th>Température</th><th>Durée</th><th>Rôle</th></tr>
+  <tr><td>Dénaturation</td><td>95 °C</td><td>~30 s</td><td>Sépare les brins</td></tr>
+  <tr><td>Hybridation</td><td>55–65 °C = Tm − 5 °C</td><td>~30 s</td><td>Une amorce par brin</td></tr>
+  <tr><td>Élongation</td><td>~72 °C</td><td>15 s à &gt; 2 min</td><td>ADN polymérase thermostable, 5'→3'</td></tr></table></div>
+  <ul><li><b>Tm</b> = température où 50 % de l'ADN est simple brin. Dépend des G-C (3 liaisons H) et de la <b>concentration en sels</b>.</li>
+  <li>Hybridation trop chaude → <b>efficacité</b> ↓ ; trop froide → <b>spécificité</b> ↓.</li>
+  <li>Amorces de <b>18 à 30 nt</b>, en excès (trop → spécificité ↓ ; pas assez → efficacité ↓).</li>
+  <li>Amorce 1 = même séquence que le brin codant, côté 5'. Amorce 2 = complémentaire du brin codant, côté 3'.</li>
+  <li>Erreurs classiques : les deux amorces sur le même brin ; amorces qui n'encadrent pas la bonne région.</li></ul>
+  <div class="trap"><b>Piège QCM.</b> Le produit de PCR <b>contient les amorces</b>. Si l'énoncé dit « amplifier à partir du A », on ne met rien en amont de l'amorce.</div>`],
+  ["Les ADN polymérases thermostables","Taq & co",`
+  <div class="tw"><table><tr><th>Enzyme</th><th>Origine</th><th>Points clés</th></tr>
+  <tr><td><b>Taq</b></td><td><i>Thermus aquaticus</i> (bactérie)</td><td><b>Pas</b> d'activité correctrice 3'→5' exonucléase ; ajoute un A ; ~3 kb max</td></tr>
+  <tr><td><b>Vent / Phusion</b></td><td><i>Thermococcus littoralis</i> (archée)</td><td>Beaucoup plus fidèle, plus lente</td></tr>
+  <tr><td><b>LongAmp Taq</b></td><td>—</td><td>Jusqu'à ~40 kb</td></tr></table></div>
+  <p>Rappel : les polymérases réplicatives polymérisent 5'→3' (matrice + amorce, libération de pyrophosphate) et les plus fidèles corrigent leurs erreurs grâce à l'exonucléase 3'→5'. Appareil : <b>thermocycleur</b> ; analyse sur gel d'agarose ou électrophorèse capillaire (plus précise).</p>`],
+  ["Cas cliniques PCR","glioblastome, mélanome",`
+  <ul><li><b>Mr X, glioblastome</b> : EGFR délété des exons 2–7 = récepteur toujours actif. Une amorce à la jonction exon 1 / exon 8 + une en 3'. Sans délétion, les amorces sont trop loin : pas de produit. <b>Bande à 120 pb = délétion</b> → thérapie ciblée anti-EGFR en plus de chirurgie + radio-chimiothérapie + Optune.</li>
+  <li><b>Mme Y, mélanome</b> : une amorce doit chevaucher la mutation <b>BRAF V600E</b>. Sauvage = 97 pb ; muté = 144 pb. 97 + 144 = <b>hétérozygote</b> → inhibiteur de BRAF V600E.</li></ul>`],
+  ["Dérivés : ARMS, multiplex","une seule PCR",`
+  <ul><li><b>ARMS</b> : 3 amorces dans une réaction (une commune + une spécifique du sauvage + une spécifique du muté, de tailles différentes). Une bande = homozygote ; deux = hétérozygote. Une PCR au lieu de deux.</li>
+  <li><b>PCR multiplex</b> : plusieurs couples d'amorces, chacun donnant un produit de taille différente. Une seule PCR, mais chaque couple doit être validé. <b>Mr Z</b> (fièvre, toux) : panel de virus respiratoires, bande à ~550 pb = <b>rhinovirus</b>.</li></ul>`],
+  ["PCR quantitative (temps réel)","Ct",`
+  <ul><li>On mesure la fluorescence à chaque cycle.</li>
+  <li><b>SYBR Green</b> : intercalant, fluoresce lié à l'ADN <b>double brin</b> (petit sillon).</li>
+  <li><b>Sonde TaqMan</b> (hydrolyse) : rapporteur + quencher proches = pas de fluorescence. L'ADN polymérase dégrade la sonde (activité exonucléase) → rapporteur libéré → fluorescence.</li>
+  <li>Courbe : bruit de fond → phase <b>exponentielle</b> → <b>plateau</b> (réactifs épuisés). Le <b>Ct</b> (cycle seuil) est pris dans la phase exponentielle.</li>
+  <li><b>Courbe de fusion</b> : un seul pic = un seul produit (spécificité).</li>
+  <li><b>Relative</b> : patient vs contrôle sain (plus ou moins, pas combien). <b>Absolue</b> : <b>gamme étalon</b> de standards connus → Ct du patient → quantité.</li>
+  <li>ARMS en PCRq : amorces de même taille, vert = sauvage, rose = mutée ; les deux = hétérozygote.</li></ul>
+  <div class="key"><b>À retenir.</b> Plus il y a d'ADN au départ, plus la fluorescence dépasse le seuil tôt, donc <b>Ct plus bas</b>.</div>`],
+  ["HRM et PCR digitale","sensibilité",`
+  <ul><li><b>HRM</b> (High Resolution Melting) : PCR classique, puis on chauffe avec un intercalant ; une mutation ponctuelle décale légèrement le Tm → homo sauvage, homo muté ou hétéro. Ex. <b>drépanocytose</b> (β-globine, 17A&gt;T, Glu → Val).</li>
+  <li><b>PCR digitale</b> : l'échantillon est partitionné (0 ou 1 copie par partition), une PCR par partition, on compte les positives → <b>loi de Poisson</b> → <b>quantification absolue</b>. Détecte les <b>allèles rares</b>.</li>
+  <li><b>ADN libre circulant</b> (fragments coupés entre nucléosomes, issus de cellules mortes) : DPNI de la trisomie 21, suivi tumoral et récidive, infectieux. <b>Mme T</b> : EGFR sauvage au diagnostic, copies mutées dans le sang à la récidive → traitement ciblé.</li>
+  <li>Le Sanger est bien moins sensible que la PCR digitale : on choisit la méthode la plus efficace et la moins chère pour la question.</li></ul>`],
+  ["Analyse des ARN","RT d'abord",`
+  <div class="trap"><b>Ne jamais oublier la RT.</b> Extraction de l'ARN → reverse transcription → mêmes techniques. On doit valider la qualité de l'ARN.</div>
+  <ul><li>Transcrits <b>connus</b> → RT puis Sanger, PCR ou PCRq :
+    <ul><li><b>Variants d'épissage</b> en cancérologie (rétention d'intron de <i>HIF3α</i> ; variants de <i>SF3B1</i> = survie plus courte). Invisibles sur l'ADN : souvent dus à des facteurs d'épissage mutés.</li>
+    <li><b>Transcrit de fusion BCR-ABL</b> (t(9;22), chromosome de Philadelphie, LMC et LAL). Recherche par caryotype, FISH ou <b>RT-PCRq</b> → chimiothérapie + inhibiteur de tyrosine kinase.</li></ul></li>
+  <li><b>Suivi</b> par RT-PCRq : % de transcrit BCR-ABL ; s'il stagne, on augmente la dose ; objectif <b>0,01 %</b>.</li>
+  <li>Transcrits <b>inconnus</b> → <b>RNA-seq</b> = NGS précédé d'une RT.</li>
+  <li>Sarcomes : signature de <b>67 gènes</b> qui prédit la réponse au traitement standard.</li></ul>`]
+  ],
+  lab:"gel",
+  qcm:[
+   {q:"Concernant les microvariants :",o:["Ils mesurent 50 pb ou moins","Un variant présent chez plus de 1 % de la population est un SNP","Les INDEL représentent environ 1 % des mutations","Une mutation du promoteur est détectable sur l'ARNm","L'ADN est plus stable que l'ARN grâce au H en 2'"],c:[0,1,2,4],e:"Une mutation du promoteur empêche la transcription : rien à lire sur l'ARN. C'est une raison d'analyser l'ADN."},
+   {q:"RFLP, mucoviscidose (entier 438 pb ; coupé 130 + 318 pb). Le patient a 3 bandes : 130, 318 et 438 pb. Il est :",o:["Homozygote sauvage","Hétérozygote","Homozygote muté","Hémizygote","Impossible à dire"],c:[1],e:"Un allèle coupé (130 + 318) et un allèle non coupé (438) : hétérozygote."},
+   {q:"Concernant la PCR :",o:["La dénaturation se fait à 95 °C","La température d'hybridation vaut environ Tm − 5 °C","Une hybridation trop basse diminue la spécificité","La Taq possède une activité correctrice 3'→5'","Le produit de PCR contient les amorces"],c:[0,1,2,4],e:"La Taq n'a PAS d'activité correctrice ; Vent / Phusion sont plus fidèles."},
+   {q:"Concernant les amorces de PCR :",o:["Elles mesurent 18 à 30 nucléotides","On les met en défaut pour gagner en spécificité","Il faut une amorce sur chaque brin","Les deux amorces peuvent être sur le même brin","Trop d'amorces diminue la spécificité"],c:[0,2,4],e:"Les amorces sont en excès (mais pas trop). Deux amorces sur le même brin = un seul brin amplifié, erreur classique."},
+   {q:"Concernant la PCR quantitative :",o:["Plus il y a d'ADN au départ, plus le Ct est bas","Le SYBR Green se lie à l'ADN simple brin","La sonde TaqMan fluoresce quand elle est dégradée","La quantification absolue nécessite une gamme étalon","Un seul pic sur la courbe de fusion = un seul produit"],c:[0,2,3,4],e:"Le SYBR Green se lie à l'ADN DOUBLE brin."},
+   {q:"Mme Y, mélanome : bandes à 97 et 144 pb (sauvage 97, muté 144). Conclusion :",o:["Homozygote sauvage","Hétérozygote pour BRAF V600E","Homozygote muté","Elle peut recevoir un inhibiteur de BRAF V600E","Il faut refaire une FISH"],c:[1,3],e:"Les deux allèles sont présents : hétérozygote, donc éligible au traitement ciblé."},
+   {q:"Quelle technique pour quantifier un allèle muté rare dans l'ADN tumoral circulant ?",o:["Sanger","PCR digitale","FISH","RFLP","Caryotype"],c:[1],e:"Partitions + loi de Poisson : quantification absolue, très sensible pour les allèles rares."},
+   {q:"Concernant BCR-ABL :",o:["Il résulte d'une t(9;22)","On peut le rechercher par RT-PCRq","Le suivi vise environ 0,01 % de transcrit","On le détecte sans étape de RT sur l'ARN","Il code une kinase toujours active"],c:[0,1,2,4],e:"Partir de l'ARN impose toujours une RT."}
+  ]}
+];
+
+/* ---------- état ---------- */
+const ERR_KEY = "genome-labo-errors-v1", SC_KEY = "genome-labo-scores-v1";
+let errors = store.get(ERR_KEY, []);
+let scores = store.get(SC_KEY, {});
+
+/* ---------- onglets ---------- */
+const TABS = MODS.map(m => ({id:m.id, label:m.name, n:m.n, isNew:m.isNew})).concat([{id:"erreurs", label:"Mes erreurs", n:"✕"}]);
+function renderTabs(active){
+  $('#tabs').innerHTML = TABS.map(t => {
+    let extra = "";
+    if (t.isNew) extra = `<span class="pill">à voir</span>`;
+    if (scores[t.id]) extra = `<span class="pill score">${scores[t.id]}</span>`;
+    if (t.id === "erreurs" && errors.length) extra = `<span class="count">${errors.length}</span>`;
+    return `<button class="tab" role="tab" aria-selected="${t.id===active}" data-id="${t.id}"><span class="num">${t.n}</span>${t.label}${extra}</button>`;
+  }).join("");
+  document.querySelectorAll('.tab').forEach(b => b.onclick = () => go(b.dataset.id));
+}
+function go(id){
+  renderTabs(id);
+  if (id === "erreurs") renderErrors(); else renderMod(MODS.find(m => m.id === id));
+  try{ history.replaceState(null, "", "#" + id); }catch(e){}
+  store.set("genome-labo-tab", id);
+  window.scrollTo({top:0});
+}
+
+/* ---------- module ---------- */
+function renderMod(m){
+  const main = $('#main');
+  main.innerHTML = `<section class="mod">
+    <div><h2>${m.name}</h2><p class="intro">${m.intro}</p></div>
+    <div class="part-label">Cours</div>
+    ${m.cours.map((c,i) => `<details class="c"${i===0?" open":""}><summary>${c[0]}<span class="tag">${c[1]}</span></summary><div class="cb">${c[2]}</div></details>`).join("")}
+    <div class="part-label">Labo</div>
+    <div id="lab"></div>
+    <div class="part-label">QCM de fin de module</div>
+    <p class="note">Plusieurs réponses peuvent être justes, comme à l'examen. Une question compte juste seulement si toutes tes cases sont bonnes.</p>
+    <div class="quiz" id="quiz"></div>
+  </section>`;
+  LABS[m.lab]($('#lab'));
+  renderQuiz(m);
+}
+
+/* ---------- QCM ---------- */
+function renderQuiz(m){
+  const box = $('#quiz');
+  box.innerHTML = m.qcm.map((q,i) => `<div class="q" id="q${i}"><div class="qh"><span class="qn">Q${i+1}</span><p class="qt">${q.q}</p></div>
+    <div class="opts">${q.o.map((o,j) => `<label class="opt"><input type="checkbox" id="${m.id}-q${i}-o${j}" data-q="${i}" data-o="${j}"><span class="L">${"ABCDE"[j]}</span><span>${o}</span></label>`).join("")}</div></div>`).join("")
+    + `<div class="qbar"><span class="res" id="res">Coche tes réponses puis corrige.</span><div class="row"><button class="btn ghost" id="reset">Recommencer</button><button class="btn" id="check">Corriger</button></div></div>`;
+  $('#check').onclick = () => correct(m);
+  $('#reset').onclick = () => renderQuiz(m);
+}
+function correct(m){
+  let ok = 0;
+  const now = new Date().toISOString().slice(0,10);
+  m.qcm.forEach((q,i) => {
+    const card = $('#q'+i);
+    const picked = [...card.querySelectorAll('input')].filter(x => x.checked).map(x => +x.dataset.o);
+    const right = picked.length === q.c.length && picked.every(p => q.c.includes(p));
+    card.classList.remove('right','wrong'); card.classList.add(right ? 'right' : 'wrong');
+    card.querySelectorAll('.opt').forEach((lab,j) => {
+      lab.classList.remove('good','miss','badpick');
+      const inp = lab.querySelector('input'); inp.disabled = true;
+      if (q.c.includes(j)) lab.classList.add(inp.checked ? 'good' : 'miss');
+      else if (inp.checked) lab.classList.add('badpick');
+    });
+    const L = a => a.length ? a.map(x => "ABCDE"[x]).join("") : "aucune";
+    let fb = card.querySelector('.fb'); if (!fb){ fb = document.createElement('div'); fb.className='fb'; card.appendChild(fb); }
+    fb.innerHTML = `<b>${right ? "Juste." : "Faux."}</b> Réponse : ${L(q.c)}${right ? "" : ` (toi : ${L(picked)})`}. ${q.e}`;
+    const key = m.id + "#" + i;
+    errors = errors.filter(e => e.key !== key);
+    if (right) ok++;
+    else errors.push({key, mod:m.name, q:q.q, opts:q.o, you:L(picked), good:L(q.c), expl:q.e, date:now});
+  });
+  scores[m.id] = `${ok}/${m.qcm.length}`;
+  store.set(ERR_KEY, errors); store.set(SC_KEY, scores);
+  $('#res').textContent = `${ok} / ${m.qcm.length} juste${ok>1?"s":""}` + (ok === m.qcm.length ? " — module validé." : " — tes erreurs sont dans « Mes erreurs ».");
+  $('#check').disabled = true;
+  renderTabs(m.id);
+}
+
+/* ---------- erreurs ---------- */
+function renderErrors(){
+  const main = $('#main');
+  const text = errors.map(e => `[${e.mod}] ${e.q} — j'ai coché ${e.you}, réponse ${e.good}`).join("\n");
+  main.innerHTML = `<section class="mod">
+   <div><h2>Mes erreurs</h2><p class="intro">${errors.length ? `${errors.length} question${errors.length>1?"s":""} à retravailler. Une question réussie au QCM suivant sort de la liste.` : "Aucune erreur enregistrée pour l'instant. Fais un QCM de fin de module."}</p></div>
+   ${errors.map(e => `<div class="err-item"><span class="m">${e.mod} · ${e.date}</span><b>${e.q}</b>
+     <div>${e.opts.map((o,j)=>`<div><span class="mono">${"ABCDE"[j]}</span> ${o}</div>`).join("")}</div>
+     <div><span class="y">Toi : ${e.you}</span> · <span class="c">Réponse : ${e.good}</span></div><div class="note">${e.expl}</div></div>`).join("")}
+   ${errors.length ? `<div class="lab"><h3>Envoyer à ton prof</h3><p class="note">Copie ce texte et colle-le dans la conversation : je garde tes erreurs en mémoire et je reviendrai dessus.</p>
+   <textarea class="copy" id="cp" readonly>${text}</textarea><div class="row"><button class="btn" id="cpb">Copier</button><span class="note" id="cpm"></span></div></div>` : ""}
+  </section>`;
+  if (errors.length) $('#cpb').onclick = () => {
+    const ta = $('#cp');
+    const done = () => $('#cpm').textContent = "Copié. Colle-le dans le chat.";
+    try{ navigator.clipboard.writeText(ta.value).then(done, () => { ta.select(); $('#cpm').textContent = "Texte sélectionné : fais Ctrl/Cmd + C."; }); }
+    catch(e){ ta.select(); $('#cpm').textContent = "Texte sélectionné : fais Ctrl/Cmd + C."; }
+  };
+}
+
+/* ---------- labos ---------- */
+function seqLab(el, title, intro, defMode, defSeq){
+  el.innerHTML = `<div class="lab"><div class="head"><h3>${title}</h3></div><p class="note">${intro}</p>
+   <div class="row"><select id="mode"><option value="m">J'ai le brin matrice (3'→5')</option><option value="c">J'ai le brin codant (5'→3')</option></select>
+   <input type="text" id="seq" spellcheck="false" autocomplete="off" aria-label="Séquence d'ADN"></div>
+   <div class="seqbox" id="out"></div><div id="prot"></div><p class="note" id="msg"></p></div>`;
+  $('#mode').value = defMode; $('#seq').value = defSeq;
+  const run = () => {
+    const raw = $('#seq').value.toUpperCase().replace(/[^ACGT]/g, "");
+    const mode = $('#mode').value;
+    if (!raw){ $('#out').innerHTML = ""; $('#prot').innerHTML=""; $('#msg').textContent = "Tape une séquence avec A, C, G, T."; return; }
+    const coding = mode === "c" ? raw : raw.split("").map(b => comp[b]).join("");
+    const matrix = coding.split("").map(b => comp[b]).join("");
+    const rna = coding.replace(/T/g, "U");
+    const start = rna.indexOf("AUG");
+    let rnaHtml = "", aas = [];
+    if (start < 0){ rnaHtml = colorSeq(rna); }
+    else {
+      rnaHtml = colorSeq(rna.slice(0,start));
+      let i = start, stopped = false;
+      while (i + 3 <= rna.length){
+        const c = rna.slice(i,i+3), a = tr(c);
+        rnaHtml += `<span class="cod ${a==="*"?"stop":"orf"}">${colorSeq(c)}</span>`;
+        aas.push(N3[a]); i += 3;
+        if (a === "*"){ stopped = true; break; }
+      }
+      rnaHtml += colorSeq(rna.slice(i));
+      $('#msg').textContent = stopped ? `Premier AUG en position ${start+1} de l'ARNm ; la traduction s'arrête au codon STOP.` : "Pas de codon STOP dans ta séquence : la protéine continue au-delà.";
+    }
+    if (start < 0) $('#msg').textContent = "Aucun AUG sur l'ARNm : la petite sous-unité scanne sans trouver de codon d'initiation, pas de traduction.";
+    $('#out').innerHTML = `
+     <div class="seqrow"><span class="lbl">Brin codant (sens)</span><span class="s">5'-${colorSeq(coding)}-3'</span></div>
+     <div class="seqrow"><span class="lbl">Brin matrice (lu)</span><span class="s">3'-${colorSeq(matrix)}-5'</span></div>
+     <div class="seqrow"><span class="lbl">ARNm</span><span class="s">5'-${rnaHtml}-3'</span></div>`;
+    $('#prot').innerHTML = aas.length ? `<div class="prot">${aas.map(a => `<span class="aa ${a==="STOP"?"stop":""}">${a}</span>`).join("")}</div>` : "";
+  };
+  $('#seq').oninput = run; $('#mode').onchange = run; run();
+}
+const LABS = {
+  transcripteur(el){ seqLab(el, "Transcripteur", "Donne un brin d'ADN : l'outil écrit le brin complémentaire, l'ARNm, puis repère le premier AUG. Exemple chargé : un brin matrice, comme dans un sujet de Mme Couderc.", "m", "CGTACCGATTCAAGCTAACTG"); },
+  traducteur(el){ seqLab(el, "Traducteur à mutations", "Exemple : un brin codant qui donne Met-Ala-Lys-Phe-Asp. Remplace le G de GCT par un T (faux sens), le premier A de AAG par un T (non-sens : TAG), ou supprime une lettre (frameshift).", "c", "GCATGGCTAAGTTCGATTGAC"); },
+  fish(el){
+    const cases = [
+      {n:"Patient 1 · sonde chr. 21", sig:3, a:"3 signaux → trisomie 21 (une trisomie n'est pas une triploïdie)."},
+      {n:"Patient 2 · sonde HER2", sig:9, a:"Nombreux signaux → amplification de HER2 → Herceptine."},
+      {n:"Patient 3 · sonde 22q11.2", sig:1, a:"1 seul signal → délétion 22q11.2 (DiGeorge), invisible au caryotype."},
+      {n:"Patient 4 · sonde chr. 9", sig:2, a:"2 signaux → pas de perte de la région."}
+    ];
+    el.innerHTML = `<div class="lab"><div class="head"><h3>Lire une FISH</h3></div><p class="note">Compte les signaux du noyau, choisis ton interprétation, puis vérifie.</p>
+     <div class="row"><select id="fc">${cases.map((c,i)=>`<option value="${i}">${c.n}</option>`).join("")}</select></div>
+     <canvas id="nuc" width="320" height="200" style="max-width:100%;border-radius:8px;background:var(--sunk)"></canvas>
+     <div class="row"><select id="fa"><option value="">Ton interprétation…</option><option value="2">Normal</option><option value="1">Monosomie / délétion</option><option value="3">Trisomie</option><option value="9">Amplification</option></select><button class="btn" id="fv">Vérifier</button></div>
+     <p class="note" id="fr"></p></div>`;
+    const draw = () => {
+      const c = cases[+$('#fc').value], cv = $('#nuc'), x = cv.getContext('2d');
+      const cs = getComputedStyle(document.documentElement);
+      x.clearRect(0,0,320,200);
+      x.fillStyle = cs.getPropertyValue('--nC').trim(); x.globalAlpha = .25;
+      x.beginPath(); x.ellipse(160,100,110,75,0,0,Math.PI*2); x.fill(); x.globalAlpha = 1;
+      let seed = c.sig * 7 + 3; const rnd = () => (seed = (seed*9301+49297)%233280)/233280;
+      x.fillStyle = cs.getPropertyValue('--nT').trim();
+      for (let i=0;i<c.sig;i++){ const ang = rnd()*Math.PI*2, r = Math.sqrt(rnd())*60; x.beginPath(); x.arc(160+Math.cos(ang)*r*1.4,100+Math.sin(ang)*r,6,0,Math.PI*2); x.fill(); }
+      $('#fr').textContent = ""; $('#fa').value = "";
+    };
+    $('#fc').onchange = draw;
+    $('#fv').onclick = () => { const c = cases[+$('#fc').value], v = +$('#fa').value; const good = (v===9 && c.sig>4) || v===c.sig; $('#fr').innerHTML = (!$('#fa').value ? "Choisis d'abord une interprétation. " : good ? "<b style='color:var(--ok)'>Juste.</b> " : "<b style='color:var(--bad)'>Faux.</b> ") + ($('#fa').value ? c.a : ""); };
+    draw();
+  },
+  gel(el){
+    const pats = [{n:"Patient 1", b:[438]},{n:"Patient 2", b:[438,318,130]},{n:"Patient 3", b:[318,130]}];
+    const ans = {"Patient 1":"homo sauvage","Patient 2":"hétérozygote","Patient 3":"homo muté"};
+    const y = bp => 180 - (Math.log(bp)-Math.log(80))/(Math.log(600)-Math.log(80))*170;
+    el.innerHTML = `<div class="lab"><div class="head"><h3>Gel RFLP · mucoviscidose</h3></div>
+     <p class="note">Fragment PCR de 438 pb. L'enzyme coupe l'allèle muté en 130 + 318 pb. Donne le génotype de chaque patient.</p>
+     <div class="gel"><div class="ladder">${[500,400,300,200,100].map(b=>`<span style="top:${y(b)}px">${b}</span>`).join("")}</div>
+      ${pats.map(p=>`<div class="lane"><div class="col">${p.b.map(b=>`<div class="band" style="top:${y(b)}px"></div>`).join("")}</div><span class="l">${p.n.replace("Patient ","P")}</span></div>`).join("")}</div>
+     ${pats.map((p,i)=>`<div class="row"><span style="min-width:80px">${p.n}</span><select id="g${i}"><option value="">Génotype…</option><option>homo sauvage</option><option>hétérozygote</option><option>homo muté</option></select></div>`).join("")}
+     <div class="row"><button class="btn" id="gv">Vérifier</button><span class="note" id="gr"></span></div>
+     <div class="lab" style="padding:14px;background:var(--bg)"><h3>Simulateur PCR</h3>
+      <div class="steps" id="st">
+       <div class="step"><div class="n">Dénaturation</div><div class="t">95 °C</div><p>Les brins se séparent.</p></div>
+       <div class="step"><div class="n">Hybridation</div><div class="t">≈ Tm − 5 °C</div><p>Les amorces se fixent.</p></div>
+       <div class="step"><div class="n">Élongation</div><div class="t">72 °C</div><p>Polymérase thermostable.</p></div></div>
+      <div class="row"><label for="cy" class="note">Cycles</label><input type="range" id="cy" min="0" max="40" value="10"><span class="big" id="cyv"></span></div>
+      <p class="note" id="cyt"></p></div></div>`;
+    $('#gv').onclick = () => { let ok = 0; pats.forEach((p,i)=>{ if ($('#g'+i).value === ans[p.n]) ok++; }); $('#gr').textContent = ok===3 ? "3/3 — P1 homo sauvage, P2 hétérozygote, P3 homo muté." : `${ok}/3. Indice : 3 bandes = un allèle coupé + un allèle entier.`; };
+    let st = 0; const steps = [...el.querySelectorAll('.step')];
+    const tick = () => { steps.forEach((s,i)=>s.classList.toggle('on', i===st)); st = (st+1)%3; };
+    tick(); const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; if (!reduce) setInterval(tick, 1400);
+    const cy = () => { const n = +$('#cy').value; const v = 2 * Math.pow(2,n); $('#cyv').textContent = n; $('#cyt').textContent = `Depuis 2 copies : ≈ ${v.toLocaleString('fr-FR')} copies après ${n} cycle${n>1?"s":""} (théorique, avant le plateau). On en fait 25 à 40.`; };
+    $('#cy').oninput = cy; cy();
+  }
+};
+
+/* ---------- démarrage ---------- */
+const h = (location.hash || "").slice(1);
+const start = TABS.some(t => t.id === h) ? h : store.get("genome-labo-tab", "transcription");
+go(TABS.some(t => t.id === start) ? start : "transcription");
+</script>
+
+
+<a href="../../" class="mes-artefacts-back" aria-label="Retour à tous mes artefacts">← Mes artefacts</a>
+<style>
+.mes-artefacts-back{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:2147483000;
+ font:600 13px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;color:#fff;background:rgba(24,28,36,.86);
+ -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);text-decoration:none;padding:9px 13px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.mes-artefacts-back:hover{background:rgba(24,28,36,.96)}
+.mes-artefacts-back:focus-visible{outline:2px solid #6aa0ff;outline-offset:2px}
+@media print{.mes-artefacts-back{display:none}}
+</style>
+</body></html>
