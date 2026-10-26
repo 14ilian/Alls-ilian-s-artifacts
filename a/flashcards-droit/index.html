@@ -1,0 +1,248 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Fiches bristol du droit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one index card at the centre, flipped by tap; chapter chips above, tally and controls below, full list at the foot */
+:root{
+  --bg:#eef0f5; --card:#fffdf7; --rule:#d9e3f2; --margin:#e6a9a3; --fg:#1b2030; --muted:#5d6475; --line:#d3d8e3;
+  --navy:#3a4f9a; --navy-soft:#e3e8f6; --ok:#21794a; --ok-bg:#e0f2e7; --todo:#a5521b; --todo-bg:#fbeadc; --trap:#8f5a00; --trap-bg:#fdf1d8;
+  --f-display:"Newsreader",Georgia,serif; --f-body:"Public Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#11141c; --card:#1b1f2a; --rule:#252c3c; --margin:#6b3a37; --fg:#e6e8ee; --muted:#9aa1b2; --line:#2b3242;
+  --navy:#a3b4f0; --navy-soft:#232b45; --ok:#7fd3a0; --ok-bg:#173324; --todo:#f0a974; --todo-bg:#3a2516; --trap:#f2c46b; --trap-bg:#382c12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11141c; --card:#1b1f2a; --rule:#252c3c; --margin:#6b3a37; --fg:#e6e8ee; --muted:#9aa1b2; --line:#2b3242;
+  --navy:#a3b4f0; --navy-soft:#232b45; --ok:#7fd3a0; --ok-bg:#173324; --todo:#f0a974; --todo-bg:#3a2516; --trap:#f2c46b; --trap-bg:#382c12; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--f-body)}
+.wrap{max-width:680px;margin:0 auto;padding-inline:16px;padding-block:22px 56px;display:flex;flex-direction:column;gap:16px}
+header .eyebrow{font:500 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin:0}
+h1{font-family:var(--f-display);font-weight:600;font-size:clamp(1.7rem,6vw,2.3rem);line-height:1.1;margin:4px 0 6px;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:60ch}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:600 .82rem var(--f-body);border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--card)}
+.chip small{font-family:var(--f-mono);opacity:.75;margin-left:4px}
+.bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;font-size:.85rem;color:var(--muted)}
+.tally{display:flex;gap:12px;font-variant-numeric:tabular-nums}
+.tally b{font-family:var(--f-mono);color:var(--fg)}
+.progress{height:6px;border-radius:99px;background:var(--line);overflow:hidden;display:flex}
+.progress i{display:block;height:100%}
+.progress .p-ok{background:var(--ok)}.progress .p-todo{background:var(--todo)}
+label.toggle{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.scene{perspective:1400px}
+.card{position:relative;width:100%;min-height:330px;cursor:pointer;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.2,.7,.2,1);border:0;padding:0;background:none;text-align:left;display:block;color:inherit;font:inherit}
+.card.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:6px;background-color:var(--card);
+  background-image:linear-gradient(90deg,transparent 46px,var(--margin) 46px,var(--margin) 47.5px,transparent 47.5px),repeating-linear-gradient(var(--card) 0 27px,var(--rule) 27px 28px);
+  background-position:0 0,0 54px;border:1px solid var(--line);box-shadow:0 1px 0 var(--line),0 10px 26px rgba(20,25,40,.08);
+  padding:22px 22px 22px 64px;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.back{transform:rotateY(180deg)}
+.tag{display:flex;justify-content:space-between;gap:8px;font:500 .72rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--navy)}
+.term{font-family:var(--f-display);font-weight:600;font-size:clamp(1.6rem,6.4vw,2.2rem);line-height:1.15;margin:auto 0;text-wrap:balance}
+.hint{font-size:.8rem;color:var(--muted)}
+.def{font-size:1.02rem;line-height:1.55;margin:0}
+.ex{font-size:.88rem;color:var(--muted);margin:0}
+.ex b{color:var(--fg);font-weight:600}
+.trap{font-size:.86rem;background:var(--trap-bg);color:var(--trap);border-radius:6px;padding:7px 10px;margin:0}
+.trap b{font-weight:700}
+.stamp{position:absolute;top:14px;right:16px;font:700 .68rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border:1.5px solid currentColor;border-radius:4px;transform:rotate(4deg)}
+.stamp.ok{color:var(--ok)}.stamp.todo{color:var(--todo)}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{font:700 .95rem var(--f-body);border-radius:10px;padding:12px;cursor:pointer;border:1.5px solid var(--line);background:var(--card);color:var(--fg)}
+.btn.todo{border-color:var(--todo);color:var(--todo);background:var(--todo-bg)}
+.btn.ok{border-color:var(--ok);color:var(--ok);background:var(--ok-bg)}
+.small-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.small-actions .btn{font-size:.82rem;padding:7px 12px;font-weight:600}
+.nav{display:flex;align-items:center;justify-content:center;gap:12px;font:500 .85rem var(--f-mono);color:var(--muted)}
+.nav button{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;width:38px;height:34px;cursor:pointer;font-size:1rem}
+.done{background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:26px 18px;text-align:center;color:var(--muted)}
+.done strong{display:block;font-family:var(--f-display);font-size:1.4rem;color:var(--fg);margin-bottom:6px}
+.keys{font-size:.78rem;color:var(--muted);text-align:center}
+kbd{font-family:var(--f-mono);font-size:.74rem;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:var(--card)}
+details.list{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+details.list summary{cursor:pointer;font-weight:700}
+.list dl{margin:12px 0 0;display:flex;flex-direction:column;gap:12px}
+.list dt{font-family:var(--f-display);font-weight:600;font-size:1.08rem;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.list dt span{font:500 .66rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--navy)}
+.list dd{margin:2px 0 0;font-size:.9rem;color:var(--muted)}
+.list dd .trap{display:inline-block;margin-top:4px;padding:2px 7px;font-size:.8rem}
+button:focus-visible,.card:focus-visible,input:focus-visible{outline:2px solid var(--navy);outline-offset:3px}
+@media (max-width:460px){.face{padding:18px 16px 18px 52px;background-image:linear-gradient(90deg,transparent 36px,var(--margin) 36px,var(--margin) 37.5px,transparent 37.5px),repeating-linear-gradient(var(--card) 0 27px,var(--rule) 27px 28px)}.card{min-height:360px}}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">UE 3.8 · Environnement juridique</p>
+    <h1>Fiches bristol du droit</h1>
+    <p>Les définitions à connaître au mot près, d'après ta ronéo. Lis le terme, dis la définition à voix haute, retourne la fiche, puis classe-la.</p>
+  </header>
+
+  <div class="chips" id="chips" role="group" aria-label="Choisir un chapitre"></div>
+
+  <div>
+    <div class="bar">
+      <div class="tally"><span><b id="n-ok">0</b> je sais</span><span><b id="n-todo">0</b> à revoir</span><span><b id="n-new">0</b> jamais vues</span></div>
+      <label class="toggle"><input type="checkbox" id="only-todo"> Seulement les fiches à revoir</label>
+    </div>
+    <div class="progress" aria-hidden="true"><i class="p-ok" id="p-ok"></i><i class="p-todo" id="p-todo"></i></div>
+  </div>
+
+  <div id="stage"></div>
+
+  <p class="keys"><kbd>Espace</kbd> retourner · <kbd>←</kbd> à revoir · <kbd>→</kbd> je sais</p>
+
+  <div class="small-actions">
+    <button class="btn" id="shuffle" type="button">Mélanger</button>
+    <button class="btn" id="restart" type="button">Revenir à la 1re fiche</button>
+    <button class="btn" id="reset" type="button">Effacer mes résultats</button>
+  </div>
+  <p class="keys" id="reset-confirm" hidden></p>
+
+  <details class="list" id="list">
+    <summary>Toutes les définitions du chapitre</summary>
+    <dl id="dl"></dl>
+  </details>
+</div>
+
+<script>
+const CH={role:"Rôle du droit",sources:"Sources",branches:"Branches",justice:"Justice",profession:"Profession"};
+const C=[
+["role","Justice","Bon partage des biens, des droits, des obligations, des avantages et des charges.","« Suum cuique tribuere » : rendre à chacun son dû."],
+["role","Droit objectif","Ensemble des règles qui gouvernent la vie sociale et s'imposent aux membres d'une société. Il vise l'intérêt général et reconnaît, consacre et sauvegarde les droits subjectifs, surtout la dignité de la personne, notamment des plus faibles.","Sa fonction : affirmer les droits subjectifs."],
+["role","Droits subjectifs","Pouvoirs juridiques reconnus aux individus. Ils servent des intérêts individuels.","Pas de droits sans devoirs (Gandhi : « le Gange des droits descend de l'Himalaya des devoirs »)."],
+["role","Droit positif","Ensemble des règles juridiques effectivement applicables en un lieu donné, à un moment donné.","Ex. : le droit français en 2026 ≠ le droit allemand.","Ce n'est pas « en tous lieux et en tout temps »."],
+["role","Fonctions du droit","Fonction régulatrice : au service de l'ordre et de la paix sociale, « système immunitaire de la société ». Fonction de direction : il explicite les valeurs de la société.","Il est enraciné dans une culture : il varie dans le temps et l'espace."],
+["role","Autres systèmes normatifs","Règles de bienséance (courtoisie, honneur), règles de la morale, préceptes religieux.","Les règles de droit, elles, interdisent, imposent ou autorisent."],
+["role","Droit pharmaceutique","Ensemble des règles applicables aux activités pharmaceutiques : production, commercialisation et dispensation des produits de santé. Il délimite les droits et devoirs de chaque acteur.","","Objectif principal : la santé publique, dont la sécurité sanitaire. Pas la rentabilité."],
+["role","Qualifier","Donner un statut juridique à un fait ou à un objet en s'appuyant sur les définitions.","Ex. : un fait → escroquerie, usage de faux ; un objet → médicament, dispositif médical."],
+["sources","Hiérarchie des normes","Pyramide des règles : en haut les principes généraux, en bas le détail concret. Constitution > droit de l'UE et traités > lois > décrets > arrêtés.","","Une norme inférieure ne contredit jamais une norme supérieure : elle l'explicite et la concrétise."],
+["sources","Bloc de constitutionnalité","Constitution de 1958 et son Préambule, DDHC de 1789, Préambule de 1946, Charte de l'environnement de 2004, et principes dégagés par le Conseil constitutionnel. Il garantit les droits de chacun et organise la séparation des pouvoirs.","","Il ne dit rien sur les produits de santé."],
+["sources","Séparation des pouvoirs","Le Parlement vote la loi (législatif), l'exécutif l'applique, le judiciaire la contrôle.",""],
+["sources","Texte déclaratoire","Texte non contraignant : rien n'est prévu en cas de non-respect.","Ex. : DUDH de 1948 (ONU), Déclaration de l'UNESCO de 2005."],
+["sources","Règlement de l'UE","Acte général et obligatoire dans tous ses éléments, qui s'adresse à tous. Il est directement applicable dans tous les États membres, sans intervention des autorités nationales.","Ex. : règlement sur les dispositifs médicaux (2017), RGPD.","Même valeur qu'une directive : pas de hiérarchie entre les deux."],
+["sources","Directive de l'UE","Fixe aux États membres des objectifs à atteindre. Elle les lie quant au résultat mais leur laisse le choix de la forme et des moyens, par une transposition avant une date limite.","Ex. : directive 2001/83/CE, code communautaire du médicament.","Les textes nationaux qui en résultent ne sont pas identiques d'un État à l'autre."],
+["sources","Transposition","Acte par lequel le législateur national adapte le droit interne aux objectifs d'une directive, dans le délai qu'elle fixe.","Ex. : « autorité compétente » devient « ANSM » ; « personne qualifiée » devient « pharmacien responsable »."],
+["sources","Décision de l'UE","Acte qui s'impose à des destinataires bien déterminés.","Ex. : une AMM européenne."],
+["sources","Loi","Règle écrite, de portée générale et permanente, rédigée par le législateur et adoptée par le Parlement (Assemblée nationale et Sénat).","Contrôle par le Conseil constitutionnel ; regroupement dans des codes.","Entrée en vigueur : promulgation par le Président de la République, puis publication au JO."],
+["sources","Projet / proposition de loi","Projet de loi : initiative du Premier ministre (gouvernement). Proposition de loi : initiative d'un parlementaire. Dans les deux cas, le Parlement débat puis adopte.","","Le gouvernement n'adopte jamais la loi."],
+["sources","Règlement (droit français)","Règle écrite de portée générale et permanente émanant de l'exécutif, pour appliquer les lois. Deux catégories : décrets et arrêtés, d'une part, ordonnances, d'autre part.",""],
+["sources","Décret","Règlement toujours signé par le Premier ministre et les ministres concernés. Décret en Conseil d'État (avis du CE) → articles R ; décret simple → articles D.","","Toujours le Premier ministre ; pris sans débat parlementaire."],
+["sources","Arrêté","Règlement pris par un ministre ou une autorité de rang inférieur : préfet, maire, ARS.","Ex. : arrêté de l'ARS Occitanie autorisant le transfert d'une officine.","Pas toujours signé par un ministre ; inférieur au décret ; jamais codifié dans le CSP."],
+["sources","Ordonnance","Texte émanant du gouvernement dans une matière normalement réservée à la loi, après autorisation du Parlement puis ratification. Utilisée en cas d'urgence ou pour un texte peu discutable (transposer une directive).","Ex. : ordonnance de 2018 sur la création et le transfert des officines.","Même effet qu'une loi, mais l'auteur diffère : gouvernement, pas Parlement."],
+["sources","Décision administrative individuelle","Arrêté ou décision notifié à l'intéressé par lettre recommandée avec accusé de réception.",""],
+["sources","Jurisprudence","Ensemble des décisions rendues par les tribunaux. Le juge applique et « dit » le droit, affaire par affaire ; ses décisions ont l'autorité de la chose jugée. Source non écrite.","Ex. : TGI de Toulon (2007) sur l'obligation d'information du pharmacien.","« Non écrite » ne veut pas dire orale : la règle ressort des décisions, aucun texte ne la pose."],
+["sources","Arrêt / arrêté","Arrêt : décision rendue par une Cour (jurisprudence). Arrêté : texte réglementaire (source écrite).","","Ne jamais confondre les deux."],
+["sources","Doctrine et coutume","Doctrine : ensemble des réflexions des experts du droit. Coutume : pratique répétée et admise.","Les deux sont des sources non écrites, comme la jurisprudence."],
+["sources","Articles L, R, D du CSP","L. = partie législative (loi, ordonnance). R. = décret en Conseil d'État. D. = décret simple.","","Les arrêtés ne sont pas codifiés dans le CSP (ex. : bonnes pratiques de dispensation)."],
+["branches","Droit administratif","Branche du droit public : règles de l'administration et de ses relations avec les usagers.","Beaucoup de décisions qui concernent le pharmacien en relèvent (ARS, ANSM)."],
+["branches","Droit pénal","Branche qui sanctionne les personnes dont le comportement trouble l'ordre public. Dans le cours, il est rangé dans le droit public.",""],
+["branches","Infraction pénale","Action ou omission imputable à son auteur, définie par un texte législatif (code pénal, CSP…), prévue et punie par la loi d'une sanction pénale.","≈ 90 % d'actes, ≈ 10 % d'omissions."],
+["branches","Légalité des délits et des peines","On ne peut poursuivre que pour la violation d'un texte, qui fixe l'infraction et la sanction maximale.","","Le juge ne peut pas dépasser le maximum, mais il peut descendre en dessous."],
+["branches","Contravention, délit, crime","Les trois catégories d'infractions, par gravité croissante. Sanctions : amende, emprisonnement, privation de droits (ex. : interdiction d'exercer).","Tribunal de police / tribunal correctionnel / cour d'assises.","En pharmacie, ce sont presque toujours des délits."],
+["branches","Responsabilité civile","Réparation pécuniaire d'un préjudice causé à une victime, avec ou sans faute. Trois éléments : préjudice, faute, lien de causalité.","Ex. sans faute : la guêpe qui fait perdre le contrôle du volant.","Civil = réparer ; pénal = sanctionner."],
+["branches","Droit de la santé","Droit mixte, à la fois public et privé : droit médical, hospitalier, pharmaceutique, de la santé publique et de la bioéthique.","","Pas uniquement du droit public."],
+["branches","Personne physique / morale","Personne physique : un être humain. Personne morale : une fiction juridique (société, association, CHU, faculté, Ordre).",""],
+["justice","Ordre judiciaire","Juge les litiges entre personnes privées (civil, commerce, travail) et les infractions pénales. 1re instance → cour d'appel → Cour de cassation.","Il traite l'essentiel des affaires."],
+["justice","Ordre administratif","Juge les litiges où l'administration est en cause, en général un usager contre les pouvoirs publics. Tribunal administratif → cour administrative d'appel → Conseil d'État.","Ex. : l'ANSM n'a pas informé les patients ; l'université refuse ton inscription."],
+["justice","Double degré de juridiction","Une affaire peut être jugée deux fois sur le fond : en 1re instance puis en appel. Ensuite, un pourvoi en cassation reste possible.",""],
+["justice","Ratione materiae, loci, personae","Les trois critères qui déterminent la juridiction compétente : la matière, le lieu, la personne.","Ex. : fuite d'eau dans un logement à Lille → tribunal judiciaire de Lille."],
+["justice","Juridiction de droit commun","Juridiction compétente pour toutes les affaires, sauf si un texte en dispose autrement.","Ex. : le tribunal judiciaire au civil."],
+["justice","Juridiction d'attribution","Juridiction compétente seulement pour les affaires qu'un texte lui attribue.","Ex. : tribunal de commerce, conseil de prud'hommes, chambres de discipline de l'Ordre.","Le conseil de prud'hommes ne peut pas infliger d'amende."],
+["justice","Juge du fond","Juge qui examine les faits de l'affaire : ce sont les juridictions de 1re instance et d'appel.","","L'appel est aussi juge du fond."],
+["justice","Juge du droit","Juge qui ne revient pas sur les faits et vérifie seulement que le droit a été bien appliqué : c'est la cassation.","Cour de cassation ; Conseil d'État en cassation."],
+["justice","Arrêt de rejet / de cassation","Rejet : le pourvoi n'est pas justifié, la décision d'appel est confirmée. Cassation : la décision est cassée et l'affaire renvoyée devant une autre cour d'appel.","","Une autre cour d'appel, pas la même."],
+["justice","Conseil d'État","Sommet de l'ordre administratif. Fonction administrative : il donne des avis au gouvernement sur les projets de lois et de règlements. Fonction juridictionnelle : juge du droit, et parfois juge du fond.","","Contrairement à la Cour de cassation, il peut être juge du fond."],
+["justice","Juridictions ordinales","Chambres de discipline des Ordres professionnels, juridictions d'attribution de l'ordre administratif : la justice par les pairs, au nom de l'État. CROP ou conseil central → CNOP (appel) → Conseil d'État (cassation).","","L'appel se fait devant le CNOP ; le tribunal administratif n'intervient pas."],
+["profession","Conditions d'exercice","Pour exercer la pharmacie : le diplôme, la nationalité requise et l'inscription à l'Ordre, avec toutes garanties de moralité professionnelle (art. L. 4221-1 CSP).","Inscription : moralité, indépendance, compétence, maîtrise du français."],
+["profession","Exercice illégal de la pharmacie","Le fait de se livrer à des opérations réservées aux pharmaciens sans réunir les conditions exigées (art. L. 4223-1 CSP). Puni de 2 ans d'emprisonnement et 30 000 € d'amende.","Ex. : un adjoint non inscrit à l'Ordre ; une grande surface qui vend des médicaments.","Deux conditions seulement : actes réservés + conditions non remplies. Vendre abusivement des psychotropes n'est pas un exercice illégal."],
+["profession","Usurpation du titre","Faire usage du titre de pharmacien sans en avoir le droit. Puni d'1 an d'emprisonnement et 15 000 € d'amende.","Ex. : la femme non diplômée du pharmacien qui fait des actes pharmaceutiques (double infraction)."],
+["profession","Suspension temporaire","Danger grave : suspension immédiate par le directeur de l'ARS (5 mois max). Infirmité ou état pathologique : Conseil de l'Ordre, après expertise de 3 médecins. Insuffisance professionnelle : Conseil de l'Ordre, sur rapport de 3 pharmaciens experts.","","Les médecins experts donnent un avis, ils ne décident pas. Le CROP ne peut pas suspendre en urgence : c'est l'ARS."],
+["profession","Exercice personnel","Obligation pour le pharmacien d'exécuter lui-même les actes professionnels, ou d'en surveiller attentivement l'exécution (art. R. 4235-13 CSP).","Pas de télétravail ; remplacement obligatoire en cas d'absence."],
+["profession","Secret professionnel","La révélation d'une information à caractère secret par une personne qui en est dépositaire par état ou par profession est punie d'1 an et 15 000 € (art. 226-13 code pénal). Il figure aussi dans le CSP et le code de déontologie.","Le pharmacien doit veiller à ce que ses collaborateurs le respectent.","On dit secret professionnel, pas médical ; il s'impose aussi au stagiaire."],
+["profession","Bonnes pratiques","Référentiels opposables : ils ont une valeur juridique et s'imposent à l'exercice professionnel (dispensation, fabrication, distribution…).","","Publiées par arrêté ministériel, donc absentes du CSP."],
+["profession","Déontologie","Ensemble des règles et des devoirs régissant une profession, forgés par la profession et transmis de génération en génération. Littéralement, la « science des devoirs ».","Elle s'ajoute aux devoirs de tout citoyen."],
+["profession","Code de déontologie des pharmaciens","Texte préparé par le Conseil national de l'Ordre, puis édicté par décret en Conseil d'État et codifié aux articles R. 4235-1 à R. 4235-77 du CSP. Version en vigueur : 1995.","Le serment de Galien n'ajoute aucune obligation juridique.","C'est un décret en Conseil d'État (R), pas un arrêté."],
+["profession","Faute disciplinaire","Tout manquement aux règles déontologiques, y compris dans la vie privée, ou l'inobservation d'une disposition pénale.","Ex. : délivrer un dosage adulte à un nourrisson ; conduite en état d'ivresse.","Toute infraction pénale est aussi une faute disciplinaire. Sanction seulement s'il y a une plainte."],
+["profession","Ordre des pharmaciens","Créé en 1945, c'est une personne morale de droit privé à qui l'État a confié des missions de service public : inscription, déontologie, discipline, représentation.","","Adhésion obligatoire ; il ne s'occupe pas des intérêts économiques."],
+["profession","Ordre / syndicat","Ordre : unique, créé par le législateur, adhésion obligatoire, santé publique, pouvoir disciplinaire. Syndicats : plusieurs, adhésion facultative, défense des intérêts économiques.","Ex. : les syndicats d'officine négocient la convention avec l'Assurance maladie.","Le pouvoir de sanction est propre à l'Ordre."],
+["profession","Profession libérale","Profession exercée de façon indépendante, avec une qualification spécifique, une pratique éthique et une déontologie.","Ex. : pharmacien, médecin, avocat. Un boulanger est un artisan."],
+["profession","Probité, dignité, indépendance","Probité : droiture, intégrité morale. Dignité : grandeur de la profession, ne pas lui faire honte. Indépendance : ne jamais aliéner son jugement professionnel (art. R. 4235-3).","Ex. : refuser de modifier une date de péremption sur ordre d'un patron."],
+["profession","Monopole pharmaceutique","Ensemble des actes réservés aux pharmaciens (art. L. 4211-1 CSP) : préparation et vente des médicaments, certaines plantes et huiles essentielles, DM de diagnostic in vitro… Son fondement est la santé publique.","Dérogations : vétérinaires, médecins propharmaciens, gaz médicaux…","Ce n'est pas un principe européen : l'UE le tolère (subsidiarité)."]
+];
+const KEY="flash-droit-v1";
+let res={},filter="all",onlyTodo=false,order=[],pos=0,flipped=false;
+try{res=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){res={};}
+try{const f=localStorage.getItem(KEY+"-f");if(f&&(f==="all"||CH[f]))filter=f;}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(res));localStorage.setItem(KEY+"-f",filter);}catch(e){}};
+const $=id=>document.getElementById(id);
+const id=c=>c[0]+":"+c[1];
+const pool=()=>C.filter(c=>filter==="all"||c[0]===filter);
+
+function build(){
+  order=pool().map(c=>C.indexOf(c));
+  if(onlyTodo)order=order.filter(i=>res[id(C[i])]!=="ok");
+  pos=0;flipped=false;render();
+}
+function chips(){
+  const counts={all:C.length};C.forEach(c=>counts[c[0]]=(counts[c[0]]||0)+1);
+  $("chips").innerHTML=[["all","Tout"],...Object.entries(CH)].map(([k,v])=>`<button class="chip" data-k="${k}" aria-pressed="${k===filter}">${v}<small>${counts[k]}</small></button>`).join("");
+}
+function tally(){
+  const p=pool();const ok=p.filter(c=>res[id(c)]==="ok").length,todo=p.filter(c=>res[id(c)]==="todo").length;
+  $("n-ok").textContent=ok;$("n-todo").textContent=todo;$("n-new").textContent=p.length-ok-todo;
+  $("p-ok").style.width=(ok/p.length*100)+"%";$("p-todo").style.width=(todo/p.length*100)+"%";
+}
+function face(c,back){
+  const st=res[id(c)];const stamp=st?`<span class="stamp ${st}">${st==="ok"?"Je sais":"À revoir"}</span>`:"";
+  if(!back)return `<div class="face front">${stamp}<div class="tag"><span>${CH[c[0]]}</span><span>${order.indexOf(C.indexOf(c))+1} / ${order.length}</span></div><div class="term">${c[1]}</div><div class="hint">Dis la définition, puis touche la fiche pour la retourner.</div></div>`;
+  return `<div class="face back">${stamp}<div class="tag"><span>${c[1]}</span></div><p class="def">${c[2]}</p>${c[3]?`<p class="ex">${c[3]}</p>`:""}${c[4]?`<p class="trap"><b>Piège :</b> ${c[4]}</p>`:""}</div>`;
+}
+function render(){
+  chips();tally();list();
+  if(!order.length){$("stage").innerHTML=`<div class="done"><strong>Aucune fiche à revoir ici</strong>Toutes les fiches de ce chapitre sont classées « je sais ». Décoche le filtre ou choisis un autre chapitre.</div>`;return;}
+  if(pos>=order.length){
+    const p=pool();const todo=p.filter(c=>res[id(c)]==="todo").length;
+    $("stage").innerHTML=`<div class="done"><strong>Tour terminé</strong>${todo?`Il te reste ${todo} fiche${todo>1?"s":""} à revoir. Coche « Seulement les fiches à revoir » pour les reprendre.`:"Tout est classé « je sais » dans ce chapitre. Bien joué."}<div class="small-actions" style="margin-top:14px"><button class="btn" data-again>Refaire un tour</button></div></div>`;return;}
+  const c=C[order[pos]];
+  $("stage").innerHTML=`<div class="scene"><button class="card${flipped?" flipped":""}" id="card" aria-label="Fiche : ${c[1]}. Retourner">${face(c,false)}${face(c,true)}</button></div>
+  <div class="actions" style="margin-top:12px"><button class="btn todo" data-mark="todo">← À revoir</button><button class="btn ok" data-mark="ok">Je sais →</button></div>
+  <div class="nav" style="margin-top:10px"><button data-step="-1" aria-label="Fiche précédente">‹</button><span>${pos+1} / ${order.length}</span><button data-step="1" aria-label="Fiche suivante">›</button></div>`;
+}
+function list(){
+  $("dl").innerHTML=pool().map(c=>`<div><dt>${c[1]}<span>${CH[c[0]]}</span></dt><dd>${c[2]}${c[4]?`<br><span class="trap">Piège : ${c[4]}</span>`:""}</dd></div>`).join("");
+}
+function flip(){const el=$("card");if(!el)return;flipped=!flipped;el.classList.toggle("flipped",flipped);}
+function mark(v){if(pos>=order.length)return;res[id(C[order[pos]])]=v;save();pos++;flipped=false;render();}
+function step(d){pos=Math.min(Math.max(0,pos+d),order.length-1);flipped=false;render();}
+
+document.addEventListener("click",e=>{
+  const ch=e.target.closest(".chip");if(ch){filter=ch.dataset.k;save();build();return;}
+  if(e.target.closest("#card")){flip();return;}
+  const m=e.target.closest("[data-mark]");if(m){mark(m.dataset.mark);return;}
+  const s=e.target.closest("[data-step]");if(s){step(+s.dataset.step);return;}
+  if(e.target.closest("[data-again]")){build();return;}
+});
+$("only-todo").addEventListener("change",e=>{onlyTodo=e.target.checked;build();});
+$("shuffle").addEventListener("click",()=>{for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}pos=0;flipped=false;render();});
+$("restart").addEventListener("click",()=>{pos=0;flipped=false;render();});
+let armed=false;
+$("reset").addEventListener("click",()=>{
+  const msg=$("reset-confirm");
+  if(!armed){armed=true;$("reset").textContent="Confirmer l'effacement";msg.textContent="Touche encore une fois pour effacer tous tes résultats.";msg.hidden=false;setTimeout(()=>{armed=false;$("reset").textContent="Effacer mes résultats";msg.hidden=true;},5000);return;}
+  armed=false;res={};save();$("reset").textContent="Effacer mes résultats";msg.hidden=true;build();
+});
+document.addEventListener("keydown",e=>{
+  if(e.target.closest&&e.target.closest("input,summary"))return;
+  if(e.key===" "||e.key==="Enter"){if(e.target.closest&&e.target.closest("button:not(#card)"))return;e.preventDefault();flip();}
+  else if(e.key==="ArrowLeft")mark("todo");
+  else if(e.key==="ArrowRight")mark("ok");
+});
+build();
+</script>
+
+<script src="../../assets/editor.js" defer></script>
+</body></html>
